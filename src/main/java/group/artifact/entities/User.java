@@ -12,15 +12,15 @@ import lombok.Data;
 
 @Data // constructor, getter, setter
 @Entity
-@Table(name = "users") // mapping to postgres
+@Table(name = "user") // mapping to postgres
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // primary key construction
-    private int userId;
+    private int user_pk;
     private String username;
     private String password;
     private String salt;
     private String email;
     private ZonedDateTime created;
-    private ZonedDateTime lastLogin;
+    private ZonedDateTime last_login;
 }
