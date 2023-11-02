@@ -13,6 +13,9 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.Route;
+import group.artifact.entities.User;
+import group.artifact.controller.UserController;
+import lombok.AllArgsConstructor;
 
 
 @Route("register")
@@ -60,7 +63,8 @@ public class RegisterView extends Composite {
             Notification.show("Bitte stimme unseren AGBs zu").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else {
             Notification.show("Registrierung erfolgreich").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            //authService.register(email, vorname, nachname, passwort)
+
+            UserController.register(new User(nachname, vorname, passwort, email));
         }
     }
 }
