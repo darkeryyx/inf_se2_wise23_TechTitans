@@ -10,7 +10,6 @@ import java.util.Base64.Encoder;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,45 +18,46 @@ import org.springframework.web.server.ResponseStatusException;
 import group.artifact.entities.User;
 import group.artifact.repositories.SessionRepository;
 import group.artifact.repositories.UserRepository;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class UserService {
-    private final SecureRandom RANDOM= new SecureRandom();
+    private final SecureRandom RANDOM = new SecureRandom();
     private UserRepository userRepository;
     private SessionRepository sessionRepository;
-    
-    @Autowired  
-    public void UserService(UserRepository userRepository, SessionRepository sessionRepository){
-        this.userRepository = userRepository;
-        this.sessionRepository = sessionRepository;
-    }
 
-    public String createUser(User newUser){
-       if(!userRepository.isUnique(newUser.getUsername())){ //check if username already exists
-            return null;
-       }
-       try{
-        newUser.setSalt(generateSalt(16));          //generate salt
-        newUser.setPassword(generateHash(newUser.getPassword(), newUser.getSalt()));   //hash pw 
-        userRepository.save(newUser);                       //save to DB
-        return "1";     //test
-       }catch(DataIntegrityViolationException e){
+    public void createUser(User newUser) {
+        if (!userRepository.isUnique(newUser.getUsername())) { // check if username already exists
+            return;
+        }
+        try {
+            newUser.setSalt(generateSalt(16)); // generate salt
+            newUser.setPassword(generateHash(newUser.getPassword(), newUser.getSalt())); // hash pw
+            userRepository.save(newUser); // save to DB
+        } catch (DataIntegrityViolationException e) {
             System.out.println("Error: unable to insert" + newUser.toString());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-       }
+        }
 
     }
 
-    private String generateSalt(int len){
-        byte bytes[] =new byte[len];
+     /**
+     * generate salt of specified length
+     * 
+     * @param len: length for the result
+     * @return: usable salt as string
+     */
+    private String generateSalt(int len) {
+        byte bytes[] = new byte[len];
         RANDOM.nextBytes(bytes);
         Encoder encoder = Base64.getEncoder().withoutPadding();
-        String salt=encoder.encodeToString(bytes);
+        String salt = encoder.encodeToString(bytes);
         return salt;
-        
+
     }
 
-        /**
+    /**
      * hash a given password with the given salt
      * 
      * @param password: users pw
@@ -78,6 +78,5 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
-    
-    
+
 }
