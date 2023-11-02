@@ -14,7 +14,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "sessions")
+@Table(name = "sessions", schema="project")
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

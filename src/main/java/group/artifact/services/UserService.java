@@ -33,15 +33,13 @@ public class UserService {
     }
 
     public String createUser(User newUser){
-        System.out.println(newUser.getUsername());
-       /*if(!userRepository.isUnique(newUser.getUsername())){ //check if username already exists
+       if(!userRepository.isUnique(newUser.getUsername())){ //check if username already exists
             return null;
-       }*/
+       }
        try{
         newUser.setSalt(generateSalt(16));          //generate salt
         newUser.setPassword(generateHash(newUser.getPassword(), newUser.getSalt()));   //hash pw 
         userRepository.save(newUser);                       //save to DB
-        System.out.println("Success");
         return "1";     //test
        }catch(DataIntegrityViolationException e){
             System.out.println("Error: unable to insert" + newUser.toString());
@@ -75,10 +73,8 @@ public class UserService {
             Encoder encoder = Base64.getEncoder().withoutPadding();
             return encoder.encodeToString(hash);
         } catch (NoSuchAlgorithmException NSAE) {
-            System.out.println("1");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         } catch (InvalidKeySpecException IKSE) {
-            System.out.println("2");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
