@@ -14,15 +14,15 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-
 @Data // constructor, getter, setter
 @Entity
 @RequiredArgsConstructor
-@Table(name = "users", schema="project") // mapping to postgres
+@Table(name = "users", schema = "project") // mapping to postgres
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // primary key construction
     private Integer user_pk;
+
     @NonNull
     private String name;
     @NonNull
@@ -34,6 +34,7 @@ public class User {
     private String email;
     private ZonedDateTime created;
     private ZonedDateTime last_login;
+    Student student;
 
     // mappedBy refers to the property in Session e.g here its User user
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

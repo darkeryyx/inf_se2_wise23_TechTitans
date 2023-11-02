@@ -19,7 +19,7 @@ import group.artifact.entities.User;
 import group.artifact.controller.UserController;
 
 @Route("register")
-public class RegisterView extends Composite {
+public class RegisterView extends Composite<Component> {
     @Autowired
     private UserController userController;
 

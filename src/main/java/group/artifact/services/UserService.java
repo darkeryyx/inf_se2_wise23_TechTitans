@@ -38,6 +38,10 @@ public class UserService {
         }
     }
 
+    public void authenticate(User user){
+        // TODO
+    }
+
      /**
      * generate salt of specified length
      * 
