@@ -1,5 +1,7 @@
 package group.artifact.views;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
@@ -15,11 +17,11 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.Route;
 import group.artifact.entities.User;
 import group.artifact.controller.UserController;
-import lombok.AllArgsConstructor;
-
 
 @Route("register")
 public class RegisterView extends Composite {
+    @Autowired
+    private UserController userController;
 
     protected Component initContent() {
         EmailField email = new EmailField("E-Mail");
@@ -64,7 +66,7 @@ public class RegisterView extends Composite {
         } else {
             Notification.show("Registrierung erfolgreich").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
-            UserController.register(new User(nachname, vorname, passwort, email));
+            userController.register(new User(vorname, nachname, passwort, email));
         }
     }
 }

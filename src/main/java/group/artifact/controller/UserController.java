@@ -1,11 +1,13 @@
 package group.artifact.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import group.artifact.entities.User;
 import group.artifact.services.UserService;
 
+@Component
 public class UserController {
 
     @Autowired
