@@ -21,4 +21,8 @@ public class UserController {
         service.createUser(newUser);
     }
 
+    @PostMapping("/login")
+    public void login(@RequestBody User user) {
+        // leeets gooo
+    }
 }
