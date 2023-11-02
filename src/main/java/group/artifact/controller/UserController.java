@@ -13,10 +13,10 @@ public class UserController {
 
     @Autowired
     UserService service;
-    
+
     @PostMapping("/register")
     public void register(@RequestBody User newUser){
-        
+    service.createUser(newUser);
     }
 
 }
