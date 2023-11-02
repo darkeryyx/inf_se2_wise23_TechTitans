@@ -20,7 +20,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // primary key construction
     private Integer user_pk;
-    private String username;
+    private String name;
+    private String surname;
     private String password;
     private String salt;
     private String email;

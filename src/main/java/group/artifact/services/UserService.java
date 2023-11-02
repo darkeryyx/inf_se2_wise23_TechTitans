@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import group.artifact.entities.User;
-import group.artifact.repositories.SessionRepository;
 import group.artifact.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 
@@ -25,11 +24,10 @@ import lombok.AllArgsConstructor;
 public class UserService {
     private final SecureRandom RANDOM = new SecureRandom();
     private UserRepository userRepository;
-    private SessionRepository sessionRepository;
 
     public void createUser(User newUser) {
-        if (!userRepository.isUnique(newUser.getUsername())) { // check if username already exists
-            return;
+        if (!userRepository.isEmailUnique(newUser.getEmail())) { // check if email already exists
+            return; // TODO
         }
         try {
             newUser.setSalt(generateSalt(16)); // generate salt
@@ -37,9 +35,7 @@ public class UserService {
             userRepository.save(newUser); // save to DB
         } catch (DataIntegrityViolationException e) {
             System.out.println("Error: unable to insert" + newUser.toString());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-
     }
 
      /**

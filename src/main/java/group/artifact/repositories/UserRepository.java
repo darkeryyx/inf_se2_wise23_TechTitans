@@ -8,6 +8,6 @@ import group.artifact.entities.User;
 public interface UserRepository extends JpaRepository<User, Integer> {
     // check if first method parameter (?1 = String name) exists, count the
     // occurance and check if its 1
-    @Query("SELECT COUNT(u) = 0 FROM User u WHERE u.username = ?1")
-    boolean isUnique(String name);
+    @Query("SELECT COUNT(u) = 0 FROM User u WHERE u.email = ?1")
+    boolean isEmailUnique(String email);
 }
