@@ -15,7 +15,7 @@ import lombok.Data;
 
 @Data // constructor, getter, setter
 @Entity
-@Table(name = "user") // mapping to postgres
+@Table(name = "users") // mapping to postgres
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // primary key construction
@@ -24,8 +24,8 @@ public class User {
     private String password;
     private String salt;
     private String email;
-    private ZonedDateTime created;
-    private ZonedDateTime last_login;
+    private ZonedDateTime created = null;
+    private ZonedDateTime last_login = null;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Session> sessions;

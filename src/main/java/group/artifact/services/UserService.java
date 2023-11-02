@@ -10,9 +10,9 @@ import java.util.Base64.Encoder;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -26,15 +26,17 @@ public class UserService {
     private UserRepository userRepository;
     private SessionRepository sessionRepository;
     
+    @Autowired  
     public void UserService(UserRepository userRepository, SessionRepository sessionRepository){
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
     }
 
     public String createUser(User newUser){
-       if(!userRepository.isUnique(newUser.getUsername())){ //check if username already exists
+        System.out.println(newUser.getUsername());
+       /*if(!userRepository.isUnique(newUser.getUsername())){ //check if username already exists
             return null;
-       }
+       }*/
        try{
         newUser.setSalt(generateSalt(16));          //generate salt
         newUser.setPassword(generateHash(newUser.getPassword(), newUser.getSalt()));   //hash pw 
