@@ -13,8 +13,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @Entity
 @Table(name = "students", schema = "project")
 public class Student {
@@ -25,13 +27,13 @@ public class Student {
 
     // foreign keys
     @OneToOne
-    @JoinColumn(name = "user_pk", nullable = false)
+    @JoinColumn(name = "user_fk", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "student")
     private Set<Application> applications;
 
-    // attributes
+       // attributes
     @Column(nullable = false)
     private String subject; // academic subject
     private LocalDate birthday;
@@ -41,4 +43,15 @@ public class Student {
     private String interests;
     private String description;
     private String image; // path to image
+
+    public Student(User user, String subject, LocalDate birthday, Short semester, String skills, String interests, String description, String image) {
+        this.user = user;
+        this.subject = subject;
+        this.birthday = birthday;
+        this.semester = semester;
+        this.skills = skills;
+        this.interests = interests;
+        this.description = description;
+        this.image = image;
+    }
 }
