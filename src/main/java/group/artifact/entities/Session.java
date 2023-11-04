@@ -16,14 +16,17 @@ import lombok.Data;
 @Entity
 @Table(name = "sessions", schema = "project")
 public class Session {
+    // primary keys
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer session_pk;
 
+    // foreign keys
     @ManyToOne
     @JoinColumn(name = "user_pk", nullable = false)
     private User user;
 
+    // attributes
     @Column(nullable = false)
     private String sid; // session id
     private ZonedDateTime login;

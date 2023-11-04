@@ -1,6 +1,6 @@
 package group.artifact.entities;
 
-import java.util.Set;
+import java.time.ZonedDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,32 +9,30 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+// connection between student and offer (n:m relation)
 @Data
 @Entity
-@Table(name = "offers", schema = "project")
-public class Offer {
+@Table(name = "applications", schema = "project")
+public class Application {
     // primary keys
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer offer_pk;
+    private Integer application_pk;
 
     // foreign keys
     @ManyToOne
-    @JoinColumn(name = "company_pk", nullable = false)
-    private Company company;
+    @JoinColumn(name = "student_pk", nullable = false)
+    private Student student;
 
-    @OneToMany(mappedBy = "offer")
-    private Set<Application> applications;
+    @ManyToOne
+    @JoinColumn(name = "offer_pk", nullable = false)
+    private Offer offer;
 
     // attributes
     @Column(nullable = false)
-    private String description;
-    @Column(nullable = false)
-    private String business;
-    private String income;
-    private String job;
+    private ZonedDateTime submitted; // timestamp
+
 }
