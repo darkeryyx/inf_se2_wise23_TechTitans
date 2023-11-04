@@ -11,12 +11,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Data // constructor, getter, setter
 @Entity
 @RequiredArgsConstructor
+@NoArgsConstructor
 @Table(name = "users", schema = "project") // mapping to postgres
 public class User {
     // primary keys
