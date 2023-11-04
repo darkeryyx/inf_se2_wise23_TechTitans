@@ -38,11 +38,11 @@ public class UserService {
         }
     }
 
-    public void authenticate(User user){
+    public void authenticate(User user) {
         // TODO
     }
 
-     /**
+    /**
      * generate salt of specified length
      * 
      * @param len: length for the result
@@ -61,7 +61,7 @@ public class UserService {
      * hash a given password with the given salt
      * 
      * @param password: users pw
-     * @param salt:     generated salt
+     * @param salt: generated salt
      * @return: storable hash
      */
     private String generateHash(String password, String salt) {
