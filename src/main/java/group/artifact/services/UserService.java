@@ -10,6 +10,8 @@ import java.util.Base64.Encoder;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.notification.Notification;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -38,8 +40,25 @@ public class UserService {
         }
     }
 
-    public void authenticate(User user) {
-        // TODO
+    public boolean authentificate(String surname, String name, String password) {
+        User user=userRepository.findUserBySurnameAndName(surname, name);
+
+        if(user== null){
+            Notification.show("User existiert nicht! Eventuell Vor-oder Nachnamen falsch geschrieben");
+        }else{
+            String salt = userRepository.findSaltBySurnameAndName(surname,name);
+            String hash = generateHash(password, salt);
+
+            String tmp= userRepository.findPasswordBySurnameAndName(surname,name);
+            if(!hash.equals(tmp)){
+                Notification.show("Falsches Passwort");
+
+            }else{
+                Notification.show("login successfull!");
+                return true;//soll die session hier gestartet werden oder in der view?
+            }
+        }
+        return false;
     }
 
     /**

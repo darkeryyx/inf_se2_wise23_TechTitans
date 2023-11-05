@@ -16,7 +16,7 @@ public class UserController {
         service.createUser(newUser);
     }
 
-    public void login(User user) {
-        // TODO
+    public void login(String surname, String name, String passwort) {
+        service.authentificate(surname, name, passwort);
     }
 }
