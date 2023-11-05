@@ -10,7 +10,6 @@ import java.util.Base64.Encoder;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;

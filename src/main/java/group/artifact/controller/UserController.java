@@ -17,6 +17,6 @@ public class UserController {
     }
 
     public void login(String surname, String name, String passwort) {
-        service.authentificate(surname, name, passwort);
+        userService.authentificate(surname, name, passwort);
     }
 }
