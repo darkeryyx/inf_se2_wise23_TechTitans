@@ -19,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     // FROM User u
     // WHERE u.password LIKE ?1 AND u.name LIKE ?2
     @Query("SELECT u.password FROM User u WHERE u.surname LIKE ?1 AND u.name LIKE ?2")
-    String findUserByPassword (String surname, String name);
+    String findPasswordBySurnameAndName (String surname, String name);
 
     // SELECT u.salt
     // FROM user u
