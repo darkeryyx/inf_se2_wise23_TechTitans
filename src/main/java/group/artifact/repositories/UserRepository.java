@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     // FROM User u
     // WHERE u.surname = [StringValueOf(surname)] AND u.name = [StringValueOf(name)]
     @Query("SELECT u FROM User u WHERE u.surname LIKE ?1 AND u.name LIKE ?2")
-    User findUserBySurnameAndName ( String surname , String name);
+    User findUserBySurnameAndName ( String surname , String name); //changed
 
     // SELECT password
     // FROM User u
