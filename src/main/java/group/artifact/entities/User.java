@@ -9,6 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,19 +19,23 @@ import lombok.RequiredArgsConstructor;
 
 @Data // constructor, getter, setter
 @Entity
-@RequiredArgsConstructor
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "users", schema = "project") // mapping to postgres
 public class User {
     // primary keys
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // primary key construction
     private Integer user_pk;
-    
+
     // foreign keys
     // mappedBy refers to the property in Session e.g here its User user
     @OneToMany(mappedBy = "user")
     private Set<Session> sessions;
+
+    @OneToOne(mappedBy = "user")
+    @PrimaryKeyJoinColumn
+    private Student student;
 
     @NonNull
     @Column(nullable = false)
@@ -47,4 +53,5 @@ public class User {
     private ZonedDateTime created;
     private ZonedDateTime last_login;
 
+    // TODO: optional fields
 }

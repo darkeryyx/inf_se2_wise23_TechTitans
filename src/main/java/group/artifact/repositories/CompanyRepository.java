@@ -1,7 +1,6 @@
 package group.artifact.repositories;
 
 import group.artifact.entities.Company;
-import group.artifact.entities.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

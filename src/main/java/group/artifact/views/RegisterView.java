@@ -62,7 +62,7 @@ public class RegisterView extends Composite<Component> {
         } else if (!passwort.equals(passwort2)) {
             Notification.show("Passwörter stimmen nicht überein").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else if(checkBox.equals("false")){
-            Notification.show("Bitte stimme unseren AGBs zu").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            Notification.show("Bitte stimme unseren AGB zu").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else {
             Notification.show("Registrierung erfolgreich").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 

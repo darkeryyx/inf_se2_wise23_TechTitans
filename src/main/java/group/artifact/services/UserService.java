@@ -54,7 +54,6 @@ public class UserService {
         Encoder encoder = Base64.getEncoder().withoutPadding();
         String salt = encoder.encodeToString(bytes);
         return salt;
-
     }
 
     /**

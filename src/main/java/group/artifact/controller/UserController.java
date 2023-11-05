@@ -10,10 +10,10 @@ import group.artifact.services.UserService;
 public class UserController {
 
     @Autowired
-    UserService service;
+    UserService userService;
 
     public void register(User newUser) {
-        service.createUser(newUser);
+        userService.createUser(newUser);
     }
 
     public void login(User user) {

@@ -41,4 +41,6 @@ public class Company {
     @Column(nullable = false)
     private String description;
     private String image; // path to logo
+
+    // TODO: correct mapping for inheritence
 }

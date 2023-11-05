@@ -1,43 +1,28 @@
 package group.artifact.views;
 
-
-import com.vaadin.flow.component.Text;
-import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.textfield.*;
-import group.artifact.controller.StudentController;
-import group.artifact.entities.Application;
 import group.artifact.entities.Student;
-import group.artifact.repositories.StudentRepository;
-import group.artifact.repositories.UserRepository;
-import group.artifact.services.UserService;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import group.artifact.controller.StudentController;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.Route;
-import group.artifact.entities.User;
-import group.artifact.controller.UserController;
-
-import java.time.LocalDate;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.textfield.*;
 
 @Route("student-profile")
 public class CreateStudentProfileView extends Composite<Component> {
 
     @Autowired
     private StudentController controller;
-
-    @Autowired
-    private UserRepository userRepository;
 
     protected Component initContent() {
         TextField subject = new TextField("Studienfach");
@@ -59,18 +44,26 @@ public class CreateStudentProfileView extends Composite<Component> {
                 interests,
                 description,
                 image,
-                new Button("Bestätigen", buttonClickEvent -> controller.createStudentProfile(
-                        new Student(
-                        userRepository.getReferenceById(user.getValue().intValue()),
-                        subject.getValue(),
-                        birthday.getValue(),
-                        semester.getValue().shortValue(),
-                        skills.getValue(),
-                        interests.getValue(),
-                        description.getValue(),
-                        image.getValue()
-                ))
-        ));
+                new Button("Bestätigen", buttonClickEvent -> {
+                        Student student = new Student(
+                                subject.getValue(),
+                                birthday.getValue(),
+                                semester.getValue().shortValue(),
+                                skills.getValue(),
+                                interests.getValue(),
+                                description.getValue(),
+                                image.getValue());
+                        try {
+                            controller.createStudentProfile(student, user.getValue().intValue());
+                            Notification.show("Studentenprofil erfolgreich angelegt.")
+                                    .addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                            ;
+                        } catch (DataIntegrityViolationException DIVE) {
+                            Notification.show("Studentenprofils existiert bereits ")
+                                    .addThemeVariants(NotificationVariant.LUMO_ERROR);
+                            ;
+                        }
+                    }));
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
         return layout;
     }
