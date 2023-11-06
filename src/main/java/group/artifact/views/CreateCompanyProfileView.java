@@ -33,10 +33,10 @@ public class CreateCompanyProfileView extends Composite<Component>{
 
     protected Component initContent() {
         TextField business = createRequiredTextField("Firmenname");
-        TextField employees = createRequiredTextField("Mitarbeiteranzahl");
+        TextField employees = createTextField("Mitarbeiteranzahl");
         DatePicker founded = createDatePicker("Gründungsdatum");
-        TextField link = createTextField("Link zur Unternehmenswebseite");
-        TextField description = createTextField("Beschreibung");
+        TextField link = createRequiredTextField("Link zur Unternehmenswebseite");
+        TextField description = createRequiredTextField("Beschreibung");
         TextField logo = createTextField("Logo");
 
         Button createProfileButton = new Button("Bestätigen", event -> createCompanyProfile(
@@ -61,7 +61,7 @@ public class CreateCompanyProfileView extends Composite<Component>{
                 logo,
                 createProfileButton
         );
-        if(business.isInvalid() | employees.isInvalid())
+        if(business.isInvalid() | link.isInvalid() | description.isInvalid())
          Notification.show("Bitte füllen Sie das erforderliche Feld aus.") ;
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
         return layout;
