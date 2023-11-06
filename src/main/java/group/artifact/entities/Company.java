@@ -42,5 +42,18 @@ public class Company {
     private String description;
     private String image; // path to logo
 
+    //constructor1
+    public Company(String business, Integer employees, LocalDate founded, String link, String description,String logo) {
+        this.business = business;
+        this.employees= employees;
+        this.founded = founded;
+        this.link = link;
+        this.description = description;
+        this.image = logo;
+    }
+//Constructore2
+    public Company() {
+    }
+
     // TODO: correct mapping for inheritence
 }
