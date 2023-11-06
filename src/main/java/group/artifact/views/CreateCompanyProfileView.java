@@ -94,6 +94,7 @@ public class CreateCompanyProfileView extends Composite<Component>{
         TextField requiredTextField = new TextField(label);
         requiredTextField.setRequired(true); //Make required field
         requiredTextField.setErrorMessage("Bitte füllen Sie das erforderliche Feld aus.");
+        requiredTextField.setWidth("20%");
         return requiredTextField;
     }
 
