@@ -18,7 +18,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import group.artifact.entities.User;
 import group.artifact.repositories.UserRepository;
+import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
+
 
 @Service
 @AllArgsConstructor
@@ -28,7 +30,7 @@ public class UserService {
 
     public void createUser(User newUser) {
         if (!userRepository.isEmailUnique(newUser.getEmail())) { // check if email already exists
-            return; // TODO
+            return; // TODO sinnvolle ausgabe + handling
         }
         try {
             newUser.setSalt(generateSalt(16)); // generate salt
@@ -39,7 +41,7 @@ public class UserService {
         }
     }
 
-    public boolean authentificate(String surname, String name, String password) {
+    public boolean authentificate(String surname, String name, String password) {  //sollte auth nicht über email laufen, vor und zunamen können sich doppel und werden nicht auf uniqueness überprüft
         User user=userRepository.findUserBySurnameAndName(surname, name);
 
         if(user== null){
@@ -54,7 +56,7 @@ public class UserService {
 
             }else{
                 Notification.show("login successfull!");
-                return true;//soll die session hier gestartet werden oder in der view?
+                return true; //session startet aktuell in Usercontroller.login()
             }
         }
         return false;
@@ -96,4 +98,17 @@ public class UserService {
         }
     }
 
+    /*
+    *Generate a cookie for a user with given SID
+    *@param: sid: secure and identifiable Integer value   Todo:secure and identifiable
+    *@return: jakarta.http.cookie object
+    */
+    public Cookie setSessionCookie(String sid){
+        Cookie sessionCookie = new Cookie("sid", sid);
+        sessionCookie.setMaxAge(1200);  //expire in 20 min
+        sessionCookie.setPath("/");
+        //sessionCookie.setAttribute("SameSite","Lax");
+        //sessionCookie.setHttpOnly(true);
+        return sessionCookie;
+    }
 }
