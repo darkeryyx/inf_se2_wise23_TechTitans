@@ -103,12 +103,26 @@ public class UserService {
     *@param: sid: secure and identifiable Integer value   Todo:secure and identifiable
     *@return: jakarta.http.cookie object
     */
-    public Cookie setSessionCookie(String sid){
+    public Cookie setSessionCookie(String sid){     //Todo: sid random generieren und an usersession knüpfen
         Cookie sessionCookie = new Cookie("sid", sid);
         sessionCookie.setMaxAge(1200);  //expire in 20 min
         sessionCookie.setPath("/");
         //sessionCookie.setAttribute("SameSite","Lax");
         //sessionCookie.setHttpOnly(true);
         return sessionCookie;
+    }
+
+    /*
+     * revokes a cookie for logout
+     * @param: cookie: current sessioncookie
+     * returns: jakarta.http.cookie object
+     */
+    public Cookie revokeCookie(Cookie cookie){
+        Cookie revokedCookie = new Cookie("sid", cookie.getValue());
+        revokedCookie.setPath("/");
+        revokedCookie.setMaxAge(0);
+         //sessionCookie.setAttribute("SameSite","Lax");
+        //sessionCookie.setHttpOnly(true);
+        return cookie;
     }
 }
