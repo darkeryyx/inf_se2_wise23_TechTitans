@@ -15,7 +15,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import group.artifact.entities.Offer;
 
-@Route("search-Offers")
+@Route("search/offer")
 public class SearchOffersView extends Composite<Component> {
 
 

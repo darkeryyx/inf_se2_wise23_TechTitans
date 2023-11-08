@@ -20,7 +20,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 
 import java.time.LocalDate;
 
-@Route("company-profile")
+@Route("create/company")
 public class CreateCompanyProfileView extends Composite<Component> {
     private final CompanyController companyController;
 

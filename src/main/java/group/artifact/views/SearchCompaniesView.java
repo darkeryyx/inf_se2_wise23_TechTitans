@@ -14,7 +14,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.RouterLink;
 import group.artifact.entities.Company;
 
-@Route("search-Companies")
+@Route("search/company")
 public class SearchCompaniesView extends Composite<Component> {
 
     protected Component initContent() {

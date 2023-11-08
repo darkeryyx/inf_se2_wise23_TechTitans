@@ -18,7 +18,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.textfield.*;
 
-@Route("student-profile")
+@Route("create/student")
 public class CreateStudentProfileView extends Composite<Component> {
 
     @Autowired
