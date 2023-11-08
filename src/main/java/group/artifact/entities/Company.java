@@ -33,6 +33,7 @@ public class Company {
 
     // attributes
     @Column(nullable = false)
+    private String name;
     private String business;
     private Integer employees;
     private LocalDate founded;
