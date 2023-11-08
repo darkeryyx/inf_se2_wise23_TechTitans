@@ -17,13 +17,11 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.html.Image;
-
 
 import java.time.LocalDate;
 
 @Route("company-profile")
-public class CreateCompanyProfileView extends Composite<Component>{
+public class CreateCompanyProfileView extends Composite<Component> {
     private final CompanyController companyController;
 
     @Autowired
@@ -32,7 +30,9 @@ public class CreateCompanyProfileView extends Composite<Component>{
     }
 
     protected Component initContent() {
-        TextField business = createRequiredTextField("Firmenname");
+        TextField user = createRequiredTextField("User-ID");
+        TextField name = createRequiredTextField("Firmenname");
+        TextField business = createRequiredTextField("Branche");
         TextField employees = createTextField("Mitarbeiteranzahl");
         DatePicker founded = createDatePicker("Gründungsdatum");
         TextField link = createRequiredTextField("Link zur Unternehmenswebseite");
@@ -40,40 +40,40 @@ public class CreateCompanyProfileView extends Composite<Component>{
         TextField logo = createTextField("Logo");
 
         Button createProfileButton = new Button("Bestätigen", event -> createCompanyProfile(
-
-
+                Integer.parseInt(user.getValue()),
+                name.getValue(),
                 business.getValue(),
                 Integer.parseInt(employees.getValue()),
                 founded.getValue(),
                 link.getValue(),
                 description.getValue(),
-                logo.getValue()
-        ));
-
+                logo.getValue()));
 
         VerticalLayout layout = new VerticalLayout(
                 new H2("Firmenprofil anlegen"),
+                user,
+                name,
                 business,
                 employees,
                 founded,
                 link,
                 description,
                 logo,
-                createProfileButton
-        );
-        if(business.isInvalid() | link.isInvalid() | description.isInvalid())
-         Notification.show("Bitte füllen Sie das erforderliche Feld aus.") ;
+                createProfileButton);
+        if (business.isInvalid() | link.isInvalid() | description.isInvalid())
+            Notification.show("Bitte füllen Sie das erforderliche Feld aus.");
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
         return layout;
     }
 
-    private void createCompanyProfile(String business, Integer employees, LocalDate founded, String link, String description, String logo) {
+    private void createCompanyProfile(Integer user, String name, String business, Integer employees, LocalDate founded, String link,
+            String description, String logo) {
 
-        Company company = new Company(business, employees, founded,  link, description,logo);
+        Company company = new Company(name, business, employees, founded, link, description, logo);
         try {
-            companyController.createCompany(company);
+            companyController.createCompany(company, user.intValue());
             showSuccessNotification("Firmenprofil erfolgreich angelegt.");
-        } catch (DataIntegrityViolationException dive) {
+        } catch (DataIntegrityViolationException DIVE) {
             showErrorNotification("Firmenprofil existiert bereits.");
         }
     }
@@ -84,20 +84,19 @@ public class CreateCompanyProfileView extends Composite<Component>{
         return textField;
     }
 
-    private DatePicker createDatePicker(String label){
+    private DatePicker createDatePicker(String label) {
         DatePicker datepicker = new DatePicker(String.valueOf(label));
         datepicker.setWidth("20%");
         return datepicker;
     }
 
-    private TextField createRequiredTextField(String label){
+    private TextField createRequiredTextField(String label) {
         TextField requiredTextField = new TextField(label);
-        requiredTextField.setRequired(true); //Make required field
+        requiredTextField.setRequired(true); // Make required field
         requiredTextField.setErrorMessage("Bitte füllen Sie das erforderliche Feld aus.");
         requiredTextField.setWidth("20%");
         return requiredTextField;
     }
-
 
     private void showSuccessNotification(String message) {
         Notification.show(message).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
@@ -106,6 +105,5 @@ public class CreateCompanyProfileView extends Composite<Component>{
     private void showErrorNotification(String message) {
         Notification.show(message).addThemeVariants(NotificationVariant.LUMO_ERROR);
     }
-
 
 }

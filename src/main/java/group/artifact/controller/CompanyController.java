@@ -11,7 +11,7 @@ public class CompanyController {
     @Autowired
     CompanyService companyService;
 
-    public void createCompany(Company company){
-        companyService.saveProfile(company);
+    public void createCompany(Company company, Integer userId){
+        companyService.saveProfile(company, userId);
     }
 }

@@ -27,11 +27,11 @@ public class Student {
     // primary keys
     @Id
     @Column(name = "user_fk")
-    private Integer user_fk; // 
+    private Integer user_fk;
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "user_fk")
+    @JoinColumn(name = "user_fk", nullable = false)
     private User user;
 
     // foreign keys

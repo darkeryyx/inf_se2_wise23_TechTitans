@@ -14,8 +14,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.RouterLink;
 import group.artifact.entities.Company;
 
-import static java.awt.AWTEventMulticaster.add;
-
 @Route("search-Companies")
 public class SearchCompaniesView extends Composite<Component> {
 

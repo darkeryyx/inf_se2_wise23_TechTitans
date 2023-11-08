@@ -9,24 +9,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT COUNT(u) = 0 FROM User u WHERE u.email = ?1")
     boolean isEmailUnique(String email);
 
-    // SELECT surname
-    // FROM User u
-    // WHERE u.surname = [StringValueOf(surname)] AND u.name = [StringValueOf(name)]
-    @Query("SELECT u FROM User u WHERE u.surname LIKE ?1 AND u.name LIKE ?2")
-    User findUserBySurnameAndName ( String surname , String name); //changed
-
-    // SELECT password
-    // FROM User u
-    // WHERE u.password LIKE ?1 AND u.name LIKE ?2
-    @Query("SELECT u.password FROM User u WHERE u.surname LIKE ?1 AND u.name LIKE ?2")
-    String findPasswordBySurnameAndName (String surname, String name);
-
-    // SELECT u.salt
-    // FROM user u
-    // WHERE u.surname LIKE ?1 AND u.name LIKE ?2
-    @Query("SELECT u.salt FROM User u WHERE u.surname LIKE ?1 AND u.name LIKE ?2")
-    String findSaltBySurnameAndName(String surname, String name);
-
-
-
+    User findUserByNameAndSurname(String name, String surname);
 }

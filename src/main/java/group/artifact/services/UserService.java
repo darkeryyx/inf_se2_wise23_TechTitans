@@ -11,6 +11,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -41,22 +43,22 @@ public class UserService {
         }
     }
 
-    public boolean authentificate(String surname, String name, String password) {  //sollte auth nicht über email laufen, vor und zunamen können sich doppel und werden nicht auf uniqueness überprüft
-        User user=userRepository.findUserBySurnameAndName(surname, name);
+    public boolean authentificate(String name, String surname, String password) {  //sollte auth nicht über email laufen, vor und zunamen können sich doppel und werden nicht auf uniqueness überprüft
+        User user=userRepository.findUserByNameAndSurname(name, surname);
 
         if(user== null){
             Notification.show("User existiert nicht! Eventuell Vor-oder Nachnamen falsch geschrieben");
         }else{
-            String salt = userRepository.findSaltBySurnameAndName(surname,name);
+            String salt = user.getSalt();
             String hash = generateHash(password, salt);
 
-            String tmp= userRepository.findPasswordBySurnameAndName(surname,name);
+            String tmp= user.getPassword();
             if(!hash.equals(tmp)){
                 Notification.show("Falsches Passwort");
 
             }else{
-                Notification.show("login successfull!");
-                return true; //session startet aktuell in Usercontroller.login()
+                Notification.show("login successfull!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                return true; //session startet aktuell in UserController.login()
             }
         }
         return false;

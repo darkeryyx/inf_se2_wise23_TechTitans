@@ -22,7 +22,7 @@ import com.vaadin.flow.component.textfield.*;
 public class CreateStudentProfileView extends Composite<Component> {
 
     @Autowired
-    private StudentController controller;
+    private StudentController studentController;
 
     protected Component initContent() {
         TextField subject = new TextField("Studienfach");
@@ -54,7 +54,7 @@ public class CreateStudentProfileView extends Composite<Component> {
                                 description.getValue(),
                                 image.getValue());
                         try {
-                            controller.createStudentProfile(student, user.getValue().intValue());
+                            studentController.createStudentProfile(student, user.getValue().intValue());
                             Notification.show("Studentenprofil erfolgreich angelegt.")
                                     .addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                             ;
