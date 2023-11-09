@@ -57,4 +57,10 @@ public class Company {
     private String description;
     @NonNull
     private String image; // path to logo
+
+    //TODO: Getter/Setter, sofern benoetigt
+
+    public String getName() {return name;}
+    public String getLogo() {return image;}
+    public String getLink() { return link;}
 }
