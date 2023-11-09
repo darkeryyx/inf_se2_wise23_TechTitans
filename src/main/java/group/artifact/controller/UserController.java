@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.flow.server.VaadinService;
+import com.vaadin.flow.server.VaadinSession;
 
 import group.artifact.entities.User;
 import group.artifact.services.UserService;
@@ -24,7 +25,9 @@ public class UserController {
        if(userService.authentificate(email, passwort)){
             Cookie s = userService.setSessionCookie();
             //todo: tie cookie to user in db
+            VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
             VaadinService.getCurrentResponse().addCookie(s);
+            
         }
        }
     
