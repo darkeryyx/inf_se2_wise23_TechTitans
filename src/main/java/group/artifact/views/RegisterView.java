@@ -25,6 +25,7 @@ public class RegisterView extends Composite<Component> {
 
     protected Component initContent() {
         EmailField email = new EmailField("E-Mail");
+        email.setPattern("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
         TextField vorname = new TextField("Vorname");
         TextField nachname = new TextField("Nachname");
         PasswordField passwort = new PasswordField("Passwort");
@@ -39,7 +40,7 @@ public class RegisterView extends Composite<Component> {
                 passwort2,
                 checkbox,
                 new Button("Bestätigen", event -> register(
-                        email.getValue(),
+                        email,
                         vorname.getValue(),
                         nachname.getValue(),
                         passwort.getValue(),
@@ -52,9 +53,9 @@ public class RegisterView extends Composite<Component> {
         return layout;
     }
 
-    private void register(String email, String vorname, String nachname, String passwort, String passwort2, String checkBox) {
-        if (email.trim().isEmpty()) {
-            Notification.show("Bitte eine Email eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
+    private void register(EmailField email, String vorname, String nachname, String passwort, String passwort2, String checkBox) {
+        if (email.getValue().trim().isEmpty() || !email.getValue().matches(email.getPattern())) {
+            Notification.show("Bitte eine gültige Email eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else if (vorname.trim().isEmpty()) {
             Notification.show("Bitte einen Vornamen eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else if (nachname.trim().isEmpty()) {
@@ -65,8 +66,7 @@ public class RegisterView extends Composite<Component> {
             Notification.show("Bitte stimme unseren AGB zu").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else {
             Notification.show("Registrierung erfolgreich").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-
-            userController.register(new User(vorname, nachname, passwort, email));
+            userController.register(new User(vorname, nachname, passwort, email.getValue()));
         }
     }
 }

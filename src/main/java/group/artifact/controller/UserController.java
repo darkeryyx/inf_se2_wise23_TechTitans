@@ -19,8 +19,8 @@ public class UserController {
         //VaadinService.getCurrentResponse().addCookie(s);
     }
 
-    public void login(String name, String surname, String passwort) {
-        userService.authentificate(name, surname, passwort);
+    public void login(String email, String passwort) {
+        userService.authentificate(email, passwort);
         //todo: if authentificate = true: setSessionCookie(Sid)
     }
 

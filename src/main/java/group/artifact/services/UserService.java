@@ -43,21 +43,21 @@ public class UserService {
         }
     }
 
-    public boolean authentificate(String name, String surname, String password) {  //sollte auth nicht über email laufen, vor und zunamen können sich doppel und werden nicht auf uniqueness überprüft
-        User user=userRepository.findUserByNameAndSurname(name, surname);
+    public boolean authentificate(String email, String password) {  //sollte auth nicht über email laufen, vor und zunamen können sich doppel und werden nicht auf uniqueness überprüft
+        User user=userRepository.findUserByEmail(email);
 
         if(user== null){
-            Notification.show("User existiert nicht! Eventuell Vor-oder Nachnamen falsch geschrieben");
+            Notification.show("Falsche Email oder Passwort! ").addThemeVariants(NotificationVariant.LUMO_ERROR);
         }else{
             String salt = user.getSalt();
             String hash = generateHash(password, salt);
 
             String tmp= user.getPassword();
             if(!hash.equals(tmp)){
-                Notification.show("Falsches Passwort");
+                Notification.show("Falsche Email oder Passwort!").addThemeVariants(NotificationVariant.LUMO_ERROR);
 
             }else{
-                Notification.show("login successfull!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                Notification.show("Login erfolgreich!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 return true; //session startet aktuell in UserController.login()
             }
         }
