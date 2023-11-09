@@ -3,8 +3,11 @@ package group.artifact.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.vaadin.flow.server.VaadinService;
+
 import group.artifact.entities.User;
 import group.artifact.services.UserService;
+import jakarta.servlet.http.Cookie;
 
 @Component
 public class UserController {
@@ -14,19 +17,26 @@ public class UserController {
 
     public void register(User newUser) {
         userService.createUser(newUser);
-        //Test Cookie zu setzen da login noch nicht fertig
-        //Cookie s = userService.setSessionCookie("123");    
-        //VaadinService.getCurrentResponse().addCookie(s);
+        
     }
 
     public void login(String email, String passwort) {
-        userService.authentificate(email, passwort);
-        //todo: if authentificate = true: setSessionCookie(Sid)
+       if(userService.authentificate(email, passwort)){
+            Cookie s = userService.setSessionCookie();
+            //todo: tie cookie to user in db
+            VaadinService.getCurrentResponse().addCookie(s);
+        }
+       }
+    
+
+    public void logout(){ //funktioniert nicht
+        Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
+        for(Cookie cookie : cookies){
+            if(cookie.getName() == "sid"){
+                userService.revokeCookie(cookie); 
+            }
+        }
+       //todo: delete cookie in db  
     }
 
-    public void logout(){
-      //todo 
-       //Cookie s = userService.revokeCookie(cookie);    
-        //VaadinService.getCurrentResponse().addCookie(s); 
-    }
 }
