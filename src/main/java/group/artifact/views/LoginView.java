@@ -22,18 +22,15 @@ public class LoginView extends Composite<Component> {
     private UserController userController;
 
     protected Component initContent() {
-        TextField firstName = new TextField("Vorname");
-        TextField lastName = new TextField("Nachname");
+        TextField email = new TextField("Email");
         PasswordField password = new PasswordField("Passwort");
 
         VerticalLayout loginFormLayout = new VerticalLayout(
                 new H2("Login"),
-                firstName,
-                lastName,
+                email,
                 password,
                 new Button("Bestätigen", event -> login(
-                        firstName.getValue(),
-                        lastName.getValue(),
+                        email.getValue(),
                         password.getValue()
                 ))
         );
@@ -52,15 +49,13 @@ public class LoginView extends Composite<Component> {
         return mainLayout;
     }
 
-    private void login(String firstName, String lastName, String password) {
-        if (firstName.trim().isEmpty()) {
+    private void login(String email, String password) {
+        if (email.trim().isEmpty()) {
             Notification.show("Bitte eine Vornamen eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }  else if (lastName.trim().isEmpty()) {
-            Notification.show("Bitte einen Nachnamen eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
-        } else if (password.trim().isEmpty()) {
+        }else if (password.trim().isEmpty()) {
             Notification.show("Bitte ein Passwort eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
         }  else {
-            userController.login(firstName, lastName, password);
+            userController.login(email, password);
         }
     }
 
