@@ -32,11 +32,13 @@ public class UserController {
        }
     
 
-    public void logout(){ //funktioniert nicht
+    public void logout(){ 
         Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
+        String name = "sid";
         for(Cookie cookie : cookies){
-            if(cookie.getName() == "sid"){
+            if(name.equals(cookie.getName())){
                 userService.revokeCookie(cookie); 
+                VaadinService.getCurrentResponse().addCookie(cookie);
             }
         }
        //todo: delete cookie in db  
