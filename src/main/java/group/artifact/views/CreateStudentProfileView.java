@@ -89,6 +89,18 @@ public class CreateStudentProfileView extends VerticalLayout {
                 withValidator(new IntegerRangeValidator("Zahl muss zwischen 1 bis 99 liegen", 1, 99)).bind("semester");
 
 
+        binder.forField(birthday)
+                .withValidator(date ->
+                        date.isBefore(LocalDate.now().plusDays(1)),
+                "Datum kann nicht in der Zukunft liegen").
+                withValidator(date ->
+                        date.getYear() >= 1900, "Datum muss ab/nach 1900 liegen").
+                bind("birthday");
+
+        binder.forField(subject).
+                withValidator(name -> name.length() >= 3,
+                        "Das Studienfach muss mindestens 3 Buchstaben haben").bind("subject");
+
         binder.forField(subject).asRequired("Studienfach ist ein Plichtfeld");
         binder.forField(userId).asRequired("UserID ist ein Pflichtfeld");
     }
