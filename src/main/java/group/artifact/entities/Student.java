@@ -11,6 +11,7 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 @Entity
 @Table(name = "students", schema = "project")
 public class Student {
@@ -38,21 +38,20 @@ public class Student {
     @OneToMany(mappedBy = "student")
     private Set<Application> applications;
 
-    // attributes
-    @NonNull
+    // attribute
     @Column(nullable = false)
     private String subject; // academic subject
-    @NonNull
+
     private LocalDate birthday;
-    @NonNull
+
     @Column(nullable = false)
-    private Short semester;
-    @NonNull
+    private Integer semester;
+
     private String skills;
-    @NonNull
+
     private String interests;
-    @NonNull
+
     private String description;
-    @NonNull
+
     private String image; // path to image
 }
