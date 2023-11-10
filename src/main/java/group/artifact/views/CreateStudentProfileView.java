@@ -2,8 +2,8 @@ package group.artifact.views;
 
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.binder.*;
+
 import com.vaadin.flow.data.validator.IntegerRangeValidator;
 import group.artifact.entities.Student;
 import group.artifact.controller.StudentController;
@@ -66,19 +66,18 @@ public class CreateStudentProfileView extends VerticalLayout {
     }
 
     private void createStudent() {
-        Student newStudent = new Student();
-        if(userId != null || userRepo.findById(userId.getValue()).isEmpty()) {
+        if (userId.isEmpty() || userRepo.findById(userId.getValue()).isEmpty()) {
             Notification.show("Bitte gebe eine korrekte UserID an");
             return;
         } /*workaround: cannot bind integer user to user user, check with binder not possible */
-
+        Student newStudent = new Student();
         try {
             binder.writeBean(newStudent);
             studentController.createStudentProfile(newStudent, userId.getValue());
             Notification.show("Studentenprofil erfolgreich erstellt!");
         } catch (ValidationException e) {
             Notification.show("Bitte überprüfen Sie Ihre Eingaben.");
-        } catch(DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             Notification.show("Für diese ID existiert bereits ein Profil");
         }
     }
@@ -89,14 +88,6 @@ public class CreateStudentProfileView extends VerticalLayout {
                 asRequired("Semester ist ein Pflichtfeld").
                 withValidator(new IntegerRangeValidator("Zahl muss zwischen 1 bis 99 liegen", 1, 99)).bind("semester");
 
-        binder.forField(birthday)
-                .withValidator(localDate -> {
-                    int year = localDate.getYear();
-                    return year >= 1880;
-                }, "Der User kann nicht vor 1880 geboren sein")
-                .withValidator(date ->
-                        date.isAfter(LocalDate.now()),
-                        "Der User kann nicht in der Zukuft geboren sein");
 
         binder.forField(subject).asRequired("Studienfach ist ein Plichtfeld");
         binder.forField(userId).asRequired("UserID ist ein Pflichtfeld");
