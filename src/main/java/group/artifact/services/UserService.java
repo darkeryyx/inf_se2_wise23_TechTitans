@@ -31,6 +31,7 @@ import lombok.AllArgsConstructor;
 public class UserService {
     private final SecureRandom RANDOM = new SecureRandom();
     private UserRepository userRepository;
+    private SessionRepository sessionRepository;
 
     public void createUser(User newUser) {
         if (!userRepository.isEmailUnique(newUser.getEmail())) { // check if email already exists
@@ -103,9 +104,9 @@ public class UserService {
     }
 
     /*
-    *@params: user email to get userid
-    *Generate a cookie for a user with given userid + SID (easy uniqueness)
-    *@return: jakarta.http.cookie object
+    * generate a cookie for a user with given userid + SID (easy uniqueness)
+    * @params: user email to get userid
+    * @return: jakarta.http.cookie object
     * 
     */
     public Cookie setSessionCookie(String email){   
@@ -124,13 +125,14 @@ public class UserService {
         newSession.setSid(sid);
         newSession.setUser(user);
         newSession.setLogin(null);
+        sessionRepository.save(newSession);
         return sessionCookie;
     }
 
     /*
      * revokes a cookie for logout
      * @param: cookie: current sessioncookie
-     * returns: jakarta.http.cookie object
+     * @returns: jakarta.http.cookie object
      */
     public Cookie revokeCookie(Cookie cookie){
         cookie.setMaxAge(0);

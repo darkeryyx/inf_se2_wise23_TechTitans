@@ -23,7 +23,7 @@ public class Session {
 
     // foreign keys
     @ManyToOne
-    @JoinColumn(name = "user_pk", nullable = false)
+    @JoinColumn(name = "user_fk", nullable = false)
     private User user;
 
     // attributes
