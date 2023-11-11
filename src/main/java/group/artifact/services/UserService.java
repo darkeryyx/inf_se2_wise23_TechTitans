@@ -18,7 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import group.artifact.entities.Session;
 import group.artifact.entities.User;
+import group.artifact.repositories.SessionRepository;
 import group.artifact.repositories.UserRepository;
 import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
@@ -107,14 +109,21 @@ public class UserService {
     * 
     */
     public Cookie setSessionCookie(String email){   
+        Session newSession = new Session();
         User user=userRepository.findUserByEmail(email);
-        int uid = user.getUser_pk();
-        String sid = generateSalt(20); //saltgeneration gibt random string len bytes, 16 bytes empfehlung OWASP
-        Cookie sessionCookie = new Cookie("sid", uid + sid);
+        String uid = Integer.toString(user.getUser_pk());
+        String rnd= generateSalt(20); //saltgeneration gibt random string len bytes, 16 bytes empfehlung OWASP
+        String sid = uid + rnd;
+
+        Cookie sessionCookie = new Cookie("sid", sid);
         sessionCookie.setMaxAge(1200);  //expire in 20 min
         sessionCookie.setPath("/");
         sessionCookie.setAttribute("SameSite","Lax");
         sessionCookie.setHttpOnly(true);
+
+        newSession.setSid(sid);
+        newSession.setUser(user);
+        newSession.setLogin(null);
         return sessionCookie;
     }
 
