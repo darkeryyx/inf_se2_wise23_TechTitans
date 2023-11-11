@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.flow.server.VaadinService;
-import com.vaadin.flow.server.VaadinSession;
 
 import group.artifact.entities.User;
 import group.artifact.services.UserService;
@@ -18,30 +17,29 @@ public class UserController {
 
     public void register(User newUser) {
         userService.createUser(newUser);
-        
+
     }
 
-    public void login(String email, String passwort) {
-       if(userService.authentificate(email, passwort)){
+    public boolean login(String email, String passwort) {
+        if (userService.authentificate(email, passwort)) {
             Cookie s = userService.setSessionCookie(email);
-            //todo: tie cookie to user in db
             VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
             VaadinService.getCurrentResponse().addCookie(s);
-            
-        }//else do some error handling
-       }
-    
+            return true; // everything worked
+        }
+        return false;
+    }
 
-    public void logout(){ 
+    public void logout() {
         Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
         String name = "sid";
-        for(Cookie cookie : cookies){
-            if(name.equals(cookie.getName())){
-                userService.revokeCookie(cookie); 
+        for (Cookie cookie : cookies) {
+            if (name.equals(cookie.getName())) {
+                userService.revokeCookie(cookie);
                 VaadinService.getCurrentResponse().addCookie(cookie);
             }
         }
-       //todo: delete cookie in db  
+        // todo: delete cookie in db
     }
 
 }

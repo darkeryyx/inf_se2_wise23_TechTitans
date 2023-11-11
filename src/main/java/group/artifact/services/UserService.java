@@ -10,9 +10,6 @@ import java.util.Base64.Encoder;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.NotificationVariant;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,7 +21,6 @@ import group.artifact.repositories.SessionRepository;
 import group.artifact.repositories.UserRepository;
 import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
-
 
 @Service
 @AllArgsConstructor
@@ -46,25 +42,19 @@ public class UserService {
         }
     }
 
-    public boolean authentificate(String email, String password) {  //sollte auth nicht über email laufen, vor und zunamen können sich doppel und werden nicht auf uniqueness überprüft
-        User user=userRepository.findUserByEmail(email);
-
-        if(user== null){
-            Notification.show("Falsche Email oder Passwort! ").addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }else{
-            String salt = user.getSalt();
-            String hash = generateHash(password, salt);
-
-            String tmp= user.getPassword();
-            if(!hash.equals(tmp)){
-                Notification.show("Falsche Email oder Passwort!").addThemeVariants(NotificationVariant.LUMO_ERROR);
-
-            }else{
-                Notification.show("Login erfolgreich!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                return true; //session startet aktuell in UserController.login()
-            }
+    public boolean authentificate(String email, String password) {
+        User user = userRepository.findUserByEmail(email);
+        if (user == null) {
+            return false;
         }
-        return false;
+        String salt = user.getSalt();
+        String tmp = user.getPassword();
+        String hash = generateHash(password, salt);
+
+        if (!hash.equals(tmp)) {
+            return false;
+        }
+        return true; // session startet aktuell in UserController.login()
     }
 
     /**
@@ -85,7 +75,7 @@ public class UserService {
      * hash a given password with the given salt
      * 
      * @param password: users pw
-     * @param salt: generated salt
+     * @param salt:     generated salt
      * @return: storable hash
      */
     private String generateHash(String password, String salt) {
@@ -104,22 +94,24 @@ public class UserService {
     }
 
     /*
-    * generate a cookie for a user with given userid + SID (easy uniqueness)
-    * @params: user email to get userid
-    * @return: jakarta.http.cookie object
-    * 
-    */
-    public Cookie setSessionCookie(String email){   
+     * generate a cookie for a user with given userid + SID (easy uniqueness)
+     * 
+     * @params: user email to get userid
+     * 
+     * @return: jakarta.http.cookie object
+     * 
+     */
+    public Cookie setSessionCookie(String email) {
         Session newSession = new Session();
-        User user=userRepository.findUserByEmail(email);
+        User user = userRepository.findUserByEmail(email);
         String uid = Integer.toString(user.getUser_pk());
-        String rnd= generateSalt(20); //saltgeneration gibt random string len bytes, 16 bytes empfehlung OWASP
+        String rnd = generateSalt(20); // saltgeneration gibt random string len bytes, 16 bytes empfehlung OWASP
         String sid = uid + rnd;
 
         Cookie sessionCookie = new Cookie("sid", sid);
-        sessionCookie.setMaxAge(1200);  //expire in 20 min
+        sessionCookie.setMaxAge(1200); // expire in 20 min
         sessionCookie.setPath("/");
-        sessionCookie.setAttribute("SameSite","Lax");
+        sessionCookie.setAttribute("SameSite", "Lax");
         sessionCookie.setHttpOnly(true);
 
         newSession.setSid(sid);
@@ -131,10 +123,12 @@ public class UserService {
 
     /*
      * revokes a cookie for logout
+     * 
      * @param: cookie: current sessioncookie
+     * 
      * @returns: jakarta.http.cookie object
      */
-    public Cookie revokeCookie(Cookie cookie){
+    public Cookie revokeCookie(Cookie cookie) {
         cookie.setMaxAge(0);
         return cookie;
     }

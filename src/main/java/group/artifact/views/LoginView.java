@@ -31,15 +31,12 @@ public class LoginView extends Composite<Component> {
                 password,
                 new Button("Bestätigen", event -> login(
                         email.getValue(),
-                        password.getValue()
-                ))
-        );
+                        password.getValue())));
 
         loginFormLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
         VerticalLayout jobAdvertisementsLayout = new VerticalLayout();
         jobAdvertisementsLayout.setWidth("400px");
-
 
         HorizontalLayout mainLayout = new HorizontalLayout(jobAdvertisementsLayout, loginFormLayout);
         mainLayout.setSizeFull();
@@ -51,11 +48,16 @@ public class LoginView extends Composite<Component> {
 
     private void login(String email, String password) {
         if (email.trim().isEmpty()) {
-            Notification.show("Bitte eine Vornamen eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }else if (password.trim().isEmpty()) {
-            Notification.show("Bitte ein Passwort eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }  else {
-            userController.login(email, password);
+            Notification.show("Bitte E-Mail eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
+        } else if (password.trim().isEmpty()) {
+            Notification.show("Bitte Passwort eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
+        } else {
+            if (userController.login(email, password)) {
+                getUI().ifPresent(ui -> ui.navigate(""));
+                Notification.show("Login erfolgreich!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            } else {
+                Notification.show("Falsche Email oder Passwort!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
         }
     }
 
