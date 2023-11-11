@@ -101,14 +101,16 @@ public class UserService {
     }
 
     /*
-    *Generate a cookie for a user with given SID
-    * Todo:identifiable
+    *@params: user email to get userid
+    *Generate a cookie for a user with given userid + SID (easy uniqueness)
     *@return: jakarta.http.cookie object
+    * 
     */
-    public Cookie setSessionCookie(){     
+    public Cookie setSessionCookie(String email){   
+        User user=userRepository.findUserByEmail(email);
+        int uid = user.getUser_pk();
         String sid = generateSalt(20); //saltgeneration gibt random string len bytes, 16 bytes empfehlung OWASP
-        //test if sid already in db
-        Cookie sessionCookie = new Cookie("sid", sid);
+        Cookie sessionCookie = new Cookie("sid", uid + sid);
         sessionCookie.setMaxAge(1200);  //expire in 20 min
         sessionCookie.setPath("/");
         sessionCookie.setAttribute("SameSite","Lax");

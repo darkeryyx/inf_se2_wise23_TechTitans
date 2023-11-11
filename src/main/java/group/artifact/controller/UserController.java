@@ -23,12 +23,13 @@ public class UserController {
 
     public void login(String email, String passwort) {
        if(userService.authentificate(email, passwort)){
-            Cookie s = userService.setSessionCookie();
+            
+            Cookie s = userService.setSessionCookie(email);
             //todo: tie cookie to user in db
             VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
             VaadinService.getCurrentResponse().addCookie(s);
             
-        }
+        }//else do some error handling
        }
     
 
