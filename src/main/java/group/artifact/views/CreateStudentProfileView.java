@@ -1,6 +1,7 @@
 package group.artifact.views;
 
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.data.binder.*;
 
@@ -27,6 +28,7 @@ public class CreateStudentProfileView extends VerticalLayout {
 
     @Autowired
     private StudentController studentController;
+    @Autowired
     private UserRepository userRepository;
 
     TextField subject = new TextField("Studienfach");
@@ -37,7 +39,7 @@ public class CreateStudentProfileView extends VerticalLayout {
     TextField description = new TextField("Beschreibung");
     TextField image = new TextField("Bild");
     IntegerField userId = new IntegerField("User ID (wird später entfernt)");
-    Button submitButton = new Button("submit");
+    Button submitButton = new Button("Bestätigen");
     Binder<Student> binder = new Binder<>(Student.class);
 
     public CreateStudentProfileView() {
@@ -48,7 +50,9 @@ public class CreateStudentProfileView extends VerticalLayout {
 
     private Component buildForm() {
         setUpSubmitButton();
-        VerticalLayout formLayout = new VerticalLayout(subject,
+        VerticalLayout formLayout = new VerticalLayout(
+                new H2("Studentenprofil anlegen"),
+                subject,
                 birthday,
                 semester,
                 skills,
@@ -57,7 +61,6 @@ public class CreateStudentProfileView extends VerticalLayout {
                 image,
                 userId,
                 submitButton);
-
         formLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         return formLayout;
     }
