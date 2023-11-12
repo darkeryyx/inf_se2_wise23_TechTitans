@@ -37,4 +37,8 @@ public class Offer {
     private String business;
     private String income;
     private String job;
+
+    public String getLogo() {return company.getLogo();}
+    public String getNameOfCompany(){ return company.getName();}
+    public String getIncome() {return income;}
 }
