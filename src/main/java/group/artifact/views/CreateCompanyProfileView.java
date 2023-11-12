@@ -1,6 +1,7 @@
 package group.artifact.views;
 
 import group.artifact.entities.Company;
+import jakarta.annotation.security.RolesAllowed;
 import group.artifact.controller.CompanyController;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import java.time.LocalDate;
 
 @Route("create/company")
+@RolesAllowed("ROLE_USER")
 public class CreateCompanyProfileView extends Composite<Component> {
     private final CompanyController companyController;
 

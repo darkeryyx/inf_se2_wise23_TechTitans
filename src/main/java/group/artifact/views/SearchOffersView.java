@@ -14,8 +14,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import group.artifact.entities.Offer;
+import jakarta.annotation.security.RolesAllowed;
 
 @Route("search/offer")
+@RolesAllowed("ROLE_USER")
 public class SearchOffersView extends Composite<Component> {
 
 

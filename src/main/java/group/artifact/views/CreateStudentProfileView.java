@@ -8,6 +8,8 @@ import com.vaadin.flow.data.validator.IntegerRangeValidator;
 import group.artifact.entities.Student;
 import group.artifact.controller.StudentController;
 import group.artifact.repositories.UserRepository;
+import jakarta.annotation.security.RolesAllowed;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -20,12 +22,12 @@ import org.springframework.dao.DataIntegrityViolationException;
 import java.time.LocalDate;
 
 @Route("create/student")
+@RolesAllowed("ROLE_USER")
 public class CreateStudentProfileView extends VerticalLayout {
 
     @Autowired
     private StudentController studentController;
-    @Autowired
-    UserRepository userRepo;
+    private UserRepository userRepository;
 
     TextField subject = new TextField("Studienfach");
     DatePicker birthday = new DatePicker("Geburtsdatum");
@@ -66,7 +68,7 @@ public class CreateStudentProfileView extends VerticalLayout {
     }
 
     private void createStudent() {
-        if (userId.isEmpty() || userRepo.findById(userId.getValue()).isEmpty()) {
+        if (userId.isEmpty() || userRepository.findById(userId.getValue()).isEmpty()) {
             Notification.show("Bitte gebe eine korrekte UserID an");
             return;
         } /*workaround: cannot bind integer user to user user, check with binder not possible */

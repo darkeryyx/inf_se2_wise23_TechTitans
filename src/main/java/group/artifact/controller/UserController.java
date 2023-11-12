@@ -1,6 +1,11 @@
 package group.artifact.controller;
 
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.flow.server.VaadinService;
@@ -25,6 +30,9 @@ public class UserController {
             Cookie s = userService.setSessionCookie(email);
             VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
             VaadinService.getCurrentResponse().addCookie(s);
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                    email, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+            SecurityContextHolder.getContext().setAuthentication(auth);
             return true; // everything worked
         }
         return false;

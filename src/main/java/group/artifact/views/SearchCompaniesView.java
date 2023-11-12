@@ -13,8 +13,10 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.RouterLink;
 import group.artifact.entities.Company;
+import jakarta.annotation.security.RolesAllowed;
 
 @Route("search/company")
+@RolesAllowed("ROLE_USER")
 public class SearchCompaniesView extends Composite<Component> {
 
     protected Component initContent() {
