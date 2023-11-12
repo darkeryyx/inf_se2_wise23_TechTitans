@@ -8,7 +8,7 @@ public interface StudentDTO {
     String getEmail();
     String getSubject();
     LocalDate getBirthday();
-    Short getSemester();
+    Integer getSemester();
     String getSkills();
     String getInterests();
     String getDescription();
