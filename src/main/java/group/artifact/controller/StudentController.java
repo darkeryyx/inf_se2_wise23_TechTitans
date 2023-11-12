@@ -1,6 +1,7 @@
 package group.artifact.controller;
 
 
+import group.artifact.dtos.StudentDTO;
 import group.artifact.entities.Student;
 import group.artifact.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ public class StudentController {
     private StudentService studentService;
 
 
-    public Student viewStudentProfile(Integer id) {
+    public StudentDTO viewStudentProfile(Integer id) {
         return studentService.viewProfile(id);
     }
 
