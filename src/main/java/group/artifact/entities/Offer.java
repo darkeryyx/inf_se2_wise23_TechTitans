@@ -11,9 +11,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "offers", schema = "project")
 public class Offer {
@@ -31,12 +36,17 @@ public class Offer {
     private Set<Application> applications;
 
     // attributes
-    @Column(nullable = false)
-    private String description;
+    @NonNull
+    private String job;
+    @NonNull
     @Column(nullable = false)
     private String business;
+    @NonNull
+    @Column(nullable = false)
+    private String description;
+    @NonNull
     private String income;
-    private String job;
+
 
     public String getLogo() {return company.getLogo();}
     public String getNameOfCompany(){ return company.getName();}

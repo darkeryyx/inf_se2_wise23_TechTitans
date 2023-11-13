@@ -1,0 +1,17 @@
+package group.artifact.controller;
+
+import group.artifact.entities.Offer;
+import group.artifact.services.OfferService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class OfferController {
+
+    @Autowired
+    private OfferService offerService;
+
+    public void createOffer(Offer offer) {
+        offerService.createOffer(offer);
+    }
+}
