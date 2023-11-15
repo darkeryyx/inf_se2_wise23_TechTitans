@@ -6,10 +6,15 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 import java.util.Base64.Encoder;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import com.vaadin.flow.component.notification.Notification;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -57,6 +62,35 @@ public class UserService {
         return true; // session startet aktuell in UserController.login()
     }
 
+    public List<String> getQuestions(String email){
+        User user = userRepository.findUserByEmail(email);
+        if (user == null) {
+            return Collections.emptyList();
+        }else{
+           return getSecurityQuestions(user);
+
+        }
+    }
+    private List<String> getSecurityQuestions(User user){
+        Map<String, String> map= user.getSQA();
+
+        return map.keySet().stream().collect(Collectors.toList());
+    }
+
+    public boolean checkSQA(String frage, String antwort, String email){
+        User user= userRepository.findUserByEmail(email);
+
+        if(antwort.equals(user.getSQA().get(frage))){
+            return true;
+        }
+        return false;
+    }
+
+    public void pwNew(String email,String pw){
+        User user = userRepository.findUserByEmail(email);
+        user.setPassword(generateHash(pw, user.getSalt()));
+        userRepository.save(user);
+    }
     /**
      * generate salt of specified length
      * 

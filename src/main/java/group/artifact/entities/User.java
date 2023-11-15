@@ -3,19 +3,16 @@ package group.artifact.entities;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
+import java.util.Map;
+
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.metamodel.mapping.SqlTypedMapping;
+import org.hibernate.type.SqlTypes;
 
 @Data // constructor, getter, setter
 @Entity
@@ -52,6 +49,14 @@ public class User {
     private String email;
     private ZonedDateTime created;
     private ZonedDateTime last_login;
+
+    @NonNull
+    @Column(nullable = false) // Wert der Map
+    @JdbcTypeCode(SqlTypes.JSON)
+    private Map<String,String> sQA;
+
+
+
 
     // TODO: optional fields
 }

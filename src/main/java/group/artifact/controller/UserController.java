@@ -1,6 +1,7 @@
 package group.artifact.controller;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -50,4 +51,16 @@ public class UserController {
         // todo: delete cookie in db
     }
 
+    public List<String> getQList(String email) {
+        return userService.getQuestions(email);
+    }
+
+    public boolean checkSQA(String frage, String antwort, String email){
+        return userService.checkSQA(frage,antwort,email);
+    }
+
+    public void pwNew(String email,String pw){
+        userService.pwNew(email,pw);
+
+    }
 }
