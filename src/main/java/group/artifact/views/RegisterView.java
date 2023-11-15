@@ -1,6 +1,11 @@
 package group.artifact.views;
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.router.RouterLink;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
@@ -57,7 +62,10 @@ public class RegisterView extends Composite<Component> {
         securityQuestionsComboBox.setRequiredIndicatorVisible(true);
         securityQuestionsComboBox.setWidth("300px");
         securityQuestionsComboBox.addValueChangeListener(this::onSecurityQuestionsSelected);
-
+        RadioButtonGroup<String> radioGroup = new RadioButtonGroup<>();
+        radioGroup.setLabel("Status");
+        radioGroup.setItems("Firma", "Student");
+        //radioGroup.setValue("Pending");
         Checkbox checkbox = new Checkbox("Ich stimme den AGBs zu");
         VerticalLayout layout = new VerticalLayout(
                 new H2("Registrieren"),
@@ -69,6 +77,7 @@ public class RegisterView extends Composite<Component> {
                 securityQuestionsComboBox,
                 answerLayout,
                 checkbox,
+                radioGroup,
                 new Button("Bestätigen", event -> register(
                         email,
                         vorname.getValue(),
@@ -76,7 +85,8 @@ public class RegisterView extends Composite<Component> {
                         passwort.getValue(),
                         passwort2.getValue(),
                         checkbox.getValue().toString(),
-                        sicherheitsQA
+                        sicherheitsQA,
+                        radioGroup.getValue()
                 ))
 
         );
@@ -103,7 +113,7 @@ public class RegisterView extends Composite<Component> {
             answerLayout.removeAll();
         }
     }
-    private void register(EmailField email, String vorname, String nachname, String passwort, String passwort2, String checkBox, Map<String,String> sicherheitsQA) {
+    private void register(EmailField email, String vorname, String nachname, String passwort, String passwort2, String checkBox, Map<String,String> sicherheitsQA, String radioValue) {
         if (email.getValue().trim().isEmpty() || !email.getValue().matches(email.getPattern())) {
             Notification.show("Bitte eine gültige Email eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else if (vorname.trim().isEmpty()) {
@@ -116,11 +126,26 @@ public class RegisterView extends Composite<Component> {
             Notification.show("Bitte stimme unseren AGB zu").addThemeVariants(NotificationVariant.LUMO_ERROR);
         }else if(sicherheitsQA.size()<2){
             Notification.show("Bitte beantworten Sie alle Sicherheitsfragen").addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }else {
-            Notification.show("Registrierung erfolgreich").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            userController.register(new User(vorname, nachname, passwort, email.getValue(), sicherheitsQA));
-
+        }else if(radioValue == null){
+            Notification.show("Bitte wählen Sie Ihren Status aus").addThemeVariants(NotificationVariant.LUMO_ERROR);
+        } else {
+            if (radioValue.equals("Firma")) {
+                userController.register(new User(vorname, nachname, passwort, email.getValue(), sicherheitsQA));
+                Notification.show("Registrierung erfolgreich").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                UI.getCurrent().navigate(CreateCompanyProfileView.class);
+            } else if (radioValue.equals("Student")) {
+                userController.register(new User(vorname, nachname, passwort, email.getValue(), sicherheitsQA));
+                Notification.show("Registrierung erfolgreich").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                UI.getCurrent().navigate(CreateStudentProfileView.class);
+            }
         }
+    }
+    private void navigateToCompany() {
+        UI.getCurrent().navigate(CreateCompanyProfileView.class);
+    }
+
+    private void navigateToStudent() {
+        UI.getCurrent().navigate(CreateStudentProfileView.class);
     }
 }
 
