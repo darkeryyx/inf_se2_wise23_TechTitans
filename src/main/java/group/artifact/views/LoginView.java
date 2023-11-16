@@ -3,8 +3,10 @@ package group.artifact.views;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("login")
 @AnonymousAllowed
+@CssImport("./css/LoginView.css")
 public class LoginView extends Composite<Component> {
 
     @Autowired
@@ -43,7 +46,9 @@ public class LoginView extends Composite<Component> {
         loginFormLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
         VerticalLayout jobAdvertisementsLayout = new VerticalLayout();
-        jobAdvertisementsLayout.setWidth("400px");
+        Image image = new Image("images/image.png", "successfull job search");
+        jobAdvertisementsLayout.add(image);
+        jobAdvertisementsLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
         HorizontalLayout mainLayout = new HorizontalLayout(jobAdvertisementsLayout, loginFormLayout);
         mainLayout.setSizeFull();
