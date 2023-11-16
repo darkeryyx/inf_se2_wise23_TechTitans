@@ -14,4 +14,8 @@ public class CompanyController {
     public void createCompany(Company company, Integer userId){
         companyService.saveProfile(company, userId);
     }
+
+    public boolean companyExists(Integer id) {
+        return companyService.companyExists(id);
+    }
 }
