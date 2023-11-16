@@ -2,11 +2,8 @@ package group.artifact.views;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
-import com.vaadin.flow.router.RouterLink;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
@@ -135,7 +132,11 @@ public class RegisterView extends Composite<Component> {
         } else if (radioValue == null) {
             Notification.show("Bitte wählen Sie Ihren Status aus").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else {
-            userController.register(new User(vorname, nachname, passwort, email.getValue(), sicherheitsQA));
+            String result = userController.register(new User(vorname, nachname, passwort, email.getValue(), sicherheitsQA));
+            if (result.equals("email_error")) {
+                Notification.show("Email bereits registriert").addThemeVariants(NotificationVariant.LUMO_ERROR);
+                return;
+            }
             userController.login(email.getValue(), passwort); // get sid cookie (after user registration, before student/company creation)
             Notification.show("Registrierung erfolgreich").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             if (radioValue.equals("Firma")) {

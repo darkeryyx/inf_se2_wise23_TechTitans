@@ -3,7 +3,6 @@ package group.artifact.views;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -12,16 +11,11 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import group.artifact.controller.OfferController;
-import group.artifact.entities.Application;
 import group.artifact.entities.Company;
 import group.artifact.entities.Offer;
 import group.artifact.repositories.CompanyRepository;
 import jakarta.annotation.security.RolesAllowed;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-
-import java.time.LocalDate;
-import java.util.Set;
 
 @Route("create/offer")
 @RolesAllowed("ROLE_USER")

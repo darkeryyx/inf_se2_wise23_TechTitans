@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import com.vaadin.flow.component.notification.Notification;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,20 +33,22 @@ public class UserService {
     private UserRepository userRepository;
     private SessionRepository sessionRepository;
 
-    public void createUser(User newUser) {
+    public String createUser(User newUser) {
         if (!userRepository.isEmailUnique(newUser.getEmail())) { // check if email already exists
-            return; // TODO sinnvolle ausgabe + handling
+            return "email_error";
         }
         try {
             newUser.setSalt(generateSalt(16)); // generate salt
             newUser.setPassword(generateHash(newUser.getPassword(), newUser.getSalt())); // hash pw
             userRepository.save(newUser); // save to DB
+            return "true";
         } catch (DataIntegrityViolationException e) {
             System.out.println("Error: unable to insert" + newUser.toString());
+            return "false";
         }
     }
 
-    public boolean authentificate(String email, String password) {
+    public boolean authenticate(String email, String password) {
         User user = userRepository.findUserByEmail(email);
         if (user == null) {
             return false;

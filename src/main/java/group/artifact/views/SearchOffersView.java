@@ -19,10 +19,8 @@ import com.vaadin.flow.router.RouterLink;
 import group.artifact.controller.OfferController;
 import group.artifact.dtos.OfferDTO;
 import group.artifact.entities.Company;
-import group.artifact.entities.Offer;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +69,7 @@ public class SearchOffersView extends MainView {
 
         // Filtering Components
         List<OfferDTO> offers = offerController.getAllOffersAndTheirCompany();
-        MultiSelectComboBox businessComboBox = new MultiSelectComboBox<>("Branchen");
+        MultiSelectComboBox<String> businessComboBox = new MultiSelectComboBox<>("Branchen");
         businessComboBox.setItems(offers.stream().map(OfferDTO::getBusiness).distinct().collect(Collectors.toList()));
         TextField searchText = new TextField("Suchfeld", "Geben Sie hier einen Jobtitel oder ein Unternehmen ein..");
         NumberField minIncome = new NumberField("min ..€/h", "z.B. min 15€/h");

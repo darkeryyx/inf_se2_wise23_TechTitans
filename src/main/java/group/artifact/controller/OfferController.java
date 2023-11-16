@@ -3,7 +3,6 @@ package group.artifact.controller;
 import group.artifact.dtos.OfferDTO;
 import group.artifact.entities.Offer;
 import group.artifact.services.OfferService;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;

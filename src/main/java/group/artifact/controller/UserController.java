@@ -21,12 +21,12 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    public void register(User newUser) {
-        userService.createUser(newUser);
+    public String register(User newUser) {
+        return userService.createUser(newUser);
     }
 
     public boolean login(String email, String passwort) {
-        if (userService.authentificate(email, passwort)) {
+        if (userService.authenticate(email, passwort)) {
             Cookie s = userService.setSessionCookie(email);
             VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
             VaadinService.getCurrentResponse().addCookie(s);

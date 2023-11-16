@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.metamodel.mapping.SqlTypedMapping;
 import org.hibernate.type.SqlTypes;
 
 @Data // constructor, getter, setter
