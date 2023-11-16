@@ -23,7 +23,6 @@ public class UserController {
 
     public void register(User newUser) {
         userService.createUser(newUser);
-
     }
 
     public boolean login(String email, String passwort) {

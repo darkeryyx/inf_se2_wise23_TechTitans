@@ -1,4 +1,5 @@
 package group.artifact.views;
+
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -32,9 +33,10 @@ import java.util.*;
 public class RegisterView extends Composite<Component> {
     @Autowired
     private UserController userController;
-    private Map<String,String> sicherheitsQA=new HashMap<>();
+    private Map<String, String> sicherheitsQA = new HashMap<>();
+
     protected Component initContent() {
-       final List<String> allSecurityQuestions = Arrays.asList(
+        final List<String> allSecurityQuestions = Arrays.asList(
                 "Wie lautet der Mädchenname Ihrer Mutter?",
                 "In welcher Stadt wurden Sie geboren?",
                 "Wie lautet der Name Ihres ersten Haustiers?",
@@ -52,7 +54,7 @@ public class RegisterView extends Composite<Component> {
         PasswordField passwort = new PasswordField("Passwort");
         PasswordField passwort2 = new PasswordField("Passwort bestätigen");
 
-        //für die sicherheitsfragen
+        // für die sicherheitsfragen
         MultiSelectComboBox<String> securityQuestionsComboBox = new MultiSelectComboBox<>();
         securityQuestionsComboBox.setLabel("Wählen Sie 2 Sicherheitsfragen");
         securityQuestionsComboBox.setItems(selectedSecurityQuestions);
@@ -65,7 +67,7 @@ public class RegisterView extends Composite<Component> {
         RadioButtonGroup<String> radioGroup = new RadioButtonGroup<>();
         radioGroup.setLabel("Status");
         radioGroup.setItems("Firma", "Student");
-        //radioGroup.setValue("Pending");
+        // radioGroup.setValue("Pending");
         Checkbox checkbox = new Checkbox("Ich stimme den AGBs zu");
         VerticalLayout layout = new VerticalLayout(
                 new H2("Registrieren"),
@@ -86,8 +88,7 @@ public class RegisterView extends Composite<Component> {
                         passwort2.getValue(),
                         checkbox.getValue().toString(),
                         sicherheitsQA,
-                        radioGroup.getValue()
-                ))
+                        radioGroup.getValue()))
 
         );
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
@@ -96,7 +97,9 @@ public class RegisterView extends Composite<Component> {
     }
 
     private VerticalLayout answerLayout = new VerticalLayout();
-    private void onSecurityQuestionsSelected(AbstractField.ComponentValueChangeEvent<MultiSelectComboBox<String>, Set<String>> value) {
+
+    private void onSecurityQuestionsSelected(
+            AbstractField.ComponentValueChangeEvent<MultiSelectComboBox<String>, Set<String>> value) {
         Set<String> selectedQuestions = value.getValue();
         sicherheitsQA.clear();
         if (selectedQuestions.size() == 2) {
@@ -106,14 +109,16 @@ public class RegisterView extends Composite<Component> {
                 TextField answerField = new TextField();
                 answerField.setLabel("Antwort auf \"" + question + "\":");
                 answerField.setWidth("30%");
-                answerField.addValueChangeListener(e -> sicherheitsQA.put(question,e.getValue()));
+                answerField.addValueChangeListener(e -> sicherheitsQA.put(question, e.getValue()));
                 answerLayout.add(answerField);
             }
-        }else if(selectedQuestions.size()<2){
+        } else if (selectedQuestions.size() < 2) {
             answerLayout.removeAll();
         }
     }
-    private void register(EmailField email, String vorname, String nachname, String passwort, String passwort2, String checkBox, Map<String,String> sicherheitsQA, String radioValue) {
+
+    private void register(EmailField email, String vorname, String nachname, String passwort, String passwort2,
+            String checkBox, Map<String, String> sicherheitsQA, String radioValue) {
         if (email.getValue().trim().isEmpty() || !email.getValue().matches(email.getPattern())) {
             Notification.show("Bitte eine gültige Email eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else if (vorname.trim().isEmpty()) {
@@ -122,21 +127,21 @@ public class RegisterView extends Composite<Component> {
             Notification.show("Bitte einen Nachnamen eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else if (!passwort.equals(passwort2)) {
             Notification.show("Passwörter stimmen nicht überein").addThemeVariants(NotificationVariant.LUMO_ERROR);
-        } else if(checkBox.equals("false")){
+        } else if (checkBox.equals("false")) {
             Notification.show("Bitte stimme unseren AGB zu").addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }else if(sicherheitsQA.size()<2){
-            Notification.show("Bitte beantworten Sie alle Sicherheitsfragen").addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }else if(radioValue == null){
+        } else if (sicherheitsQA.size() < 2) {
+            Notification.show("Bitte beantworten Sie alle Sicherheitsfragen")
+                    .addThemeVariants(NotificationVariant.LUMO_ERROR);
+        } else if (radioValue == null) {
             Notification.show("Bitte wählen Sie Ihren Status aus").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else {
+            userController.register(new User(vorname, nachname, passwort, email.getValue(), sicherheitsQA));
+            userController.login(email.getValue(), passwort); // get sid cookie (after user registration, before student/company creation)
+            Notification.show("Registrierung erfolgreich").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             if (radioValue.equals("Firma")) {
-                userController.register(new User(vorname, nachname, passwort, email.getValue(), sicherheitsQA));
-                Notification.show("Registrierung erfolgreich").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                UI.getCurrent().navigate(CreateCompanyProfileView.class);
+                navigateToCompany();
             } else if (radioValue.equals("Student")) {
-                userController.register(new User(vorname, nachname, passwort, email.getValue(), sicherheitsQA));
-                Notification.show("Registrierung erfolgreich").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                UI.getCurrent().navigate(CreateStudentProfileView.class);
+                navigateToStudent();
             }
         }
     }
@@ -148,4 +153,3 @@ public class RegisterView extends Composite<Component> {
         UI.getCurrent().navigate(CreateStudentProfileView.class);
     }
 }
-
