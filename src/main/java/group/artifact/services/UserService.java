@@ -4,11 +4,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-import java.util.Base64;
+import java.util.*;
 import java.util.Base64.Encoder;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.crypto.SecretKeyFactory;
@@ -166,5 +163,17 @@ public class UserService {
     public Cookie revokeCookie(Cookie cookie) {
         cookie.setMaxAge(0);
         return cookie;
+    }
+
+    public User getCurrentUser(Cookie[] cookies) { //get the currently logged in User
+        String name = "sid";
+        User user = null;
+        for (Cookie cookie : cookies) {
+            if (name.equals(cookie.getName())) {
+                Session session = sessionRepository.findBySid(cookie.getValue());
+                user = session.getUser();
+            }
+        }
+        return user;
     }
 }

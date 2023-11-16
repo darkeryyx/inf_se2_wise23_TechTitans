@@ -54,12 +54,16 @@ public class UserController {
         return userService.getQuestions(email);
     }
 
-    public boolean checkSQA(String frage, String antwort, String email){
-        return userService.checkSQA(frage,antwort,email);
+    public boolean checkSQA(String frage, String antwort, String email) {
+        return userService.checkSQA(frage, antwort, email);
     }
 
-    public void pwNew(String email,String pw){
-        userService.pwNew(email,pw);
+    public void pwNew(String email, String pw) {
+        userService.pwNew(email, pw);
 
+    }
+
+    public User getCurrentUser() {
+        return userService.getCurrentUser(VaadinService.getCurrentRequest().getCookies());
     }
 }

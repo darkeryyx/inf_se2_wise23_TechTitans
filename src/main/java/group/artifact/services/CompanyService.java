@@ -29,4 +29,7 @@ public class CompanyService {
             companyRepository.save(company);
         }
     }
+    public boolean companyExists(Integer id) {
+        return companyRepository.existsById(id);
+    }
 }

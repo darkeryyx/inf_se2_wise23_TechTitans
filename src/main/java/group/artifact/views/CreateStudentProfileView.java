@@ -4,13 +4,16 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.binder.*;
 
 import com.vaadin.flow.data.validator.IntegerRangeValidator;
+import group.artifact.controller.CompanyController;
+import group.artifact.controller.UserController;
 import group.artifact.entities.Student;
 import group.artifact.controller.StudentController;
-import group.artifact.repositories.UserRepository;
+import group.artifact.entities.User;
 import jakarta.annotation.security.RolesAllowed;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +33,12 @@ public class CreateStudentProfileView extends VerticalLayout {
 
     @Autowired
     private StudentController studentController;
+
     @Autowired
-    private UserRepository userRepository;
+    private CompanyController companyController;
+
+    @Autowired
+    private UserController userController;
 
     TextField subject = new TextField("Studienfach");
     DatePicker birthday = new DatePicker("Geburtsdatum");
@@ -40,10 +47,10 @@ public class CreateStudentProfileView extends VerticalLayout {
     TextField interests = new TextField("Interessen");
     TextField description = new TextField("Beschreibung");
     TextField image = new TextField("Bild");
-    IntegerField userId = new IntegerField("User ID (wird später entfernt)");
     Button submitButton = new Button("Bestätigen");
     Button cancelButton = new Button ("Abbruch");
     Binder<Student> binder = new Binder<>(Student.class);
+
 
     public CreateStudentProfileView() {
         setSizeFull();
@@ -65,7 +72,6 @@ public class CreateStudentProfileView extends VerticalLayout {
                 interests,
                 description,
                 image,
-                userId,
                 buttonLayout);
         formLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         return formLayout;
@@ -78,18 +84,28 @@ public class CreateStudentProfileView extends VerticalLayout {
 
     public void setUpCancelButton() {
         cancelButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        cancelButton.addClickListener(e -> UI.getCurrent().navigate(""));
+        cancelButton.addClickListener(e -> {
+                binder.getFields().forEach(f -> f.clear());
+                //UI.getCurrent().navigate("/login"); Wohin
+                Notification.show("Profilerstellung abgebrochen!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+        });
     }
 
     private void createStudent() {
-        if (userId.isEmpty() || userRepository.findById(userId.getValue()).isEmpty()) {
-            Notification.show("Bitte gebe eine korrekte UserID an");
+        User user = userController.getCurrentUser();
+        if (companyController.companyExists(user.getUser_pk())) {
+            Notification.show("Für das Profil wurde schon ein Unternehmensprofil erstellt");
+            return;
+        }
+        if (studentController.studentExists(user.getUser_pk())) {
+            Notification.show("Das Studentprofil existiert bereits");
+            UI.getCurrent().navigate("");
             return;
         } /*workaround: cannot bind integer user to user user, check with binder not possible */
         Student newStudent = new Student();
         try {
             binder.writeBean(newStudent);
-            studentController.createStudentProfile(newStudent, userId.getValue());
+            studentController.createStudentProfile(newStudent, user);
             Notification.show("Studentenprofil erfolgreich erstellt!");
         } catch (ValidationException e) {
             Notification.show("Bitte überprüfen Sie Ihre Eingaben.");
@@ -106,18 +122,21 @@ public class CreateStudentProfileView extends VerticalLayout {
 
 
         binder.forField(birthday)
-                .withValidator(date ->
-                        date.isBefore(LocalDate.now().plusDays(1)),
-                "Datum kann nicht in der Zukunft liegen").
-                withValidator(date ->
-                        date.getYear() >= 1900, "Datum muss ab/nach 1900 liegen").
-                bind("birthday");
+                .withValidator(
+                        date -> date == null || date.isBefore(LocalDate.now().plusDays(1)),
+                        "Das Datum kann nicht in der Zukunft liegen"
+                )
+                .withValidator(
+                        date -> date == null || date.getYear() >= 1900,
+                        "Das Datum muss ab/nach 1900 liegen"
+                )
+                .bind("birthday");
+
 
         binder.forField(subject).
                 withValidator(name -> name.length() >= 3,
                         "Das Studienfach muss mindestens 3 Buchstaben haben").bind("subject");
 
         binder.forField(subject).asRequired("Studienfach ist ein Plichtfeld");
-        binder.forField(userId).asRequired("UserID ist ein Pflichtfeld");
     }
 }

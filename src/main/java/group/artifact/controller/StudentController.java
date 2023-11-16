@@ -3,6 +3,7 @@ package group.artifact.controller;
 
 import group.artifact.dtos.StudentDTO;
 import group.artifact.entities.Student;
+import group.artifact.entities.User;
 import group.artifact.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,11 @@ public class StudentController {
     }
 
 
-    public void createStudentProfile(Student student, Integer userId) {
-        studentService.saveProfile(student, userId);
+    public void createStudentProfile(Student student, User user) {
+        studentService.saveProfile(student, user);
+    }
+
+    public boolean studentExists(Integer id) {
+        return studentService.studentExists(id);
     }
 }

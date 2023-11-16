@@ -132,20 +132,22 @@ public class RegisterView extends Composite<Component> {
         } else if (radioValue == null) {
             Notification.show("Bitte wählen Sie Ihren Status aus").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else {
-            String result = userController.register(new User(vorname, nachname, passwort, email.getValue(), sicherheitsQA));
-            if (result.equals("email_error")) {
-                Notification.show("Email bereits registriert").addThemeVariants(NotificationVariant.LUMO_ERROR);
-                return;
-            }
-            userController.login(email.getValue(), passwort); // get sid cookie (after user registration, before student/company creation)
-            Notification.show("Registrierung erfolgreich").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            if (radioValue.equals("Firma")) {
-                navigateToCompany();
-            } else if (radioValue.equals("Student")) {
-                navigateToStudent();
+            String result = userController
+                    .register(new User(vorname, nachname, passwort, email.getValue(), sicherheitsQA));
+            if (result == "email_error") {
+                Notification.show("E-Mail bereits vergeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            } else {
+                userController.login(email.getValue(), passwort);
+                Notification.show("Registrierung erfolgreich").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                if (radioValue.equals("Firma")) {
+                    navigateToCompany();
+                } else if (radioValue.equals("Student")) {
+                    navigateToStudent();
+                }
             }
         }
     }
+
     private void navigateToCompany() {
         UI.getCurrent().navigate(CreateCompanyProfileView.class);
     }
@@ -153,4 +155,5 @@ public class RegisterView extends Composite<Component> {
     private void navigateToStudent() {
         UI.getCurrent().navigate(CreateStudentProfileView.class);
     }
+
 }
