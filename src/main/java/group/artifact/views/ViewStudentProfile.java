@@ -1,8 +1,6 @@
 package group.artifact.views;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -14,6 +12,9 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
 import group.artifact.controller.StudentController;
 import group.artifact.dtos.StudentDTO;
+import group.artifact.entities.User;
+import group.artifact.services.UserService;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 @Route("view/student")
@@ -22,6 +23,8 @@ public class ViewStudentProfile extends VerticalLayout {
 
     @Autowired
     private StudentController studentController;
+    @Autowired
+    private UserService userService;
     TextField name = createTextField("Vorname");
     TextField surname = createTextField("Nachname");
     TextField email = createTextField("E-Mail");
@@ -32,18 +35,22 @@ public class ViewStudentProfile extends VerticalLayout {
     TextField interests = createTextField("Interessen");
     TextField description = createTextField("Beschreibung");
     TextField image = createTextField("Bild");
-    IntegerField search = new IntegerField("Suchfeld (Übergangslösung)", "Gebe eine UserID ein");
+
     Binder<StudentDTO> binder = new Binder<>(StudentDTO.class);
-    Button searchButton = new Button("Suche");
 
     public ViewStudentProfile() {
         setSizeFull();
         add(buildForm());
     }
 
+    @PostConstruct
+    public void init() {
+        findStudent();
+    }
+
     private Component buildForm() {
+
         VerticalLayout formLayout = new VerticalLayout();
-        createButton();
         HorizontalLayout header = new HorizontalLayout(
                 new H2 ("Studentenprofil"));
         VerticalLayout profile = new VerticalLayout(
@@ -58,20 +65,15 @@ public class ViewStudentProfile extends VerticalLayout {
                 description,
                 image);
         profile.setAlignItems(Alignment.CENTER);
-        formLayout.add(header,new VerticalLayout(search, searchButton),profile);
+        formLayout.add(header,profile);
         formLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         return formLayout;
     }
 
-    public void createButton() {
-        searchButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        searchButton.addClickListener(e -> {
-            findStudent(search.getValue());
-        });
-    }
 
-    public void findStudent(Integer id) {
-        StudentDTO student = studentController.viewStudentProfile(id);
+    public void findStudent() {
+        User user = userService.getCurrentUser();
+        StudentDTO student = studentController.viewStudentProfile(user.getUser_pk());
         binder.bindInstanceFields(this);
         binder.readBean(student);
     }
