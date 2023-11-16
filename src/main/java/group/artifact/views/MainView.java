@@ -2,37 +2,54 @@ package group.artifact.views;
 
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.router.Route;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class MainView extends VerticalLayout {
 
+    HorizontalLayout header;
+    VerticalLayout content;
+    HorizontalLayout fooder;
 
     MainView(){
-        add(header());
-        add(new VerticalLayout(
-                )
+       header = new HorizontalLayout(
 
-        );
-        add(fooder());
+       );
+
+       content = new VerticalLayout(
+
+       );
+
+       fooder = new HorizontalLayout(
+
+       );
+       add(header, content, fooder);
     }
     MainView(VerticalLayout content){
-        add(header());
-        add(content);
-        add(fooder());
-    }
-
-    HorizontalLayout header (){
-        return new HorizontalLayout(
+        header = new HorizontalLayout(
 
         );
-    }
 
-    HorizontalLayout fooder(){
-        return new HorizontalLayout(
+        this.content = content;
+
+        fooder = new HorizontalLayout(
 
         );
+        add(header,this.content,fooder);
     }
 
-
-
+    void addHeader (HorizontalLayout header){
+        this.header = header;
+        add(this.header,content,fooder);
+    }
+    void addContent(VerticalLayout content){
+        this.content = content;
+        add(header, this.content, fooder);
+    }
+    void addFooder(HorizontalLayout fooder){
+        this.fooder = fooder;
+        add(header,content,fooder);
+    }
 
 }
