@@ -3,6 +3,7 @@ package group.artifact.views;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -27,6 +28,7 @@ public class LoginView extends Composite<Component> {
     protected Component initContent() {
         TextField email = new TextField("Email");
         PasswordField password = new PasswordField("Passwort");
+        Anchor pwVergessen = new Anchor("forgotPW", "Passwort vergessen?");
 
         VerticalLayout loginFormLayout = new VerticalLayout(
                 new H2("Login"),
@@ -35,6 +37,8 @@ public class LoginView extends Composite<Component> {
                 new Button("Bestätigen", event -> login(
                         email.getValue(),
                         password.getValue())));
+
+        loginFormLayout.add(pwVergessen);
 
         loginFormLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 

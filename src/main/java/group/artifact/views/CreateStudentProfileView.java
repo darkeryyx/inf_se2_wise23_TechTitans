@@ -1,8 +1,10 @@
 package group.artifact.views;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.binder.*;
 
 import com.vaadin.flow.data.validator.IntegerRangeValidator;
@@ -40,6 +42,7 @@ public class CreateStudentProfileView extends VerticalLayout {
     TextField image = new TextField("Bild");
     IntegerField userId = new IntegerField("User ID (wird später entfernt)");
     Button submitButton = new Button("Bestätigen");
+    Button cancelButton = new Button ("Abbruch");
     Binder<Student> binder = new Binder<>(Student.class);
 
     public CreateStudentProfileView() {
@@ -50,6 +53,9 @@ public class CreateStudentProfileView extends VerticalLayout {
 
     private Component buildForm() {
         setUpSubmitButton();
+        setUpCancelButton();
+        HorizontalLayout buttonLayout = new HorizontalLayout();
+        buttonLayout.add(submitButton, cancelButton);
         VerticalLayout formLayout = new VerticalLayout(
                 new H2("Studentenprofil anlegen"),
                 subject,
@@ -60,7 +66,7 @@ public class CreateStudentProfileView extends VerticalLayout {
                 description,
                 image,
                 userId,
-                submitButton);
+                buttonLayout);
         formLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         return formLayout;
     }
@@ -68,6 +74,11 @@ public class CreateStudentProfileView extends VerticalLayout {
     private void setUpSubmitButton() {
         submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         submitButton.addClickListener(e -> createStudent());
+    }
+
+    public void setUpCancelButton() {
+        cancelButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        cancelButton.addClickListener(e -> UI.getCurrent().navigate(""));
     }
 
     private void createStudent() {
