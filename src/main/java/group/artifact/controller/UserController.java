@@ -62,4 +62,8 @@ public class UserController {
         userService.pwNew(email,pw);
 
     }
+
+    public User getCurrentUser() {
+        return userService.getCurrentUser();
+    }
 }
