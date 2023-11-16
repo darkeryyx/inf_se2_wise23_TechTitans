@@ -29,7 +29,7 @@ public class Offer {
 
     // foreign keys
     @ManyToOne
-    @JoinColumn(name = "company_pk", nullable = false)
+    @JoinColumn(name = "company_fk", nullable = false)
     private Company company;
 
     @OneToMany(mappedBy = "offer")
@@ -46,9 +46,4 @@ public class Offer {
     private String description;
     @NonNull
     private String income;
-
-
-    public String getLogo() {return company.getLogo();}
-    public String getNameOfCompany(){ return company.getName();}
-    public String getIncome() {return income;}
 }

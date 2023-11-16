@@ -1,4 +1,5 @@
 package group.artifact.views;
+
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Image;
@@ -17,52 +18,65 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import group.artifact.controller.OfferController;
 import group.artifact.dtos.OfferDTO;
-
+import group.artifact.entities.Company;
+import group.artifact.entities.Offer;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Route("search/offer")
 @RolesAllowed("ROLE_USER")
 public class SearchOffersView extends MainView {
 
-    @Autowired
-    private OfferController offerController;
+    private final OfferController offerController;
+    private OfferFilter offerFilter;
+    private OfferDTODataProvider dataProvider;
+    private ConfigurableFilterDataProvider<OfferDTO, Void, OfferFilter> filterDataProvider;
 
-    private OfferFilter offerFilter = new OfferFilter();
-    private OfferDTODataProvider dataProvider = new OfferDTODataProvider();
-    private ConfigurableFilterDataProvider<OfferDTO, Void, OfferFilter> filterDataProvider = dataProvider.withConfigurableFilter();
-
-
-    SearchOffersView(){
+    // Constructor with OfferController as a dependency
+    public SearchOffersView(OfferController offerController) {
         super();
+        this.offerController = offerController;
         this.addContent(this.content());
+        init();
+    }
+
+    @PostConstruct
+    public void init() {
+        offerFilter = new OfferFilter();
+        dataProvider = new OfferDTODataProvider();
+        filterDataProvider = dataProvider.withConfigurableFilter();
     }
 
     VerticalLayout content() {
-        //Grid - Umändern siehe Klassenvariablen
+
+        // Grid - Umändern siehe Klassenvariablen
         Grid<OfferDTO> grid = new Grid<>(OfferDTO.class, false);
         grid.setItems();
-        grid.addColumn(item ->  {
-            Image image = new Image(item.getLogo(),
+        grid.addColumn(item -> {
+            Image image = new Image(item.getCompany().getLogo(),
                     "");
             image.setWidth("50px");
             return image;
         }).setHeader("Logo").setWidth("50px");
-        grid.addColumn(OfferDTO::getNameOfCompany).setHeader("Unternehmen").setWidth("150px");
-        grid.addColumn(OfferDTO::getNameOfCompany).setHeader("Branche").setWidth("50px"); //Ändern zu OfferDTO::getBusiness
-        grid.addColumn(OfferDTO::getNameOfCompany).setHeader("Stellenangebote").setWidth("700px"); //Ändern zu OfferDTO::getJob
+        grid.addColumn(item -> item.getCompany().getName()).setHeader("Unternehmen").setWidth("150px");
+        grid.addColumn(OfferDTO::getBusiness).setHeader("Branche").setWidth("50px"); // Ändern zu OfferDTO::getBusiness
+        grid.addColumn(OfferDTO::getJob).setHeader("Stellenangebote").setWidth("700px"); // Ändern zu OfferDTO::getJob
         grid.addColumn(OfferDTO::getIncome).setHeader("€/h").setWidth("50px");
 
-        //Filtering Components
+        // Filtering Components
+        List<OfferDTO> offers = offerController.getAllOffersAndTheirCompany();
         MultiSelectComboBox businessComboBox = new MultiSelectComboBox<>("Branchen");
+        businessComboBox.setItems(offers.stream().map(OfferDTO::getBusiness).distinct().collect(Collectors.toList()));
         TextField searchText = new TextField("Suchfeld", "Geben Sie hier einen Jobtitel oder ein Unternehmen ein..");
         NumberField minIncome = new NumberField("min ..€/h", "z.B. min 15€/h");
 
-        //Filtering
+        // Filtering
         searchText.setValueChangeMode(ValueChangeMode.EAGER);
         searchText.addValueChangeListener(e -> {
             offerFilter.setSearchTerm(e.getValue());
@@ -75,10 +89,10 @@ public class SearchOffersView extends MainView {
             filterDataProvider.setFilter(offerFilter);
         });
 
-        businessComboBox.addSelectionListener(event -> {}); //Filtern einfügen
+        businessComboBox.addSelectionListener(event -> {
+        }); // Filtern einfügen
 
-
-        //Width, Hight, Icons
+        // Width, Hight, Icons
         grid.setWidth("1100px");
         minIncome.setWidth("150px");
         searchText.setWidth("770px");
@@ -88,35 +102,33 @@ public class SearchOffersView extends MainView {
         RouterLink searchCompanyViewLink = new RouterLink(SearchCompaniesView.class);
         searchCompanyViewLink.setText("Nach Unternehmen suchen");
 
-
-        //Layout
+        // Layout
         return new VerticalLayout(
                 new HorizontalLayout(
-                        searchCompanyViewLink
-                ),
+                        searchCompanyViewLink),
                 new HorizontalLayout(
                         businessComboBox,
                         searchText,
-                        minIncome
-                ),
-                grid
-        );
+                        minIncome),
+                grid);
 
     }
 
     protected class OfferFilter {
         private String searchTerm;
         private Double minIncome;
+
         public void setSearchTerm(String searchTerm) {
             this.searchTerm = searchTerm;
         }
 
-        public void setMinIncome(Double minIncome){
+        public void setMinIncome(Double minIncome) {
             this.minIncome = minIncome;
         }
 
         public boolean test(OfferDTO offer) {
-            boolean matchesFullName = matchesSearchTerm(offer.getNameOfCompany(), searchTerm);
+            Company company = offer.getCompany();
+            boolean matchesFullName = matchesSearchTerm(company.getName(), searchTerm);
             boolean matchesProfession = matchesMinIncome(Double.parseDouble(offer.getIncome()), minIncome);
             return matchesFullName || matchesProfession;
         }
@@ -125,6 +137,7 @@ public class SearchOffersView extends MainView {
             return searchTerm == null || searchTerm.isEmpty()
                     || value.toLowerCase().contains(searchTerm.toLowerCase());
         }
+
         private boolean matchesMinIncome(Double value, Double minIncome) {
             return minIncome == null || minIncome.isNaN()
                     || value >= minIncome;
@@ -155,6 +168,4 @@ public class SearchOffersView extends MainView {
         }
     }
 
-
 }
-
