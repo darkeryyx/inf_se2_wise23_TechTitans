@@ -3,6 +3,8 @@ package group.artifact.views;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -16,6 +18,7 @@ import group.artifact.dtos.StudentDTO;
 import group.artifact.entities.User;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("view/student")
@@ -24,8 +27,9 @@ public class ViewStudentProfile extends VerticalLayout {
 
     @Autowired
     private StudentController studentController;
-    private UserController userController;
 
+    @Autowired
+    private UserController userController;
     TextField name = createTextField("Vorname");
     TextField surname = createTextField("Nachname");
     TextField email = createTextField("E-Mail");
@@ -74,6 +78,10 @@ public class ViewStudentProfile extends VerticalLayout {
 
     public void findStudent() {
         User user = userController.getCurrentUser();
+        if(!studentController.studentExists(user.getUser_pk())) {
+            Notification.show("Für diesen User existiert kein Studentenprofil").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            return;
+        }
         StudentDTO student = studentController.viewStudentProfile(user.getUser_pk());
         binder.bindInstanceFields(this);
         binder.readBean(student);
