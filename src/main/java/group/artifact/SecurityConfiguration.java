@@ -21,18 +21,6 @@ public class SecurityConfiguration extends VaadinWebSecurity {
     @Autowired
     private SidAuthenticationFilter sidAuthenticationFilter;
 
-    @Bean
-    MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
-        return new MvcRequestMatcher.Builder(introspector);
-    }
-
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        // configure ignoring security filters for static resources
-        web.ignoring().requestMatchers(
-                new AntPathRequestMatcher("/images/**", "GET"));
-    }
-
     /*
      * blocks requests to all views and endpoints by default
      * except: internal request or public views annotated with @AnonymousAllowed
@@ -40,9 +28,12 @@ public class SecurityConfiguration extends VaadinWebSecurity {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // perform sid check, otherwise continue with default auth
+        http.authorizeHttpRequests(req -> req
+                .requestMatchers(new AntPathRequestMatcher("/images/*")).permitAll() // access to all images
+        );
         http.addFilterBefore(sidAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        super.configure(http); // apply default vaadin configuration
 
+        super.configure(http); // apply default vaadin configuration
         setLoginView(http, LoginView.class); // page for denied users
     }
 }
