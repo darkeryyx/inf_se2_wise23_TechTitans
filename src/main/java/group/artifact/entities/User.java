@@ -53,9 +53,4 @@ public class User {
     @Column(nullable = false) // Wert der Map
     @JdbcTypeCode(SqlTypes.JSON)
     private Map<String,String> sQA;
-
-
-
-
-    // TODO: optional fields
 }

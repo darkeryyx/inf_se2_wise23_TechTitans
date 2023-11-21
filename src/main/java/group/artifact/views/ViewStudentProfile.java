@@ -18,7 +18,6 @@ import group.artifact.dtos.StudentDTO;
 import group.artifact.entities.User;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("view/student")

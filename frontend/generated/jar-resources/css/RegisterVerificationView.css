@@ -1,0 +1,10 @@
+.register-verification-view {
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.code-field input{
+  font-size: 8vh;
+  text-align: center;
+}

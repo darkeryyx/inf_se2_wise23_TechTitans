@@ -57,7 +57,7 @@ public class SearchOffersView extends MainView {
         Grid<OfferDTO> grid = new Grid<>(OfferDTO.class, false);
         grid.setItems();
         grid.addColumn(item -> {
-            Image image = new Image(item.getCompany().getLogo(),
+            Image image = new Image(item.getCompany().getImage(),
                     "");
             image.setWidth("50px");
             return image;

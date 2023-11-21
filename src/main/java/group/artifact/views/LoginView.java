@@ -18,6 +18,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 import group.artifact.controller.UserController;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("login")
@@ -65,8 +66,10 @@ public class LoginView extends Composite<Component> {
             Notification.show("Bitte Passwort eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else {
             if (userController.login(email, password)) {
-                getUI().ifPresent(ui -> ui.navigate(""));
-                Notification.show("Login erfolgreich!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                getUI().ifPresent(ui -> ui.access(() -> {
+                    ui.navigate("");
+                    Notification.show("Login erfolgreich!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                }));
             } else {
                 Notification.show("Falsche Email oder Passwort!").addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
