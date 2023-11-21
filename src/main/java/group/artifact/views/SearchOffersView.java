@@ -36,7 +36,7 @@ public class SearchOffersView extends MainView {
     private OfferDTODataProvider dataProvider;
     private ConfigurableFilterDataProvider<OfferDTO, Void, OfferFilter> filterDataProvider;
 
-    // Constructor with OfferController as a dependency
+    // constructor with OfferController as a dependency
     public SearchOffersView(OfferController offerController) {
         super();
         this.offerController = offerController;

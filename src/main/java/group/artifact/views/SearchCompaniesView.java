@@ -7,23 +7,26 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.RouterLink;
+
+import group.artifact.controller.CompanyController;
 import group.artifact.dtos.CompanyDTO;
-import group.artifact.repositories.CompanyRepository;
 import jakarta.annotation.security.RolesAllowed;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+
 
 @Route("search/company")
 @RolesAllowed("ROLE_USER")
 public class SearchCompaniesView extends MainView {
+    CompanyController companyController;
 
-    @Autowired
-    CompanyRepository companyRepository;
-
-    public SearchCompaniesView(){
+    public SearchCompaniesView(CompanyController companyController){
         super();
+        this.companyController = companyController;
         this.addContent(this.content());
     }
 
@@ -33,17 +36,14 @@ public class SearchCompaniesView extends MainView {
         searchOffersViewLink.setText("Nach Stellenangebote suchen");
 
         //Grid
-
-        /*List<CompanyDTO> companyDTOList = companyRepository.findAllCompanies();
+        List<CompanyDTO> companyDTOList = companyController.getAllCompanies();
         Grid<CompanyDTO> grid = new Grid<>(CompanyDTO.class, false);
         ListDataProvider<CompanyDTO> companyDataProvider = new ListDataProvider<>(companyDTOList);
         grid.setDataProvider(companyDataProvider);
-        */
-        Grid<CompanyDTO> grid = new Grid<>(CompanyDTO.class, false);
 
         grid.addColumn(item -> {
             Image image = new Image(item.getLogo(),
-                    "");
+                    "company view logo");
             image.setWidth("100px");
             return image;
         }).setHeader("Logo").setWidth("100px");
