@@ -53,7 +53,7 @@ public class SearchOffersView extends MainView {
 
     VerticalLayout content() {
 
-        // Grid - Umändern siehe Klassenvariablen
+        // Grid
         Grid<OfferDTO> grid = new Grid<>(OfferDTO.class, false);
         grid.setItems();
         grid.addColumn(item -> {
@@ -147,8 +147,7 @@ public class SearchOffersView extends MainView {
 
         @Override
         protected Stream<OfferDTO> fetchFromBackEnd(Query<OfferDTO, OfferFilter> query) {
-            // A real app should use a real database or a service
-            // to fetch, filter and sort data.
+
             Stream<OfferDTO> stream = DATABASE.stream();
 
             // Filtering
