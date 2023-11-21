@@ -1,7 +1,6 @@
 package group.artifact.views;
 
 import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,22 +137,15 @@ public class RegisterView extends Composite<Component> {
                 Notification.show("E-Mail bereits vergeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
             } else {
                 userController.login(email.getValue(), passwort);
-                Notification.show("Registrierung erfolgreich").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                if (radioValue.equals("Firma")) {
-                    navigateToCompany();
-                } else if (radioValue.equals("Student")) {
-                    navigateToStudent();
-                }
+                getUI().ifPresent(ui -> ui.access(() -> {
+                    if (radioValue.equals("Firma")) {
+                        ui.navigate(CreateCompanyProfileView.class);
+                    } else if (radioValue.equals("Student")) {
+                        ui.navigate(CreateStudentProfileView.class);
+                    }
+                }));
+
             }
         }
     }
-
-    private void navigateToCompany() {
-        UI.getCurrent().navigate(CreateCompanyProfileView.class);
-    }
-
-    private void navigateToStudent() {
-        UI.getCurrent().navigate(CreateStudentProfileView.class);
-    }
-
 }

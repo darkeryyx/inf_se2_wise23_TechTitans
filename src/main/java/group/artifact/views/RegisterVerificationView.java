@@ -4,6 +4,8 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -19,6 +21,12 @@ public class RegisterVerificationView extends VerticalLayout {
     public RegisterVerificationView() {
         addClassName("register-verification-view");
 
+        H1 title = new H1("E-Mail bestätigen");
+        add(title);
+
+        Paragraph text = new Paragraph("Bitte geben Sie den Code ein, den Sie per E-Mail erhalten haben.");
+        add(text);
+
         HorizontalLayout inputFields = new HorizontalLayout();
         TextField[] codeFields = new TextField[5];
         for (int i = 0; i < codeFields.length; i++) {
@@ -31,10 +39,10 @@ public class RegisterVerificationView extends VerticalLayout {
         }
         add(inputFields); // add inputs to the main layout
 
-        Anchor resendLink = new Anchor("/", "resend verification code");
+        Anchor resendLink = new Anchor("/", "erneut senden");
         add(resendLink);
 
-        Button verifyButton = new Button("Verify");
+        Button verifyButton = new Button("Bestätigen");
         verifyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         add(verifyButton);
     }

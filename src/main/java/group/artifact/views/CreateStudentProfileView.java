@@ -106,6 +106,9 @@ public class CreateStudentProfileView extends VerticalLayout {
         try {
             binder.writeBean(newStudent);
             studentController.createStudentProfile(newStudent, user);
+            getUI().ifPresent(ui -> ui.access(() -> {
+                ui.navigate(RegisterVerificationView.class);
+            }));
             Notification.show("Studentenprofil erfolgreich erstellt!");
         } catch (ValidationException e) {
             Notification.show("Bitte überprüfen Sie Ihre Eingaben.");

@@ -74,6 +74,9 @@ public class CreateCompanyProfileView extends Composite<Component> {
         Company company = new Company(name, business, employees, founded, link, description, logo);
         try {
             companyController.createCompany(company, user.intValue());
+            getUI().ifPresent(ui -> ui.access(() -> {
+                ui.navigate(RegisterVerificationView.class);
+            }));
             showSuccessNotification("Firmenprofil erfolgreich angelegt.");
         } catch (DataIntegrityViolationException DIVE) {
             showErrorNotification("Firmenprofil existiert bereits.");
