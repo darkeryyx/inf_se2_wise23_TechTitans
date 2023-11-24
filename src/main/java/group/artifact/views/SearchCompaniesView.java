@@ -51,7 +51,7 @@ public class SearchCompaniesView extends MainView {
 
         //Searching Parameters
         MultiSelectComboBox<String> businessComboBox = new MultiSelectComboBox<>("Branchen");
-        businessComboBox.setItems(); //Funktion: getBusinesses gruppiert
+        businessComboBox.setItems(companyController.findAllBusinesses()); //Funktion: getBusinesses gruppiert
 
         TextField searchField = new TextField("Suchfeld", "Geben Sie hier einen Firmennamen ein");
         searchField.setPrefixComponent( new Icon (VaadinIcon.SEARCH));

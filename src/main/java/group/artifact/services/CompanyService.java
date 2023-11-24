@@ -54,4 +54,6 @@ public class CompanyService {
     public boolean companyExists(Integer id) {
         return companyRepository.existsById(id);
     }
+
+    public List<String> findAllBusinesses() {return companyRepository.findAllBusinesses();}
 }
