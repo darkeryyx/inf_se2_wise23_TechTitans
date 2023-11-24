@@ -14,8 +14,7 @@ import com.vaadin.flow.router.RouterLink;
 
 import group.artifact.controller.CompanyController;
 import group.artifact.dtos.CompanyDTO;
-import jakarta.annotation.security.RolesAllowed;
-
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 
@@ -39,7 +38,7 @@ public class SearchCompaniesView extends MainView {
         List<CompanyDTO> companyDTOList = companyController.getAllCompanies();
         Grid<CompanyDTO> grid = new Grid<>(CompanyDTO.class, false);
         ListDataProvider<CompanyDTO> companyDataProvider = new ListDataProvider<>(companyDTOList);
-        grid.setDataProvider(companyDataProvider);
+        grid.setItems(companyDataProvider);
 
         grid.addColumn(item -> {
             Image image = new Image(item.getLogo(),

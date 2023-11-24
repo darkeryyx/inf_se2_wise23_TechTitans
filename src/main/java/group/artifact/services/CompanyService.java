@@ -6,7 +6,7 @@ import group.artifact.entities.Company;
 import group.artifact.entities.User;
 import group.artifact.repositories.CompanyRepository;
 import group.artifact.repositories.UserRepository;
-import jakarta.persistence.EntityManager;
+import javax.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;

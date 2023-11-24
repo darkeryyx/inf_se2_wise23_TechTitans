@@ -59,8 +59,7 @@
         checked: child._checked,
         theme: child.__theme
       };
-      // Do not hardcode tag name to allow `vaadin-menu-bar-item`
-      if (child._hasVaadinItemMixin && child._containerNodeId) {
+      if (child.localName == 'vaadin-context-menu-item' && child._containerNodeId) {
         item.children = generateItemsTree(appId, child._containerNodeId);
       }
       child._item = item;

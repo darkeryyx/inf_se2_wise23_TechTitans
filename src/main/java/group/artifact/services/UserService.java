@@ -6,7 +6,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.*;
 import java.util.Base64.Encoder;
-import java.util.stream.Collectors;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -16,11 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import group.artifact.dtos.UserDTO;
 import group.artifact.entities.Session;
 import group.artifact.entities.User;
 import group.artifact.repositories.SessionRepository;
 import group.artifact.repositories.UserRepository;
-import jakarta.servlet.http.Cookie;
+import javax.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -30,17 +30,18 @@ public class UserService {
     private UserRepository userRepository;
     private SessionRepository sessionRepository;
 
-    public String createUser(User newUser) {
-        if (!userRepository.isEmailUnique(newUser.getEmail())) { // check if email already exists
+    public String createUser(UserDTO newUser) {
+        User user = newUser.getUser();
+        if (!userRepository.isEmailUnique(user.getEmail())) { // check if email already exists
             return "email_error";
         }
         try {
-            newUser.setSalt(generateSalt(16)); // generate salt
-            newUser.setPassword(generateHash(newUser.getPassword(), newUser.getSalt())); // hash pw
-            userRepository.save(newUser); // save to DB
+            user.setSalt(generateSalt(16)); // generate salt
+            user.setPassword(generateHash(user.getPassword(), user.getSalt())); // hash pw
+            userRepository.save(user); // save to DB
             return "true";
         } catch (DataIntegrityViolationException e) {
-            System.out.println("Error: unable to insert" + newUser.toString());
+            System.out.println("Error: unable to insert" + user.toString());
             return "false";
         }
     }
@@ -60,35 +61,38 @@ public class UserService {
         return true; // session startet aktuell in UserController.login()
     }
 
-    public List<String> getQuestions(String email){
+    public List<String> getQuestions(String email) {
         User user = userRepository.findUserByEmail(email);
         if (user == null) {
-            return Collections.emptyList();
-        }else{
-           return getSecurityQuestions(user);
-
+            return null;
+        } else {
+            List<String> questions = new ArrayList<>();
+            questions.add(user.getQuestion1());
+            questions.add(user.getQuestion2());
+            return questions;
         }
     }
-    private List<String> getSecurityQuestions(User user){
-        Map<String, String> map= user.getSQA();
 
-        return map.keySet().stream().collect(Collectors.toList());
-    }
-
-    public boolean checkSQA(String frage, String antwort, String email){
-        User user= userRepository.findUserByEmail(email);
-
-        if(antwort.equals(user.getSQA().get(frage))){
+    public boolean checkSQA(String frage, String antwort, String email) {
+        User user = userRepository.findUserByEmail(email);
+        String solution = "";
+        if (frage.equals(user.getQuestion1())) {
+            solution = user.getAnswer1();
+        } else if (frage.equals(user.getQuestion2())) {
+            solution = user.getAnswer2();
+        }
+        if (antwort.equals(solution)) {
             return true;
         }
         return false;
     }
 
-    public void pwNew(String email,String pw){
+    public void pwNew(String email, String pw) {
         User user = userRepository.findUserByEmail(email);
         user.setPassword(generateHash(pw, user.getSalt()));
         userRepository.save(user);
     }
+
     /**
      * generate salt of specified length
      * 
@@ -143,7 +147,6 @@ public class UserService {
         Cookie sessionCookie = new Cookie("sid", sid);
         sessionCookie.setMaxAge(1200); // expire in 20 min
         sessionCookie.setPath("/");
-        sessionCookie.setAttribute("SameSite", "Lax");
         sessionCookie.setHttpOnly(true);
 
         newSession.setSid(sid);
@@ -158,14 +161,14 @@ public class UserService {
      * 
      * @param: cookie: current sessioncookie
      * 
-     * @returns: jakarta.http.cookie object
+     * @returns: javax.http.cookie object
      */
     public Cookie revokeCookie(Cookie cookie) {
         cookie.setMaxAge(0);
         return cookie;
     }
 
-    public User getCurrentUser(Cookie[] cookies) { //get the currently logged in User
+    public User getCurrentUser(Cookie[] cookies) { // get the currently logged in User
         String name = "sid";
         User user = null;
         for (Cookie cookie : cookies) {

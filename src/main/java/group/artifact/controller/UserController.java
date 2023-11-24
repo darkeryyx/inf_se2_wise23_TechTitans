@@ -3,6 +3,8 @@ package group.artifact.controller;
 import java.util.Collections;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,9 +13,9 @@ import org.springframework.stereotype.Component;
 
 import com.vaadin.flow.server.VaadinService;
 
+import group.artifact.dtos.UserDTO;
 import group.artifact.entities.User;
 import group.artifact.services.UserService;
-import jakarta.servlet.http.Cookie;
 
 @Component
 public class UserController {
@@ -21,15 +23,15 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    public String register(User newUser) {
+    public String register(UserDTO newUser) {
         return userService.createUser(newUser);
     }
 
     public boolean login(String email, String passwort) {
         if (userService.authenticate(email, passwort)) {
-            Cookie s = userService.setSessionCookie(email);
+            Cookie cookie = userService.setSessionCookie(email);
             VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
-            VaadinService.getCurrentResponse().addCookie(s);
+            VaadinService.getCurrentResponse().addCookie(cookie);
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     email, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
             SecurityContextHolder.getContext().setAuthentication(auth);

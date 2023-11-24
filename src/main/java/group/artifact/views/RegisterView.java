@@ -21,6 +21,7 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 import group.artifact.entities.User;
 import group.artifact.controller.UserController;
+import group.artifact.dtos.impl.UserDTOImpl;
 
 import java.util.*;
 
@@ -131,8 +132,9 @@ public class RegisterView extends Composite<Component> {
         } else if (radioValue == null) {
             Notification.show("Bitte wählen Sie Ihren Status aus").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else {
+            User user = new User(vorname, nachname, passwort, email.getValue());
             String result = userController
-                    .register(new User(vorname, nachname, passwort, email.getValue(), sicherheitsQA));
+                    .register(new UserDTOImpl(user, sicherheitsQA));
             if (result == "email_error") {
                 Notification.show("E-Mail bereits vergeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
             } else {
