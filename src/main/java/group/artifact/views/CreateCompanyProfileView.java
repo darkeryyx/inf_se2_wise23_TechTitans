@@ -96,9 +96,9 @@ public class CreateCompanyProfileView extends Composite<Component> {
             getUI().ifPresent(ui -> ui.access(() -> {
                 ui.navigate(RegisterVerificationView.class);
             }));
-            showSuccessNotification("Firmenprofil erfolgreich angelegt.");
+            showSuccessNotification();
         } catch (DataIntegrityViolationException DIVE) {
-            showErrorNotification("Firmenprofil existiert bereits.");
+            showErrorNotification();
         }
     }
 
@@ -144,12 +144,12 @@ public class CreateCompanyProfileView extends Composite<Component> {
         return integerField;
     }
 
-    private void showSuccessNotification(String message) {
-        Notification.show(message).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+    private void showSuccessNotification() {
+        Notification.show("Firmenprofil erfolgreich angelegt.").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 
-    private void showErrorNotification(String message) {
-        Notification.show(message).addThemeVariants(NotificationVariant.LUMO_ERROR);
+    private void showErrorNotification() {
+        Notification.show("Firmenprofil existiert bereits.").addThemeVariants(NotificationVariant.LUMO_ERROR);
     }
 
 }
