@@ -25,7 +25,7 @@ public class OfferService {
         ArrayList<OfferDTO> offerDTOS = new ArrayList<>(); // this whill be done by an array list
         for (Offer offer : offers) {
             OfferDTO dto = new OfferDTOImpl();
-            dto.setCompany(offer.getCompany());
+            dto.setCompanyName(offer.getCompany().getName());
             dto.setJob(offer.getJob());
             dto.setBusiness(offer.getBusiness());
             dto.setDescription(offer.getDescription());

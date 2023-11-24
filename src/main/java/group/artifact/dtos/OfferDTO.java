@@ -4,13 +4,13 @@ import group.artifact.entities.Company;
 
 public interface OfferDTO {
 
-    public Company getCompany();
+    public String getCompanyName();
     public String getJob();
     public String getBusiness();
     public String getDescription();
     public String getIncome();
 
-    public void setCompany(Company company);
+    public void setCompanyName(String company);
     public void setJob(String job);
     public void setBusiness(String business);
     public void setDescription(String description);

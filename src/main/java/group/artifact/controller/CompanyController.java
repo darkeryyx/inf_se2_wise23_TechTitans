@@ -26,4 +26,5 @@ public class CompanyController {
     public boolean companyExists(Integer id) {
         return companyService.companyExists(id);
     }
+    public List<String> findAllBusinesses() {return companyService.findAllBusinesses();}
 }
