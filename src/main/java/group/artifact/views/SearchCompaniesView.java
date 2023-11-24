@@ -52,6 +52,8 @@ public class SearchCompaniesView extends MainView {
         }).setHeader("Logo").setWidth("100px");
         Grid.Column<CompanyDTO> nameColumn = grid
                 .addColumn(CompanyDTO:: getName ).setHeader("Unternehmen").setWidth("600px");
+        Grid.Column<CompanyDTO> businessColumn = grid
+                .addColumn(CompanyDTO:: getBusiness ).setHeader("Branche").setWidth("600px");
         Grid.Column<CompanyDTO> linkColumn = grid
                 .addColumn(CompanyDTO:: getLink).setHeader("Link").setWidth("160px");
 
@@ -68,8 +70,6 @@ public class SearchCompaniesView extends MainView {
                         searchField.getValue())));
 
         searchField.setValueChangeMode(ValueChangeMode.EAGER);
-        searchField.setSizeFull();
-        searchField.setPlaceholder("Filter");
 
 
         //Width and Hight
