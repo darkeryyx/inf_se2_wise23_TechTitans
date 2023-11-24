@@ -14,7 +14,7 @@ import group.artifact.controller.UserController;
 import group.artifact.entities.Student;
 import group.artifact.controller.StudentController;
 import group.artifact.entities.User;
-import jakarta.annotation.security.RolesAllowed;
+import javax.annotation.security.RolesAllowed;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.Component;

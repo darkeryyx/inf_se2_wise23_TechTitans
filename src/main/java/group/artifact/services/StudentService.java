@@ -5,8 +5,8 @@ import group.artifact.dtos.impl.StudentDTOImpl;
 import group.artifact.entities.Student;
 import group.artifact.entities.User;
 import group.artifact.repositories.StudentRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
 

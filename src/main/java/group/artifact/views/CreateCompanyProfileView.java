@@ -4,7 +4,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextArea;
 import group.artifact.entities.Company;
-import jakarta.annotation.security.RolesAllowed;
+import javax.annotation.security.RolesAllowed;
 import group.artifact.controller.CompanyController;
 
 import org.springframework.beans.factory.annotation.Autowired;

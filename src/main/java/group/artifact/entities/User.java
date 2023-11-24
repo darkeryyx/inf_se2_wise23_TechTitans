@@ -3,15 +3,11 @@ package group.artifact.entities;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
-import java.util.Map;
-
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 @Data // constructor, getter, setter
 @Entity
@@ -49,8 +45,12 @@ public class User {
     private ZonedDateTime created;
     private ZonedDateTime last_login;
 
-    @NonNull
-    @Column(nullable = false) // Wert der Map
-    @JdbcTypeCode(SqlTypes.JSON)
-    private Map<String,String> sQA;
+    @Column(nullable = false)
+    private String question1;
+    @Column(nullable = false)
+    private String question2;
+    @Column(nullable = false)
+    private String answer1;
+    @Column(nullable = false)
+    private String answer2;
 }

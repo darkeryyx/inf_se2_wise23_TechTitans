@@ -7,6 +7,7 @@ import group.artifact.services.EmailService;
 
 @Component
 public class EmailController {
+    
     @Autowired
     EmailService emailService;
 

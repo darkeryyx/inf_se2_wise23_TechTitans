@@ -24,7 +24,7 @@ public class SecurityConfiguration extends VaadinWebSecurity {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // perform sid check, otherwise continue with default auth
-        http.authorizeHttpRequests(req -> req
+        http.authorizeRequests(req -> req
                 .requestMatchers(new AntPathRequestMatcher("/images/*")).permitAll() // access to all images
         );
         http.addFilterBefore(sidAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

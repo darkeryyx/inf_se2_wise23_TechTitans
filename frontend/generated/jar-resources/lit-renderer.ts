@@ -41,8 +41,7 @@ _window.Vaadin.setLitRenderer = (
 
     const [render, html, returnChannel] = arguments;
 
-    return (root, model, itemKey) => {
-      const { item, index } = model;
+    return (root, {item, index}, itemKey) => {
       ${clientCallables
         .map((clientCallable) => {
           // Map all the client-callables as inline functions so they can be accessed from the template literal
@@ -59,8 +58,7 @@ _window.Vaadin.setLitRenderer = (
     }
   `)(render, html, returnChannel);
 
-  const renderer: Renderer = (root, _, model) => {
-    const { item } = model;
+  const renderer: Renderer = (root, _, { index, item }) => {
     // Clean up the root element of any existing content
     // (and Lit's _$litPart$ property) from other renderers
     // TODO: Remove once https://github.com/vaadin/web-components/issues/2235 is done
@@ -84,7 +82,7 @@ _window.Vaadin.setLitRenderer = (
       }
     }
 
-    renderFunction(root, { ...model, item: mappedItem }, item.key);
+    renderFunction(root, { index, item: mappedItem }, item.key);
   };
 
   renderer.__rendererId = propertyNamespace;

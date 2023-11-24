@@ -16,8 +16,8 @@ import group.artifact.controller.StudentController;
 import group.artifact.controller.UserController;
 import group.artifact.dtos.StudentDTO;
 import group.artifact.entities.User;
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.security.RolesAllowed;
+import javax.annotation.PostConstruct;
+import javax.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("view/student")

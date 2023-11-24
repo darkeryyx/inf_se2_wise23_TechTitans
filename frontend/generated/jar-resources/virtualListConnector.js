@@ -59,29 +59,11 @@ window.Vaadin.Flow.virtualListConnector = {
         root.__virtualListIndex = model.index;
 
         if (model.item === undefined) {
-          if (list.$connector.placeholderElement) {
-            // ComponentRenderer
-            if (!root.__hasComponentRendererPlaceholder) {
-              // The root was previously rendered by the ComponentRenderer. Clear and add a placeholder.
-              root.innerHTML = '';
-              delete root._$litPart$;
-              root.appendChild(list.$connector.placeholderElement.cloneNode(true));
-              root.__hasComponentRendererPlaceholder = true;
-            }
-          } else {
-            // LitRenderer
-            originalRenderer.call(list, root, list, {
-              ...model,
-              item: list.$connector.placeholderItem
-            });
-          }
+          originalRenderer.call(list, root, list, {
+            ...model,
+            item: list.$connector.placeholderItem
+          });
         } else {
-          if (root.__hasComponentRendererPlaceholder) {
-            // The root was previously populated with a placeholder. Clear it.
-            root.innerHTML = '';
-            root.__hasComponentRendererPlaceholder = false;
-          }
-
           originalRenderer.call(list, root, list, model);
         }
 
@@ -140,11 +122,9 @@ window.Vaadin.Flow.virtualListConnector = {
       }
     };
 
-    list.$connector.setPlaceholderItem = function (placeholderItem = {}, appId) {
+    list.$connector.setPlaceholderItem = function (placeholderItem = {}) {
       placeholderItem.__placeholder = true;
       list.$connector.placeholderItem = placeholderItem;
-      const nodeId = Object.entries(placeholderItem).find(([key]) => key.endsWith('_nodeid'));
-      list.$connector.placeholderElement = nodeId ? Vaadin.Flow.clients[appId].getByNodeId(nodeId[1]) : null;
     };
   }
 };

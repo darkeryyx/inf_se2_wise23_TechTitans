@@ -14,7 +14,7 @@ import group.artifact.controller.OfferController;
 import group.artifact.entities.Company;
 import group.artifact.entities.Offer;
 import group.artifact.repositories.CompanyRepository;
-import jakarta.annotation.security.RolesAllowed;
+import javax.annotation.security.RolesAllowed;
 import org.springframework.dao.DataIntegrityViolationException;
 
 @Route("create/offer")

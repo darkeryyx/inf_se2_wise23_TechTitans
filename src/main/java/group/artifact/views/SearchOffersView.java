@@ -19,8 +19,8 @@ import com.vaadin.flow.router.RouterLink;
 import group.artifact.controller.OfferController;
 import group.artifact.dtos.OfferDTO;
 import group.artifact.entities.Company;
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.security.RolesAllowed;
+import javax.annotation.PostConstruct;
+import javax.annotation.security.RolesAllowed;
 
 import java.util.ArrayList;
 import java.util.List;
