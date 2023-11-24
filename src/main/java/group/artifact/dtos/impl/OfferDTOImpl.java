@@ -9,7 +9,7 @@ import group.artifact.dtos.OfferDTO;
 @NoArgsConstructor
 public class OfferDTOImpl implements OfferDTO {
 
-    private Company company;
+    private String companyName;
     private String job;
     private String business;
     private String description;
