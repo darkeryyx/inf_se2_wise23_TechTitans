@@ -140,6 +140,7 @@ public class CreateCompanyProfileView extends Composite<Component> {
         integerField.setHelperText("mind. 1 Mitarbeiter(in)");
         integerField.setMin(1);
         integerField.setValue(1);
+        integerField.setWidth("10%");
         integerField.setStepButtonsVisible(true);
         return integerField;
     }
