@@ -16,16 +16,19 @@ import com.vaadin.flow.router.RouterLink;
 
 import group.artifact.controller.CompanyController;
 import group.artifact.dtos.CompanyDTO;
+import group.artifact.entities.Company;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Route("search/company")
 @RolesAllowed("ROLE_USER")
 public class SearchCompaniesView extends MainView {
     CompanyController companyController;
+    MultiSelectComboBox<String> businessComboBox;
 
     public SearchCompaniesView(CompanyController companyController){
         super();
@@ -58,7 +61,7 @@ public class SearchCompaniesView extends MainView {
                 .addColumn(CompanyDTO:: getLink).setHeader("Link").setWidth("160px");
 
         //Searching Parameters
-        MultiSelectComboBox<String> businessComboBox = new MultiSelectComboBox<>("Branchen");
+        businessComboBox = new MultiSelectComboBox<>("Branchen");
         businessComboBox.setItems(companyController.findAllBusinesses()); //Funktion: getBusinesses gruppiert
 
         TextField searchField = new TextField("Suchfeld", "Geben Sie hier einen Firmennamen ein");
@@ -71,6 +74,16 @@ public class SearchCompaniesView extends MainView {
 
         searchField.setValueChangeMode(ValueChangeMode.EAGER);
 
+        //Filter - Business
+        businessComboBox.addValueChangeListener(event -> companyDataProvider.addFilter(
+                company -> {
+                    if (businessComboBox.isEmpty()) {
+                        return true;
+                    } else {
+                        return businessComboBox.isSelected(company.getBusiness());
+                    }
+                    }));
+        businessComboBox.setClearButtonVisible(true);
 
         //Width and Hight
         searchField.setWidth("720px");
@@ -89,5 +102,4 @@ public class SearchCompaniesView extends MainView {
         );
 
     }
-
 }
