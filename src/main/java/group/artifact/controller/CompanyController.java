@@ -5,7 +5,6 @@ import group.artifact.entities.Company;
 import group.artifact.services.CompanyService;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,5 +27,4 @@ public class CompanyController {
         return companyService.companyExists(id);
     }
     public List<String> findAllBusinesses() {return companyService.findAllBusinesses();}
-    public Optional<Company> findByID(int i) {return companyService.findByID(i);}
 }
