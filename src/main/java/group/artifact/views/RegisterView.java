@@ -132,7 +132,7 @@ public class RegisterView extends Composite<Component> {
         } else if (radioValue == null) {
             Notification.show("Bitte wählen Sie Ihren Status aus").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else {
-            User user = new User(vorname, nachname, passwort, email.getValue());
+            User user = new User(vorname, nachname, passwort, email.getValue(),false);
             String result = userController
                     .register(new UserDTOImpl(user, sicherheitsQA));
             if (result == "email_error") {
