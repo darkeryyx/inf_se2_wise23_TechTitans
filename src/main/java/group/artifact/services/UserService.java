@@ -12,8 +12,6 @@ import javax.crypto.spec.PBEKeySpec;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseCookie.ResponseCookieBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
