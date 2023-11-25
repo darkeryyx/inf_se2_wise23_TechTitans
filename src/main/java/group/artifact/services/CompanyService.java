@@ -56,4 +56,5 @@ public class CompanyService {
     }
 
     public List<String> findAllBusinesses() {return companyRepository.findAllBusinesses();}
+    public Optional<Company> findByID(int i) {return companyRepository.findById(i);}
 }
