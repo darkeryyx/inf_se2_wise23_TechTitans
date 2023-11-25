@@ -47,7 +47,7 @@ public class CreateOfferView extends Composite<Component> {
                 Integer.parseInt(company.getValue())));
 
         VerticalLayout layout = new VerticalLayout(
-                new H2("Firmenprofil anlegen"),
+                new H2("Jobausschreibung erstellen"),
                 job,
                 business,
                 description,
@@ -67,9 +67,9 @@ public class CreateOfferView extends Composite<Component> {
             Offer offer = new Offer(c.get(), job, business, description, income);
             try {
                 offerController.createOffer(offer);
-                showSuccessNotification("Firmenprofil erfolgreich angelegt.");
+                showSuccessNotification("Jobausschreibung erfolgreich angelegt.");
             } catch (DataIntegrityViolationException DIVE) {
-                showErrorNotification("Firmenprofil existiert bereits.");
+                showErrorNotification("Jobausschreibung existiert bereits.");
             }
         } else {
             showErrorNotification("Unternehmen existiert nicht");
