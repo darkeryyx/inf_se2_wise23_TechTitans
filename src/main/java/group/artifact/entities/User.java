@@ -53,4 +53,8 @@ public class User {
     private String answer1;
     @Column(nullable = false)
     private String answer2;
+
+    @NonNull
+    @Column(nullable = false)
+    private boolean locked;
 }
