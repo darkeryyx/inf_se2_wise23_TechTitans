@@ -2,6 +2,7 @@ package group.artifact.views;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
@@ -55,6 +56,12 @@ public class forgotPWView extends Composite<Component> {
         TextField q1 = new TextField(sQuestions.get(0));
         q1.setWidth("30%");
 
+        q1.addKeyDownListener(Key.ENTER, event -> {
+            ((VerticalLayout) getContent()).add(checkSQA(sQuestions.get(0),
+                    q1.getValue(),
+                    email,
+                    sQuestions));
+        });
         VerticalLayout sqaLayout = new VerticalLayout(
                 q1,
                 new Button("Bestätigen", event -> ((VerticalLayout) getContent()).add(checkSQA(
@@ -75,6 +82,13 @@ public class forgotPWView extends Composite<Component> {
             TextField q2 = new TextField(liste.get(1));
             q2.setWidth("30%");
 
+            q2.addKeyDownListener(Key.ENTER, event -> {
+                ((VerticalLayout) getContent()).add(pwReset(
+                        liste.get(1),
+                        q2.getValue(),
+                        email
+                ));
+            });
             VerticalLayout q2Layout = new VerticalLayout(
                     q2,
                     new Button("Bestätigen", event -> ((VerticalLayout) getContent()).add(pwReset(
@@ -101,6 +115,12 @@ public class forgotPWView extends Composite<Component> {
             TextField reset = new TextField("Bitte geben Sie Ihr neues Passwort ein");
             reset.setWidth("30%");
 
+            reset.addKeyDownListener(Key.ENTER, event -> {
+                pwNew(
+                        email,
+                        reset.getValue()
+                );
+            });
             VerticalLayout pwNeu = new VerticalLayout(
                     reset,
                     new Button("Bestätigen", event -> pwNew(

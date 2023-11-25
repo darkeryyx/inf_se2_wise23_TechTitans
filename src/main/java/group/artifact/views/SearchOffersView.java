@@ -12,13 +12,17 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import group.artifact.controller.OfferController;
+import group.artifact.dtos.CompanyDTO;
 import group.artifact.dtos.OfferDTO;
 import group.artifact.entities.Company;
+import org.apache.commons.lang3.StringUtils;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.security.RolesAllowed;
 
@@ -32,63 +36,76 @@ import java.util.stream.Stream;
 public class SearchOffersView extends MainView {
 
     private final OfferController offerController;
-    private OfferFilter offerFilter;
-    private OfferDTODataProvider dataProvider;
-    private ConfigurableFilterDataProvider<OfferDTO, Void, OfferFilter> filterDataProvider;
-
-    // constructor with OfferController as a dependency
     public SearchOffersView(OfferController offerController) {
         super();
         this.offerController = offerController;
         this.addContent(this.content());
-        init();
     }
-
-    @PostConstruct
-    public void init() {
-        offerFilter = new OfferFilter();
-        dataProvider = new OfferDTODataProvider();
-        filterDataProvider = dataProvider.withConfigurableFilter();
-    }
-
     VerticalLayout content() {
 
         // Grid
         Grid<OfferDTO> grid = new Grid<>(OfferDTO.class, false);
-        grid.setItems();
-        grid.addColumn(item -> {
+        List<OfferDTO> offers = offerController.getAllOffersAndTheirCompany();
+        ListDataProvider<OfferDTO> offerDataProvider = new ListDataProvider<>(offers);
+        grid.setItems(offerDataProvider);
+
+        //TODO: Fehler beim Zugreifen auf company deswegen in dto nur name übergeben -> keinen zugriff auf link
+        /*grid.addColumn(item -> {
             Image image = new Image(item.getCompany().getImage(),
                     "");
             image.setWidth("50px");
             return image;
-        }).setHeader("Logo").setWidth("50px");
-        grid.addColumn(item -> item.getCompany().getName()).setHeader("Unternehmen").setWidth("150px");
-        grid.addColumn(OfferDTO::getBusiness).setHeader("Branche").setWidth("50px"); // Ändern zu OfferDTO::getBusiness
-        grid.addColumn(OfferDTO::getJob).setHeader("Stellenangebote").setWidth("700px"); // Ändern zu OfferDTO::getJob
+        }).setHeader("Logo").setWidth("50px");*/
+
+        grid.addColumn(OfferDTO::getCompanyName).setHeader("Unternehmen").setWidth("150px");
+        grid.addColumn(OfferDTO::getBusiness).setHeader("Branche").setWidth("250px"); // Ändern zu OfferDTO::getBusiness
+        grid.addColumn(OfferDTO::getJob).setHeader("Stellenangebote").setWidth("500px"); // Ändern zu OfferDTO::getJob
         grid.addColumn(OfferDTO::getIncome).setHeader("€/h").setWidth("50px");
 
         // Filtering Components
-        List<OfferDTO> offers = offerController.getAllOffersAndTheirCompany();
         MultiSelectComboBox<String> businessComboBox = new MultiSelectComboBox<>("Branchen");
         businessComboBox.setItems(offers.stream().map(OfferDTO::getBusiness).distinct().collect(Collectors.toList()));
         TextField searchText = new TextField("Suchfeld", "Geben Sie hier einen Jobtitel oder ein Unternehmen ein..");
         NumberField minIncome = new NumberField("min ..€/h", "z.B. min 15€/h");
 
-        // Filtering
+        // Filter - Job / Company
         searchText.setValueChangeMode(ValueChangeMode.EAGER);
-        searchText.addValueChangeListener(e -> {
-            offerFilter.setSearchTerm(e.getValue());
-            filterDataProvider.setFilter(offerFilter);
-        });
+        searchText.addValueChangeListener(event -> offerDataProvider.addFilter(
+                offer -> {
+                    if(StringUtils.containsIgnoreCase(offer.getCompanyName(), searchText.getValue()) ||
+                            StringUtils.containsIgnoreCase(offer.getJob(), searchText.getValue())) {
+                        return true;
+                    } else {return false;}
+                }));
 
+        //Filter - minIncome
         minIncome.setValueChangeMode(ValueChangeMode.EAGER);
-        minIncome.addValueChangeListener(e -> {
-            offerFilter.setSearchTerm(String.valueOf(e.getValue()));
-            filterDataProvider.setFilter(offerFilter);
-        });
+        minIncome.addValueChangeListener(event ->offerDataProvider.addFilter(
+                offer -> {
+                    try {
+                        int income = 0;
+                        try {
+                            income = Integer.valueOf(offer.getIncome());
+                        } catch (NumberFormatException e) {
+                        }
+                        if (income >= minIncome.getValue()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } catch(NullPointerException e) {return true;}
+                }));
 
-        businessComboBox.addSelectionListener(event -> {
-        }); // Filtern einfügen
+        //Filter - Business
+        businessComboBox.addValueChangeListener(event -> offerDataProvider.addFilter(
+                offer -> {
+                    if (businessComboBox.isEmpty()) {
+                        return true;
+                    } else {
+                        return businessComboBox.isSelected(offer.getBusiness());
+                    }
+                }));
+        businessComboBox.setClearButtonVisible(true);
 
         // Width, Hight, Icons
         grid.setWidth("1100px");
@@ -110,59 +127,6 @@ public class SearchOffersView extends MainView {
                         minIncome),
                 grid);
 
-    }
-
-    protected class OfferFilter {
-        private String searchTerm;
-        private Double minIncome;
-
-        public void setSearchTerm(String searchTerm) {
-            this.searchTerm = searchTerm;
-        }
-
-        public void setMinIncome(Double minIncome) {
-            this.minIncome = minIncome;
-        }
-
-        public boolean test(OfferDTO offer) {
-            Company company = offer.getCompany();
-            boolean matchesFullName = matchesSearchTerm(company.getName(), searchTerm);
-            boolean matchesProfession = matchesMinIncome(Double.parseDouble(offer.getIncome()), minIncome);
-            return matchesFullName || matchesProfession;
-        }
-
-        private boolean matchesSearchTerm(String value, String searchTerm) {
-            return searchTerm == null || searchTerm.isEmpty()
-                    || value.toLowerCase().contains(searchTerm.toLowerCase());
-        }
-
-        private boolean matchesMinIncome(Double value, Double minIncome) {
-            return minIncome == null || minIncome.isNaN()
-                    || value >= minIncome;
-        }
-    }
-
-    private class OfferDTODataProvider extends AbstractBackEndDataProvider<OfferDTO, OfferFilter> {
-        final List<OfferDTO> DATABASE = new ArrayList<>(offerController.getAllOffersAndTheirCompany());
-
-        @Override
-        protected Stream<OfferDTO> fetchFromBackEnd(Query<OfferDTO, OfferFilter> query) {
-
-            Stream<OfferDTO> stream = DATABASE.stream();
-
-            // Filtering
-            if (query.getFilter().isPresent()) {
-                stream = stream.filter(offer -> query.getFilter().get().test(offer));
-            }
-
-            // Pagination
-            return stream.skip(query.getOffset()).limit(query.getLimit());
-        }
-
-        @Override
-        protected int sizeInBackEnd(Query<OfferDTO, OfferFilter> query) {
-            return 0;
-        }
     }
 
 }

@@ -31,7 +31,9 @@ public class UserController {
         if (userService.authenticate(email, passwort)) {
             Cookie cookie = userService.setSessionCookie(email);
             VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
-            VaadinService.getCurrentResponse().addCookie(cookie);
+            //samesite funktioniert seit downgrade nicht, häßlicher workaround
+            //VaadinService.getCurrentResponse().addCookie(cookie);
+            VaadinService.getCurrentResponse().setHeader("Set-Cookie", ""+ cookie.getName() +"="+ cookie.getValue() +";Max-Age=1200;HttpOnly; SameSite=lax");
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     email, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
             SecurityContextHolder.getContext().setAuthentication(auth);

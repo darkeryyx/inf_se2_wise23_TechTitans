@@ -12,6 +12,8 @@ import javax.crypto.spec.PBEKeySpec;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseCookie.ResponseCookieBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -142,14 +144,19 @@ public class UserService {
         User user = userRepository.findUserByEmail(email);
         String uid = Integer.toString(user.getUser_pk());
         String rnd = generateSalt(20); // saltgeneration gibt random string len bytes, 16 bytes empfehlung OWASP
-        String sid = uid + rnd;
+        String sid = rnd + uid;
 
         Cookie sessionCookie = new Cookie("sid", sid);
         sessionCookie.setMaxAge(1200); // expire in 20 min
         sessionCookie.setPath("/");
         sessionCookie.setHttpOnly(true);
+       //sessionCookie.sameSite("Lax"); 
+       
+
+
 
         newSession.setSid(sid);
+
         newSession.setUser(user);
         newSession.setLogin(null);
         sessionRepository.save(newSession);

@@ -2,6 +2,7 @@ package group.artifact.views;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Anchor;
@@ -33,6 +34,14 @@ public class LoginView extends Composite<Component> {
         TextField email = new TextField("Email");
         PasswordField password = new PasswordField("Passwort");
         Anchor pwVergessen = new Anchor("forgotPW", "Passwort vergessen?");
+
+        password.addKeyDownListener(Key.ENTER, event -> {
+            login(email.getValue(), password.getValue());
+        });
+
+        email.addKeyDownListener(Key.ENTER, event -> {
+            login(email.getValue(), password.getValue());
+        });
 
         VerticalLayout loginFormLayout = new VerticalLayout(
                 new H2("Login"),
