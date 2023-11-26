@@ -35,6 +35,14 @@ public class UserService {
 
     public String createUser(UserDTO newUser) {
         User user = newUser.getUser();
+        try {
+            boolean x = isCommonPassword(user.getPassword()); //check if password is on List
+            //TODO: erneute aufforderung zur passworteingabe 
+            System.out.println(x);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         if (!userRepository.isEmailUnique(user.getEmail())) { // check if email already exists
             return "email_error";
         }
@@ -219,14 +227,14 @@ public class UserService {
      * 
      * @param: String: registration form user password
      * 
-     * @returns: false -> password is on list
-     *           true -> else
+     * @returns: true -> password is on list
+     *           false -> else
      */ 
 public static boolean isCommonPassword(String passwd) throws IOException{
         List<String> list = new ArrayList<>();
         BufferedReader br = null;
         try{
-        br = new BufferedReader(new FileReader("./best1050.txt"));
+        br = new BufferedReader(new FileReader("src/main/resources/best1050.txt")); //might not survive packaging to jarfile
         String line;
         while((line = br.readLine())!= null){
             list.add(line);
