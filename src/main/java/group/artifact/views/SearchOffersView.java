@@ -22,7 +22,7 @@ import javax.annotation.security.RolesAllowed;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Route("search/offer")
+@Route("search/offers")
 @RolesAllowed("ROLE_USER")
 public class SearchOffersView extends HomeView {
 
