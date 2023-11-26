@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Route("search/offer")
+@Route("search/offers")
 @RolesAllowed("ROLE_USER")
 public class SearchOffersView extends HomeView {
 

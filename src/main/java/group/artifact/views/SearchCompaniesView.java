@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
-@Route("search/company")
+@Route("search/companies")
 @RolesAllowed("ROLE_USER")
 public class SearchCompaniesView extends HomeView {
     CompanyController companyController;
