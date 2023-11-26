@@ -6,6 +6,7 @@ import group.artifact.dtos.CompanyDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @NoArgsConstructor
 public class CompanyDTOImpl implements CompanyDTO  {
