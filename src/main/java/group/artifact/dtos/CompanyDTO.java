@@ -1,5 +1,6 @@
 package group.artifact.dtos;
 
+
 import java.time.LocalDate;
 
 public interface CompanyDTO {
