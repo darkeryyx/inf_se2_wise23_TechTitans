@@ -27,6 +27,13 @@ public class UserController {
         return userService.createUser(newUser);
     }
 
+    public void lock(String email){
+        userService.lock(email);
+    }
+
+    public boolean getLocked(String email){
+        return userService.getLocked(email);
+    }
     public boolean login(String email, String passwort) {
         if (userService.authenticate(email, passwort)) {
             Cookie cookie = userService.setSessionCookie(email);

@@ -10,19 +10,27 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import group.artifact.controller.CompanyController;
 import group.artifact.controller.OfferController;
 import group.artifact.entities.Company;
 import group.artifact.entities.Offer;
-import group.artifact.repositories.CompanyRepository;
+
 import javax.annotation.security.RolesAllowed;
 import org.springframework.dao.DataIntegrityViolationException;
+
+import java.util.Optional;
 
 @Route("create/offer")
 @RolesAllowed("ROLE_USER")
 public class CreateOfferView extends Composite<Component> {
     private OfferController offerController;
 
-    private CompanyRepository companyRepository;
+    private CompanyController companyController;
+
+    public CreateOfferView(OfferController offerController, CompanyController companyController) {
+        this.offerController = offerController;
+        this.companyController = companyController;
+    }
 
     protected Component initContent() {
         TextField description = createTextField("Beschreibung");
@@ -30,24 +38,21 @@ public class CreateOfferView extends Composite<Component> {
         TextField income = createTextField("Gehalt");
         TextField job = createTextField("Jobbezeichnung");
         TextField company = createTextField("Firmen_ID"); // TODO: Firma aus Session herauslesen
-        TextField offerID = createTextField("Offer_ID");
 
         Button createOfferButton = new Button("Veröffentlichen", event -> createOffer(
                 job.getValue(),
                 business.getValue(),
                 description.getValue(),
                 income.getValue(),
-                Integer.parseInt(offerID.getValue()),
                 Integer.parseInt(company.getValue())));
 
         VerticalLayout layout = new VerticalLayout(
-                new H2("Firmenprofil anlegen"),
+                new H2("Jobausschreibung erstellen"),
                 job,
                 business,
                 description,
                 income,
                 company,
-                offerID,
                 createOfferButton);
         if (business.isInvalid() | job.isInvalid() | description.isInvalid() | income.isInvalid())
             Notification.show("Bitte füllen Sie das erforderliche Feld aus.");
@@ -55,15 +60,19 @@ public class CreateOfferView extends Composite<Component> {
         return layout;
     }
 
-    private void createOffer(String job, String business, String description, String income, Integer company, Integer offerID) {
+    private void createOffer(String job, String business, String description, String income, Integer company) {
 
-        Company c = companyRepository.getReferenceById(company);
-        Offer offer = new Offer(offerID, c, null,job, business, description, income);
-        try {
-            offerController.createOffer(offer);
-            showSuccessNotification("Firmenprofil erfolgreich angelegt.");
-        } catch (DataIntegrityViolationException DIVE) {
-            showErrorNotification("Firmenprofil existiert bereits.");
+        Optional<Company> c = companyController.findByID(company);
+        if(c.isPresent()) {
+            Offer offer = new Offer(c.get(), job, business, description, income);
+            try {
+                offerController.createOffer(offer);
+                showSuccessNotification("Jobausschreibung erfolgreich angelegt.");
+            } catch (DataIntegrityViolationException DIVE) {
+                showErrorNotification("Jobausschreibung existiert bereits.");
+            }
+        } else {
+            showErrorNotification("Unternehmen existiert nicht");
         }
     }
 

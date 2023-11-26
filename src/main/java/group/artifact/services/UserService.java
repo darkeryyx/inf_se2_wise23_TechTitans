@@ -38,16 +38,39 @@ public class UserService {
         try {
             user.setSalt(generateSalt(16)); // generate salt
             user.setPassword(generateHash(user.getPassword(), user.getSalt())); // hash pw
+
+            String hashedAnswer1 = generateHash(user.getAnswer1(), user.getSalt());
+            user.setAnswer1(hashedAnswer1);
+            String hashedAnswer2 = generateHash(user.getAnswer2(), user.getSalt());
+            user.setAnswer2(hashedAnswer2);
+
             userRepository.save(user); // save to DB
             return "true";
+
         } catch (DataIntegrityViolationException e) {
             System.out.println("Error: unable to insert" + user.toString());
             return "false";
         }
     }
 
+    public void lock(String email){
+        User user = userRepository.findUserByEmail(email);
+        user.setLocked(true);
+        userRepository.save(user);
+    }
+
+    public boolean getLocked(String email){
+        User u= userRepository.findUserByEmail(email);
+
+        return u.isLocked();
+    }
+
     public boolean authenticate(String email, String password) {
         User user = userRepository.findUserByEmail(email);
+        if(user.isLocked()){
+            return false;
+        }
+
         if (user == null) {
             return false;
         }
@@ -76,12 +99,15 @@ public class UserService {
     public boolean checkSQA(String frage, String antwort, String email) {
         User user = userRepository.findUserByEmail(email);
         String solution = "";
+        String salt = user.getSalt();
+        String hashedAnswer = generateHash(antwort, salt);
+
         if (frage.equals(user.getQuestion1())) {
             solution = user.getAnswer1();
         } else if (frage.equals(user.getQuestion2())) {
             solution = user.getAnswer2();
         }
-        if (antwort.equals(solution)) {
+        if (hashedAnswer.equals(solution)) {
             return true;
         }
         return false;

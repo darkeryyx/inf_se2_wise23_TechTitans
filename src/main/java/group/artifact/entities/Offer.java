@@ -11,14 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+
+import lombok.*;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Entity
 @Table(name = "offers", schema = "project")
 public class Offer {
@@ -29,6 +27,7 @@ public class Offer {
 
     // foreign keys
     @ManyToOne
+    @NonNull
     @JoinColumn(name = "company_fk", nullable = false)
     private Company company;
 
@@ -37,6 +36,7 @@ public class Offer {
 
     // attributes
     @NonNull
+    @Column(nullable = false)
     private String job;
     @NonNull
     @Column(nullable = false)
@@ -45,5 +45,6 @@ public class Offer {
     @Column(nullable = false)
     private String description;
     @NonNull
+    @Column(nullable = false)
     private String income;
 }

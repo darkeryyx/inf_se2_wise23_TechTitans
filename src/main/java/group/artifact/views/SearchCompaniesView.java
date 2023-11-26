@@ -2,7 +2,6 @@ package group.artifact.views;
 
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -16,17 +15,14 @@ import com.vaadin.flow.router.RouterLink;
 
 import group.artifact.controller.CompanyController;
 import group.artifact.dtos.CompanyDTO;
-import group.artifact.entities.Company;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 @Route("search/company")
 @RolesAllowed("ROLE_USER")
-public class SearchCompaniesView extends MainView {
+public class SearchCompaniesView extends HomeView {
     CompanyController companyController;
     MultiSelectComboBox<String> businessComboBox;
 

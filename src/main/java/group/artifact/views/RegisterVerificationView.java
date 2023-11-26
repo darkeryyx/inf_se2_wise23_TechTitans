@@ -1,5 +1,6 @@
 package group.artifact.views;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -42,7 +43,7 @@ public class RegisterVerificationView extends VerticalLayout {
         Anchor resendLink = new Anchor("/", "erneut senden");
         add(resendLink);
 
-        Button verifyButton = new Button("Bestätigen");
+        Button verifyButton = new Button("Bestätigen", e -> UI.getCurrent().navigate("/create/profile"));
         verifyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         add(verifyButton);
     }

@@ -76,7 +76,7 @@ public class LoginView extends Composite<Component> {
         } else {
             if (userController.login(email, password)) {
                 getUI().ifPresent(ui -> ui.access(() -> {
-                    ui.navigate("");
+                    ui.navigate("/home");
                     Notification.show("Login erfolgreich!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 }));
             } else {

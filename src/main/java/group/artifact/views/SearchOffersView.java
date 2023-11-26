@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 
 @Route("search/offer")
 @RolesAllowed("ROLE_USER")
-public class SearchOffersView extends MainView {
+public class SearchOffersView extends HomeView {
 
     private final OfferController offerController;
     public SearchOffersView(OfferController offerController) {

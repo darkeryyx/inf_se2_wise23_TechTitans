@@ -46,7 +46,7 @@ public class CreateProfile extends VerticalLayout {
     // general buttons
     private Component currentForm;
     private Button submitButton = new Button("Bestätigen");
-    private Button skipButton = new Button("Überspringen");
+    private Button skipButton = new Button("Überspringen", e -> UI.getCurrent().navigate("home"));
 
     // student fields
     TextField subject = new TextField("Studienfach");
@@ -109,6 +109,7 @@ public class CreateProfile extends VerticalLayout {
         submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         submitButton.addClickListener(e -> createStudent());
         studentForm.setAlignItems(Alignment.CENTER);
+        setUpStudentBinder();
         return studentForm;
     }
 
@@ -125,11 +126,12 @@ public class CreateProfile extends VerticalLayout {
         }
         // workaround: cannot bind integer user to user, check with binder not possible
         Student newStudent = new Student();
+        newStudent.setSkills(null);
         try {
             binder.writeBean(newStudent);
             studentController.createStudentProfile(newStudent, user);
             getUI().ifPresent(ui -> ui.access(() -> {
-                ui.navigate(RegisterVerificationView.class);
+                ui.navigate("/home");
             }));
             Notification.show("Studentenprofil erfolgreich erstellt!");
         } catch (ValidationException VE) {
@@ -140,7 +142,11 @@ public class CreateProfile extends VerticalLayout {
     }
 
     private void setUpStudentBinder() {
-        binder.bindInstanceFields(this);
+        binder.forField(skills).bind("skills");
+        binder.forField(interests).bind("interests");
+        binder.forField(studentDescription).bind("description");
+        binder.forField(image).bind("image");
+
         binder.forField(semester).asRequired("Semester ist ein Pflichtfeld")
                 .withValidator(new IntegerRangeValidator("Zahl muss zwischen 1 bis 99 liegen", 1, 99)).bind("semester");
 
