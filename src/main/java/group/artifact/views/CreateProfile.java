@@ -192,7 +192,7 @@ public class CreateProfile extends VerticalLayout {
 
     private void createCompany(Integer user, String name, String business, Integer employees, LocalDate founded,
             String link, String logo, String description) {
-        Company company = new Company(name, business, employees, founded, link, description, logo);
+        Company company = new Company(name, business, employees, founded, link, logo,description);
         try {
             companyController.createCompany(company, user);
             getUI().ifPresent(ui -> ui.access(() -> {
