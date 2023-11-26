@@ -2,7 +2,6 @@ package group.artifact.views;
 
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -10,26 +9,18 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.provider.AbstractBackEndDataProvider;
-import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
-import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import group.artifact.controller.OfferController;
-import group.artifact.dtos.CompanyDTO;
 import group.artifact.dtos.OfferDTO;
-import group.artifact.entities.Company;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.security.RolesAllowed;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Route("search/offer")
 @RolesAllowed("ROLE_USER")

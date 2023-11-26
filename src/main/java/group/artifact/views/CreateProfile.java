@@ -14,11 +14,13 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
@@ -28,6 +30,7 @@ import com.vaadin.flow.router.Route;
 import group.artifact.controller.CompanyController;
 import group.artifact.controller.StudentController;
 import group.artifact.controller.UserController;
+import group.artifact.entities.Company;
 import group.artifact.entities.Student;
 import group.artifact.entities.User;
 
@@ -56,17 +59,17 @@ public class CreateProfile extends VerticalLayout {
     TextField interests = new TextField("Interessen");
     TextField studentDescription = new TextField("Beschreibung");
     TextField image = new TextField("Bild");
-    private Binder<Student> binder = new Binder<>(Student.class);
+    private Binder<Student> studentBinder = new Binder<>(Student.class);
 
     // company fields
-    IntegerField user = new IntegerField("User-ID");
-    TextField name = new TextField("Firmenname");
-    TextField business = new TextField("Branche");
-    IntegerField employees = new IntegerField("Mitarbeiteranzahl");
-    DatePicker founded = new DatePicker("Gründungsdatum");
-    TextField link = new TextField("Link zur Unternehmenswebseite");
-    TextField companyDescription = new TextField("Beschreibung");
-    TextField logo = new TextField("Logo");
+    TextField user = createRequiredTextField("User-ID");
+    TextField name = createRequiredTextField("Firmenname");
+    TextField business = createRequiredTextField("Branche");
+    IntegerField employees = createIntegerField("Mitarbeiteranzahl");
+    DatePicker founded = createDatePicker("Gründungsdatum");
+    TextField link = createRequiredTextField("Webseite");
+    TextField logo = createTextField("Logo");
+    TextArea companyDesription = createTextArea("Beschreibung");
 
     public CreateProfile() {
         addClassName("create-profile-view");
@@ -88,6 +91,7 @@ public class CreateProfile extends VerticalLayout {
         currentForm = createStudentForm();
         add(currentForm);
 
+        submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         // add a selection listener to change the form based on the selected tab
         tabs.addSelectedChangeListener(event -> {
             remove(currentForm);
@@ -100,13 +104,14 @@ public class CreateProfile extends VerticalLayout {
         });
     }
 
+    // student specific methods
+
     private Component createStudentForm() {
         // create and return the student form component
         VerticalLayout studentForm = new VerticalLayout();
         HorizontalLayout buttonLayout = new HorizontalLayout(submitButton, skipButton);
         studentForm.add(
                 subject, birthday, semester, skills, interests, studentDescription, image, buttonLayout);
-        submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         submitButton.addClickListener(e -> createStudent());
         studentForm.setAlignItems(Alignment.CENTER);
         setUpStudentBinder();
@@ -121,36 +126,34 @@ public class CreateProfile extends VerticalLayout {
         }
         if (studentController.studentExists(user.getUser_pk())) {
             Notification.show("Das Studentprofil existiert bereits");
-            UI.getCurrent().navigate("");
             return;
         }
         // workaround: cannot bind integer user to user, check with binder not possible
         Student newStudent = new Student();
         newStudent.setSkills(null);
         try {
-            binder.writeBean(newStudent);
+            studentBinder.writeBean(newStudent);
             studentController.createStudentProfile(newStudent, user);
             getUI().ifPresent(ui -> ui.access(() -> {
                 ui.navigate("/home");
             }));
             Notification.show("Studentenprofil erfolgreich erstellt!");
         } catch (ValidationException VE) {
-            Notification.show("Bitte überprüfen Sie Ihre Eingaben.");
         } catch (DataIntegrityViolationException DIVE) {
             Notification.show("Für diese ID existiert bereits ein Profil");
         }
     }
 
     private void setUpStudentBinder() {
-        binder.forField(skills).bind("skills");
-        binder.forField(interests).bind("interests");
-        binder.forField(studentDescription).bind("description");
-        binder.forField(image).bind("image");
+        studentBinder.forField(skills).bind("skills");
+        studentBinder.forField(interests).bind("interests");
+        studentBinder.forField(studentDescription).bind("description");
+        studentBinder.forField(image).bind("image");
 
-        binder.forField(semester).asRequired("Semester ist ein Pflichtfeld")
+        studentBinder.forField(semester).asRequired("Semester ist ein Pflichtfeld")
                 .withValidator(new IntegerRangeValidator("Zahl muss zwischen 1 bis 99 liegen", 1, 99)).bind("semester");
 
-        binder.forField(birthday)
+        studentBinder.forField(birthday)
                 .withValidator(
                         date -> date == null || date.isBefore(LocalDate.now().plusDays(1)),
                         "Das Datum kann nicht in der Zukunft liegen")
@@ -159,20 +162,88 @@ public class CreateProfile extends VerticalLayout {
                         "Das Datum muss ab/nach 1900 liegen")
                 .bind("birthday");
 
-        binder.forField(subject).withValidator(name -> name.length() >= 3,
+        studentBinder.forField(subject).withValidator(name -> name.length() >= 3,
                 "Das Studienfach muss mindestens 3 Buchstaben haben").bind("subject");
 
-        binder.forField(subject).asRequired("Studienfach ist ein Plichtfeld");
+        studentBinder.forField(subject).asRequired("Studienfach ist ein Plichtfeld");
     }
+
+    // company specific methods
 
     private Component createCompanyForm() {
         // create and return the company form component
-
         VerticalLayout companyForm = new VerticalLayout();
         HorizontalLayout buttonLayout = new HorizontalLayout(submitButton, skipButton);
+
         companyForm.add(
-                user, name, business, employees, founded, link, companyDescription, logo, buttonLayout);
+                user, name, business, employees, founded, link, companyDesription, logo, buttonLayout);
         companyForm.setAlignItems(Alignment.CENTER);
+        submitButton.addClickListener(event -> createCompany(
+                Integer.parseInt(user.getValue()),
+                name.getValue(),
+                business.getValue(),
+                employees.getValue(),
+                founded.getValue(),
+                link.getValue(),
+                logo.getValue(),
+                companyDesription.getValue()));
         return companyForm;
+    }
+
+    private void createCompany(Integer user, String name, String business, Integer employees, LocalDate founded,
+            String link, String logo, String description) {
+        Company company = new Company(name, business, employees, founded, link, description, logo);
+        try {
+            companyController.createCompany(company, user);
+            getUI().ifPresent(ui -> ui.access(() -> {
+                ui.navigate(HomeView.class);
+            }));
+            Notification.show("Firmenprofil erfolgreich angelegt.").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        } catch (DataIntegrityViolationException DIVE) {
+            Notification.show("Firmenprofil existiert bereits.").addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
+    }
+
+    private TextField createTextField(String label) {
+        TextField textField = new TextField(label);
+        textField.setWidth("10%");
+        return textField;
+    }
+
+    private DatePicker createDatePicker(String label) {
+        DatePicker datepicker = new DatePicker(String.valueOf(label));
+        datepicker.setWidth("10%");
+        return datepicker;
+    }
+
+    private TextField createRequiredTextField(String label) {
+        TextField requiredTextField = new TextField(label);
+        requiredTextField.setRequired(true); // Make required field
+        requiredTextField.setErrorMessage("Bitte füllen Sie das erforderliche Feld aus.");
+        requiredTextField.setWidth("10%");
+        return requiredTextField;
+    }
+
+    public TextArea createTextArea(String label) {
+        TextArea textArea = new TextArea(label);
+        textArea.setLabel(label);
+        textArea.setHelperText("beschreiben Sie Ihr Unternehmen kurz");
+        textArea.setPlaceholder("Schreiben Sie hier . . . ");
+        textArea.setWidth("30%");
+        textArea.setHeight("30%");
+        textArea.setClearButtonVisible(true);
+
+        return textArea;
+
+    }
+
+    public IntegerField createIntegerField(String label) {
+        IntegerField integerField = new IntegerField(label);
+        integerField.setHelperText("mind. 1 Mitarbeiter(in)");
+        integerField.setMin(1);
+        integerField.setValue(1);
+        integerField.setWidth("10%");
+        integerField.setStepButtonsVisible(true);
+        return integerField;
     }
 }

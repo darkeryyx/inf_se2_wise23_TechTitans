@@ -1,12 +1,13 @@
 package group.artifact.views;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -43,7 +44,12 @@ public class RegisterVerificationView extends VerticalLayout {
         Anchor resendLink = new Anchor("/", "erneut senden");
         add(resendLink);
 
-        Button verifyButton = new Button("Bestätigen", e -> UI.getCurrent().navigate("/create/profile"));
+        Button verifyButton = new Button("Bestätigen", e -> {
+            getUI().ifPresent(ui -> ui.access(() -> {
+                ui.navigate("/create/profile");
+                Notification.show("E-Mail erfolreich verifiziert").addThemeVariants(NotificationVariant.LUMO_SUCCESS);;
+            }));
+        });
         verifyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         add(verifyButton);
     }
