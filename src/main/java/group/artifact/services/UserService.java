@@ -1,5 +1,8 @@
 package group.artifact.services;
 
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -219,7 +222,7 @@ public class UserService {
      * @returns: false -> password is on list
      *           true -> else
      */ 
-public static boolean isCommonPassword(String password) throws IOException{
+public static boolean isCommonPassword(String passwd) throws IOException{
         List<String> list = new ArrayList<>();
         BufferedReader br = null;
         try{
@@ -236,7 +239,7 @@ public static boolean isCommonPassword(String password) throws IOException{
             }
         }
         for(String commonpw : list){
-            if password.equals(commonpw){
+            if(passwd.equals(commonpw)){
                 return true;
             }
         }
