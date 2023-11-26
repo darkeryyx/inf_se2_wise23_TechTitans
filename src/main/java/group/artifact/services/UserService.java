@@ -210,4 +210,36 @@ public class UserService {
         }
         return user;
     }
+
+        /*
+     * reads commonpasswordlist and compares it with userpassword
+     * 
+     * @param: String: registration form user password
+     * 
+     * @returns: false -> password is on list
+     *           true -> else
+     */ 
+public static boolean isCommonPassword(String password) throws IOException{
+        List<String> list = new ArrayList<>();
+        BufferedReader br = null;
+        try{
+        br = new BufferedReader(new FileReader("./best1050.txt"));
+        String line;
+        while((line = br.readLine())!= null){
+            list.add(line);
+        }
+        } catch(IOException e){
+            e.printStackTrace();
+        }finally{
+            if (br != null){
+            br.close();
+            }
+        }
+        for(String commonpw : list){
+            if password.equals(commonpw){
+                return true;
+            }
+        }
+        return false;
+    }    
 }
