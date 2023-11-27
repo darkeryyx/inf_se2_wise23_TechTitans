@@ -1,5 +1,6 @@
 package group.artifact.views;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -28,7 +29,9 @@ public class RegisterVerificationView extends VerticalLayout {
 
         Paragraph text = new Paragraph("Bitte geben Sie den Code ein, den Sie per E-Mail erhalten haben.");
         add(text);
-
+        Anchor resendLink = new Anchor("/", "erneut senden");
+        add(resendLink);
+        
         HorizontalLayout inputFields = new HorizontalLayout();
         TextField[] codeFields = new TextField[5];
         for (int i = 0; i < codeFields.length; i++) {
@@ -41,16 +44,17 @@ public class RegisterVerificationView extends VerticalLayout {
         }
         add(inputFields); // add inputs to the main layout
 
-        Anchor resendLink = new Anchor("/", "erneut senden");
-        add(resendLink);
-
         Button verifyButton = new Button("Bestätigen", e -> {
             getUI().ifPresent(ui -> ui.access(() -> {
                 ui.navigate("/create/profile");
-                Notification.show("E-Mail erfolreich verifiziert").addThemeVariants(NotificationVariant.LUMO_SUCCESS);;
+                Notification.show("E-Mail erfolreich verifiziert").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                ;
             }));
         });
         verifyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        add(verifyButton);
+        Button skipButton = new Button("Überspringen", e -> UI.getCurrent().navigate("/create/profile"));
+        HorizontalLayout buttons = new HorizontalLayout();
+        buttons.add(verifyButton, skipButton);
+        add(buttons);
     }
 }

@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H2;
@@ -34,6 +35,7 @@ public class LoginView extends Composite<Component> {
         TextField email = new TextField("Email");
         PasswordField password = new PasswordField("Passwort");
         Anchor pwVergessen = new Anchor("forgotPW", "Passwort vergessen?");
+        Anchor account = new Anchor("register", "Account erstellen");
 
         password.addKeyDownListener(Key.ENTER, event -> {
             login(email.getValue(), password.getValue());
@@ -43,15 +45,19 @@ public class LoginView extends Composite<Component> {
             login(email.getValue(), password.getValue());
         });
 
+        Button submit = new Button("Bestätigen", event -> login(
+                email.getValue(),
+                password.getValue()));
+        submit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
         VerticalLayout loginFormLayout = new VerticalLayout(
                 new H2("Login"),
                 email,
                 password,
-                new Button("Bestätigen", event -> login(
-                        email.getValue(),
-                        password.getValue())));
+                submit);
 
         loginFormLayout.add(pwVergessen);
+        loginFormLayout.add(account);
 
         loginFormLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
