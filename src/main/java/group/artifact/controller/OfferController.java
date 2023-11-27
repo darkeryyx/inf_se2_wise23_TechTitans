@@ -22,4 +22,6 @@ public class OfferController {
     public List<OfferDTO> getAllOffersAndTheirCompany() {
         return offerService.getAllOffersAndTheirCompany();
     }
+
+    public List<String> getBusinessList() {return offerService.getBusinessList();}
 }
