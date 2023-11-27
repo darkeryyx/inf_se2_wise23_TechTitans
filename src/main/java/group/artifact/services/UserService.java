@@ -50,6 +50,22 @@ public class UserService {
             user.setSalt(generateSalt(16)); // generate salt
             user.setPassword(generateHash(user.getPassword(), user.getSalt())); // hash pw
 
+                 /*      KOMMENTARE NICH MIT PUSHEN NUR FÜR MICH ZUM VERSTÄNDNIS
+            List<String> sQuestions =getQuestions(newUser.getEmail());
+          //  Map<String, String> sQuestions = newUser.getSQA();
+     //       if(antwort.equals(user.getSQA().get(frage))){
+            String firstQ = sQuestions.get(0);
+            newUser.setSQA(firstQ, generateHash(newUser.getSQA().get(firstQ),newUser.getSalt())); //geht net,weil kann ja net map<string,<string> mit <frage,antwort> ersetzen ist ja keine map, müsste getSQA.put benutzten und paar reinzutun in map
+            Map<String, String> sQuestisdons = newUser.getSQA();
+            newUser.setSQA(sQuestisdons); //map mit map ersetzen, könnte vllt auch so machen-> neue map, fragen und gehashedn antworte nrein und dann setSQA(neue sqa) aber untere version viel besser */
+            //   List<String> sQuestions = getQuestions(newUser.getEmail()); //das funkt net weil getQuestions auf repository zugreift aber user is ja noch net in db gespeichert
+
+            //antworten der sFragen hashen
+       /*     Set<String> sQuestions = newUser.getSQA().keySet();
+            for (String question : sQuestions) {
+                String hashedAnswer = generateHash(newUser.getSQA().get(question), newUser.getSalt());
+                newUser.getSQA().put(question, hashedAnswer); //ersetzt die antworten der vorhandenen keys(questions) mit den gehashden antworten
+            }*/
             String hashedAnswer1 = generateHash(user.getAnswer1(), user.getSalt());
             user.setAnswer1(hashedAnswer1);
             String hashedAnswer2 = generateHash(user.getAnswer2(), user.getSalt());
@@ -252,5 +268,24 @@ public static boolean isCommonPassword(String passwd) throws IOException{
             }
         }
         return false;
-    }    
+    }
+
+    public boolean pwLengthValid(String pw){
+        return pw.length() >=8;
+    }
+
+    public boolean pwUpperCaseValid(String pw){
+        return !pw.equals(pw.toLowerCase());
+    }
+
+    public boolean pwSpecialCharValid(String pw){
+        String specialChars = "(.*[@,#,$,!,&,/,(,),=,?,%].*$)";
+        return pw.matches(specialChars) ;
+    }
+
+    public boolean pwNumberValid(String pw){
+        String numbers = "(.*[0,1,2,3,4,5,6,7,8,9].*$)";
+        return pw.matches(numbers) ;
+    }
+
 }

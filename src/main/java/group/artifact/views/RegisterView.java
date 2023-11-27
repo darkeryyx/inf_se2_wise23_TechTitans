@@ -2,6 +2,10 @@ package group.artifact.views;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
@@ -52,6 +56,16 @@ public class RegisterView extends Composite<Component> {
         PasswordField passwort = new PasswordField("Passwort");
         PasswordField passwort2 = new PasswordField("Passwort bestätigen");
 
+        //passwort anforderungen
+        HorizontalLayout passwortAnforderungen =new HorizontalLayout();
+        HorizontalLayout laenge= createPasswordRequirement("mind. 8 Zeichen");
+        HorizontalLayout großbuchstabe= createPasswordRequirement("mind. 1 Großbuchstabe");
+        HorizontalLayout sonderzeichen= createPasswordRequirement("mind. 1 Sonderzeichen");
+        HorizontalLayout zahl= createPasswordRequirement("mind. 1 Zahl");
+
+        passwortAnforderungen.add(laenge,großbuchstabe,sonderzeichen,zahl);
+        passwort.addValueChangeListener(event ->validatePW(event.getValue(), laenge, großbuchstabe, sonderzeichen,zahl));
+
         // für die sicherheitsfragen
         MultiSelectComboBox<String> securityQuestionsComboBox = new MultiSelectComboBox<>();
         securityQuestionsComboBox.setLabel("Wählen Sie 2 Sicherheitsfragen");
@@ -84,6 +98,7 @@ public class RegisterView extends Composite<Component> {
                 line1, 
                 line2,
                 line3,
+                passwortAnforderungen,
                 securityQuestionsComboBox,
                 answerLayout,
                 checkbox,
@@ -93,8 +108,31 @@ public class RegisterView extends Composite<Component> {
         return layout;
     }
 
-    private VerticalLayout answerLayout = new VerticalLayout();
+    private HorizontalLayout createPasswordRequirement(String text){
+        Icon icon = VaadinIcon.CHECK_CIRCLE.create();
+        icon.setColor("var(--lumo-error-color)");
+        icon.setSize("15px");
 
+        HorizontalLayout layout =new HorizontalLayout(icon, new Span(text));
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+        return layout;
+    }
+
+    private void validatePW(String passwort, HorizontalLayout laenge, HorizontalLayout groß, HorizontalLayout sonder, HorizontalLayout zahl){
+
+        updateIndicator(laenge, userController.pwLengthValid(passwort));
+        updateIndicator(groß, userController.pwUpperCaseValid(passwort));
+        updateIndicator(sonder, userController.pwSpecialCharValid(passwort));
+        updateIndicator(zahl, userController.pwNumberValid(passwort));
+    }
+
+    private void updateIndicator(HorizontalLayout ind, boolean valid){
+        Icon icon= (Icon) ind.getComponentAt(0);
+        icon.setColor(valid? "green" : "var(--lumo-error-color)");
+    }
+
+    private VerticalLayout answerLayout = new VerticalLayout();
     private void onSecurityQuestionsSelected(
             AbstractField.ComponentValueChangeEvent<MultiSelectComboBox<String>, Set<String>> value) {
         Set<String> selectedQuestions = value.getValue();
@@ -127,8 +165,9 @@ public class RegisterView extends Composite<Component> {
         } else if (checkBox.equals("false")) {
             Notification.show("Bitte stimme unseren AGB zu").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else if (sicherheitsQA.size() < 2) {
-            Notification.show("Bitte beantworten Sie alle Sicherheitsfragen")
-                    .addThemeVariants(NotificationVariant.LUMO_ERROR);
+            Notification.show("Bitte beantworten Sie alle Sicherheitsfragen").addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }else if(!userController.pwNumberValid(passwort) ||!userController.pwSpecialCharValid(passwort)||!userController.pwUpperCaseValid(passwort) ||!userController.pwLengthValid(passwort)) {
+            Notification.show("Passwort entspricht nicht den Anforderungen!").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else {
             User user = new User(vorname, nachname, passwort, email.getValue(), false);
             String result = userController
