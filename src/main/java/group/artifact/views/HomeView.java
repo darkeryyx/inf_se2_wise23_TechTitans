@@ -16,14 +16,6 @@ public class HomeView extends VerticalLayout {
     HorizontalLayout fooder;
 
     HomeView() {
-        header = new HorizontalLayout();
-
-        content = new VerticalLayout();
-
-        fooder = new HorizontalLayout();
-
-        content.setWidth("80%");
-        /*
         Anchor login = new Anchor("login", "Login");
         Anchor register = new Anchor("register", "Registrieren");
         Anchor registerVerify = new Anchor("register/verify", "E-Mail bestätigen");
@@ -36,9 +28,15 @@ public class HomeView extends VerticalLayout {
         Anchor searchOffersView = new Anchor("search/offers", "Angebote suchen");
 
         Anchor viewStudentProfile = new Anchor("view/student", "Studentenprofil ansehen");
-        add(login, register, registerVerify, forgotPW, createProfile, createOfferView, searchCompaniesView, searchOffersView, viewStudentProfile);
 
-         */
+        header = new HorizontalLayout(login, register, registerVerify, forgotPW, createProfile, createOfferView, searchCompaniesView, searchOffersView, viewStudentProfile);
+
+        content = new VerticalLayout();
+
+        fooder = new HorizontalLayout();
+
+        content.setWidth("80%");
+
     }
 
     HomeView(VerticalLayout content) {

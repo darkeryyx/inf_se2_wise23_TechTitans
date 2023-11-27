@@ -3,7 +3,7 @@ package group.artifact.views;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
@@ -13,26 +13,19 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.provider.AbstractBackEndDataProvider;
-import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
-import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import group.artifact.controller.OfferController;
-import group.artifact.dtos.CompanyDTO;
 import group.artifact.dtos.OfferDTO;
-import group.artifact.entities.Company;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.security.RolesAllowed;
 
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Route("search/offers")
 @RolesAllowed("ROLE_USER")
@@ -43,6 +36,7 @@ public class SearchOffersView extends HomeView {
         super();
         this.offerController = offerController;
         this.setContent(this.content());
+        this.add();
     }
     VerticalLayout content() {
 
@@ -53,7 +47,7 @@ public class SearchOffersView extends HomeView {
         grid.setItems(offerDataProvider);
 
         //TODO: Fehler beim Zugreifen auf company deswegen in dto nur name übergeben -> keinen zugriff auf link
-        grid.addComponentColumn(item -> gridRowLayout(item));
+        grid.addComponentColumn( item-> gridRowLayout(item));
 
         // Filtering Components
         MultiSelectComboBox<String> businessComboBox = new MultiSelectComboBox<>("Branchen");
@@ -100,62 +94,86 @@ public class SearchOffersView extends HomeView {
                 }));
         businessComboBox.setClearButtonVisible(true);
 
-        // Width, Hight, Icons
-        grid.setWidth("1100px");
-        minIncome.setWidth("150px");
-        searchText.setWidth("770px");
-        businessComboBox.setWidth("150px");
-        searchText.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
-
+        //Others
         RouterLink searchCompanyViewLink = new RouterLink(SearchCompaniesView.class);
-        searchCompanyViewLink.setText("Nach Unternehmen suchen");
+        searchCompanyViewLink.setText("-> hier geht es zur Suche von Unternehmen");
+        searchCompanyViewLink.getStyle().set("text-decoration", "underline");
 
-        // Layout
+        //Titel - erstmal vorläufig bis Standardheader definiert
+        H3 viewTitle = new H3("Suchen und Filtern von Stellenangeboten");
+
+        //Layout - searching and filtering
+        businessComboBox.setWidth("15%");
+        searchText.setWidth("85%");
+        searchText.setPrefixComponent( new Icon (VaadinIcon.SEARCH));
+
+        HorizontalLayout searchings = new HorizontalLayout(businessComboBox, searchText, minIncome);
+        searchings.setWidth("70%");
+        searchings.setHeight("10%");
+
+        //Layout -grid
+        grid.setWidth("70%");
+        grid.setHeightByRows(true);
+        grid.getStyle().set("border","none");
+        grid.getStyle().set("box-shadow", "none");
+
+        //Content Layout
         VerticalLayout layout = new VerticalLayout(
-                new HorizontalLayout(
-                        searchCompanyViewLink),
-                new HorizontalLayout(
-                        businessComboBox,
-                        searchText,
-                        minIncome),
-                grid);
-
+                viewTitle,
+                searchCompanyViewLink,
+                searchings,
+                grid
+        );
+        layout.setAlignSelf(Alignment.END, searchCompanyViewLink);
+        layout.setAlignSelf(Alignment.CENTER, searchings,grid, viewTitle);
+        layout.setSizeFull();
+        layout.setHeightFull();
         return layout;
+
     }
+
+
     static HorizontalLayout gridRowLayout(OfferDTO item){
 
         Image logo = new Image ("images/fabrik.png", "images/fabrik.png");
-        Label companyName = new Label(item.getCompanyName());
-        Label business = new Label(item.getBusiness());
+        Label details = new Label("Branche: " + item.getBusiness() + "\u3000\u3000" + "Gehalt: " + item.getIncome() + " €/h");
+        Label company = new Label(item.getCompanyName());
         Label job = new Label(item.getJob());
         Label description = new Label(item.getDescription());
-        Label income = new Label(item.getIncome());
+
+        //LogoLayout
+        logo.setWidth("100px");
+        logo.setHeight("100px");
 
 
-        //left
-        VerticalLayout leftLayout = new VerticalLayout(logo, business);
+        HorizontalLayout logoLayout = new HorizontalLayout(logo);
+        logoLayout.setMargin(true);
 
-        logo.getStyle().set("border-radius","2px");
-        logo.setWidthFull();
-        logo.setHeightFull();
+        //InfoLayout
+        company.getStyle().set("font-size", "9pt");
 
-        business.getStyle().set("font-size", "14pt");
-
-        //Middle
-        VerticalLayout rightLayout = new VerticalLayout(companyName, job, description);
-        companyName.getStyle().set("font-size", "10pt");
-
-        job.getStyle().set("font-size", "14pt");
+        job.getStyle().set("font-size", "16pt");
         job.getStyle().set("font-weight", "bold");
-        description.getStyle().set("font-size", "11pt");
+        job.getStyle().set("text-decoration", "underline");
+        job.getStyle().set("margin-top", "0");
 
-        description.setWhiteSpace(HasText.WhiteSpace.NORMAL);
+        description.getStyle().set("font-size", "11pt");
+        description.getStyle().set("overflow", "hidden");
+        description.getStyle().set("text-overflow", "ellipsis");
+        description.getStyle().set("max-height", "3em");
+        description.setWhiteSpace(HasText.WhiteSpace.NORMAL)  ;
+
+        VerticalLayout infoLayout = new VerticalLayout(company,job,details, description);
+        infoLayout.setSpacing(false);
+        infoLayout.setAlignItems(Alignment.START);
 
         
-        leftLayout.setWidth("30%");
-        rightLayout.setWidth("70%");
+        //RowLayout
+        HorizontalLayout layout = new HorizontalLayout(logoLayout, infoLayout);
+        layout.setSpacing(false);
+        layout.setAlignItems(Alignment.START);
 
-        return new HorizontalLayout(leftLayout, rightLayout);
+        return layout;
     }
 
 }
