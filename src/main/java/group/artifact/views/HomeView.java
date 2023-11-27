@@ -22,7 +22,7 @@ public class HomeView extends VerticalLayout {
         Anchor forgotPW = new Anchor("forgotPW", "Passwort vergessen?");
 
         Anchor createProfile = new Anchor("create/profile", "Profil erstellen");
-        Anchor createOfferView = new Anchor("create/offers", "Angebot erstellen");
+        Anchor createOfferView = new Anchor("create/offer", "Angebot erstellen");
 
         Anchor searchCompaniesView = new Anchor("search/companies", "Unternehmen suchen");
         Anchor searchOffersView = new Anchor("search/offers", "Angebote suchen");
@@ -37,6 +37,7 @@ public class HomeView extends VerticalLayout {
 
         content.setWidth("80%");
 
+        add(header, content, fooder);
     }
 
     HomeView(VerticalLayout content) {

@@ -46,5 +46,5 @@ public class Offer {
     private String description;
     @NonNull
     @Column(nullable = false)
-    private String income;
+    private float incomePerHour;
 }

@@ -8,11 +8,11 @@ public interface OfferDTO {
     public String getJob();
     public String getBusiness();
     public String getDescription();
-    public String getIncome();
+    public Float getIncomePerHour();
 
     public void setCompanyName(String company);
     public void setJob(String job);
     public void setBusiness(String business);
     public void setDescription(String description);
-    public void setIncome(String income);
+    public void setIncomePerHour(Float incomePerHour);
 }

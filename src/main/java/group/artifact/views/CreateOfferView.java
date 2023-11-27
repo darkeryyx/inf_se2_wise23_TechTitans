@@ -9,6 +9,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import group.artifact.controller.CompanyController;
@@ -38,7 +39,7 @@ public class CreateOfferView extends Composite<Component> {
     protected Component initContent() {
         TextField description = createTextField("Beschreibung");
         ComboBox<String> business = new ComboBox<>("Branche");
-        TextField income = createTextField("Gehalt");
+        NumberField income = new NumberField("Stundenlohn");
         TextField job = createTextField("Jobbezeichnung");
         TextField company = createTextField("Firmen_ID"); // TODO: Firma aus Session herauslesen
         List<String> businessList = offerController.getBusinessList();
@@ -50,7 +51,7 @@ public class CreateOfferView extends Composite<Component> {
                 job.getValue(),
                 business.getValue(),
                 description.getValue(),
-                income.getValue(),
+                income.getValue().floatValue(),
                 Integer.parseInt(company.getValue())));
 
         VerticalLayout layout = new VerticalLayout(
@@ -67,7 +68,7 @@ public class CreateOfferView extends Composite<Component> {
         return layout;
     }
 
-    private void createOffer(String job, String business, String description, String income, Integer company) {
+    private void createOffer(String job, String business, String description, Float income, Integer company) {
 
         Optional<Company> c = companyController.findByID(company);
         if(c.isPresent()) {

@@ -1,11 +1,18 @@
 package group.artifact.views;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.LocalDate;
 
 import javax.annotation.security.RolesAllowed;
 
+import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.upload.UploadI18N;
+import com.vaadin.flow.component.html.Div;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Component;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.vaadin.flow.component.Component;
@@ -63,8 +70,8 @@ public class CreateProfile extends VerticalLayout {
     TextField studentDescription = new TextField("Beschreibung");
     TextField image = new TextField("Bild");
     //me time
-    MemoryBuffer memoryBuffer = new MemoryBuffer();
-    Upload singleFileUpload = new Upload(memoryBuffer);
+    //MemoryBuffer memoryBuffer = new MemoryBuffer();
+    UploadFileFormat singleFileUpload = new UploadFileFormat();
     private Binder<Student> studentBinder = new Binder<>(Student.class);
 
     
@@ -118,29 +125,10 @@ public class CreateProfile extends VerticalLayout {
         // create and return the student form component
         VerticalLayout studentForm = new VerticalLayout();
         HorizontalLayout buttonLayout = new HorizontalLayout(submitButton, skipButton);
+
         studentForm.add(
                 subject, birthday, semester, skills, interests, studentDescription, image, singleFileUpload, buttonLayout);
         submitButton.addClickListener(e -> createStudent());
-
-        //fileupload ab hier
-        singleFileUpload.setAcceptedFileTypes("image/jpeg", "image/png", "image/gif");
-
-        singleFileUpload.addFileRejectedListener(event -> {
-        String errorMessage = event.getErrorMessage();
-
-        Notification notification = Notification.show(errorMessage, 5000,
-        Notification.Position.MIDDLE);
-        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-        });
-
-        singleFileUpload.addSucceededListener(event -> {
-        InputStream fileData = memoryBuffer.getInputStream();
-        String fileName = event.getFileName();
-        long contentLength = event.getContentLength();
-        String mimeType = event.getMIMEType();
-        // ToDo: sth with file
-        System.out.println(fileData);
-         });
          
         studentForm.setAlignItems(Alignment.CENTER);
         setUpStudentBinder();
@@ -154,7 +142,7 @@ public class CreateProfile extends VerticalLayout {
             return;
         }
         if (studentController.studentExists(user.getUser_pk())) {
-            Notification.show("Das Studentprofil existiert bereits");
+            Notification.show("Das Studentenprofil existiert bereits");
             return;
         }
         // workaround: cannot bind integer user to user, check with binder not possible
@@ -205,7 +193,7 @@ public class CreateProfile extends VerticalLayout {
         HorizontalLayout buttonLayout = new HorizontalLayout(submitButton, skipButton);
 
         companyForm.add(
-                user, name, business, employees, founded, link, logo,companyDesription, buttonLayout);
+                user, name, business, employees, founded, link, logo, singleFileUpload, companyDesription, buttonLayout);
         companyForm.setAlignItems(Alignment.CENTER);
         submitButton.addClickListener(event -> createCompany(
                 Integer.parseInt(user.getValue()),
@@ -216,6 +204,7 @@ public class CreateProfile extends VerticalLayout {
                 link.getValue(),
                 logo.getValue(),
                 companyDesription.getValue()));
+
         return companyForm;
     }
 
@@ -256,7 +245,7 @@ public class CreateProfile extends VerticalLayout {
     public TextArea createTextArea(String label) {
         TextArea textArea = new TextArea(label);
         textArea.setLabel(label);
-        textArea.setHelperText("beschreiben Sie Ihr Unternehmen kurz");
+        textArea.setHelperText("Beschreiben Sie Ihr Unternehmen kurz");
         textArea.setPlaceholder("Schreiben Sie hier . . . ");
         textArea.setWidth("30%");
         textArea.setHeight("30%");
@@ -275,4 +264,50 @@ public class CreateProfile extends VerticalLayout {
         integerField.setStepButtonsVisible(true);
         return integerField;
     }
+
+    public class UploadFileFormat extends Div {
+
+        public UploadFileFormat() {
+            MemoryBuffer buffer = new MemoryBuffer();
+            Upload upload = new Upload(buffer);
+
+            upload.setAcceptedFileTypes("image/jpeg", "image/png", "image/gif");
+            int maxFileSizeInBytes = 1024 * 1024; // 1MB
+            upload.setMaxFileSize(maxFileSizeInBytes);
+
+            upload.addFileRejectedListener(event -> {
+                String errorMessage = event.getErrorMessage();
+
+                Notification notification = Notification.show(errorMessage, 5000,
+                        Notification.Position.MIDDLE);
+                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            });
+
+            upload.addSucceededListener(event -> {
+                InputStream fileData = buffer.getInputStream();
+                String fileName = event.getFileName();
+                long contentLength = event.getContentLength();
+                String mimeType = event.getMIMEType();
+                // ToDo: sth with file
+                System.out.println(fileData);
+            /*
+            try {
+                byte[] targetArray = new byte[fileData.available()];
+             fileData.read(targetArray);
+            } catch (IOException e) {
+               Notification.show("IO Exception.");
+            }
+            */
+            });
+
+            H4 title = new H4("Bild hochladen");
+            title.getStyle().set("margin-top", "0");
+            Paragraph hint = new Paragraph("Maximale Dateigröße: 1 MB. Akzeptierte Formate: jpeg, png, gif.");
+            hint.getStyle().set("color", "var(--lumo-secondary-text-color)");
+
+            add(title, hint, upload);
+        }
+
+    }
+
 }
