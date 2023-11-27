@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -58,27 +60,34 @@ public class RegisterView extends Composite<Component> {
         securityQuestionsComboBox.setClearButtonVisible(true);
         securityQuestionsComboBox.setRequired(true);
         securityQuestionsComboBox.setRequiredIndicatorVisible(true);
-        securityQuestionsComboBox.setWidth("300px");
+        securityQuestionsComboBox.setWidth("20rem");
         securityQuestionsComboBox.addValueChangeListener(this::onSecurityQuestionsSelected);
         Checkbox checkbox = new Checkbox("Ich stimme den AGBs zu");
-        VerticalLayout layout = new VerticalLayout(
-                new H2("Registrieren"),
-                email,
-                vorname,
-                nachname,
-                passwort,
-                passwort2,
-                securityQuestionsComboBox,
-                answerLayout,
-                checkbox,
-                new Button("Bestätigen", event -> register(
+
+        HorizontalLayout line1 = new HorizontalLayout(vorname, nachname);
+        HorizontalLayout line2 = new HorizontalLayout(email);
+        email.setWidth("25rem");
+        HorizontalLayout line3 = new HorizontalLayout(passwort, passwort2);
+
+        Button submit = new Button("Bestätigen", event -> register(
                         email,
                         vorname.getValue(),
                         nachname.getValue(),
                         passwort.getValue(),
                         passwort2.getValue(),
                         checkbox.getValue().toString(),
-                        sicherheitsQA)));
+                        sicherheitsQA));
+        submit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        VerticalLayout layout = new VerticalLayout(
+                new H2("Registrieren"),
+                line1, 
+                line2,
+                line3,
+                securityQuestionsComboBox,
+                answerLayout,
+                checkbox,
+                submit);
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
         answerLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         return layout;
@@ -96,7 +105,7 @@ public class RegisterView extends Composite<Component> {
 
                 TextField answerField = new TextField();
                 answerField.setLabel("Antwort auf \"" + question + "\":");
-                answerField.setWidth("30%");
+                answerField.setWidth("25rem");
                 answerField.addValueChangeListener(e -> sicherheitsQA.put(question, e.getValue()));
                 answerLayout.add(answerField);
             }
@@ -121,7 +130,7 @@ public class RegisterView extends Composite<Component> {
             Notification.show("Bitte beantworten Sie alle Sicherheitsfragen")
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else {
-            User user = new User(vorname, nachname, passwort, email.getValue(),false);
+            User user = new User(vorname, nachname, passwort, email.getValue(), false);
             String result = userController
                     .register(new UserDTOImpl(user, sicherheitsQA));
             if (result == "email_error") {
