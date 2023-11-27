@@ -6,6 +6,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.BoxSizing;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextArea;
 import group.artifact.entities.Company;
@@ -66,13 +67,15 @@ public class CreateCompanyProfileView extends Composite<Component> {
                 description.getValue()
                 ));
         createProfileButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        createProfileButton.addClickListener(e -> Notification.show("Unternehmen" + name.getValue() + "erfolgreich angelegt"));
+        ProgressBar progressBar = new ProgressBar();
 
+        createProfileButton.addClickListener(e -> progressBar.setValue(0.5));
+        createProfileButton.addClickListener(e -> progressBar.setValue(1.0));
         //create cancel button. button goes back to Log in view
 
         Button cancelButton = new Button("Abbrechen", e -> {
             getUI().ifPresent(ui -> ui.navigate(LoginView.class));  //when user is present navigate back to log in view
-            Notification.show("Firmenprofilerstellung abgebrochen!");
+            Notification.show("Firmenprofilerstellung abgebrochen!").addThemeVariants(NotificationVariant.LUMO_ERROR);
         });
 
 
@@ -163,7 +166,7 @@ public class CreateCompanyProfileView extends Composite<Component> {
             getUI().ifPresent(ui -> ui.access(() -> {
                 ui.navigate(RegisterVerificationView.class);
             }));
-            showSuccessNotification();
+            showSuccessNotification(name);
         } catch (DataIntegrityViolationException DIVE) {
             showErrorNotification();
         }
@@ -222,8 +225,8 @@ public class CreateCompanyProfileView extends Composite<Component> {
         return formLayout;
     }
 
-    private void showSuccessNotification() {
-        Notification.show("Firmenprofil erfolgreich angelegt.").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+    private void showSuccessNotification(String component) {
+        Notification.show("Firmenprofil für " + component + "erfolgreich angelegt").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 
     private void showErrorNotification() {
