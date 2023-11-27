@@ -9,6 +9,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -37,11 +38,13 @@ public class forgotPWView extends Composite<Component> {
             checkEmail(
                   email.getValue());
         });
-        VerticalLayout enterEmailLayout = new VerticalLayout(
-                new H2("Passwort vergessen"),
-                email,
-                new Button("Bestätigen", event -> checkEmail(
-                        email.getValue())));
+        VerticalLayout enterEmailLayout = new VerticalLayout();
+        enterEmailLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+        enterEmailLayout.setSizeFull();
+
+
+        enterEmailLayout.add(new H2("Passwort vergessen"), email,
+                new Button("Bestätigen", event -> checkEmail(email.getValue())));
 
         return enterEmailLayout;
     }
@@ -71,8 +74,12 @@ public class forgotPWView extends Composite<Component> {
                     email,
                     sQuestions));
         });
-        VerticalLayout sqaLayout = new VerticalLayout(
-                new H5("Sie haben jeweils nur 3 Versuche um die Sicherheitsfragen korrekt zu beantworten!"),
+
+        VerticalLayout sqaLayout = new VerticalLayout();
+        sqaLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+        sqaLayout.setSizeFull();
+
+        sqaLayout.add(new H5("Sie haben jeweils nur 3 Versuche um die Sicherheitsfragen korrekt zu beantworten!"),
                 q1,
                 new Button("Bestätigen", event -> ((VerticalLayout) getContent()).add(checkSQA(
                         sQuestions.get(0),
@@ -80,12 +87,13 @@ public class forgotPWView extends Composite<Component> {
                         email,
                         sQuestions
                 ))));
+
         return sqaLayout;
     }
 
 
+
     public VerticalLayout checkSQA(String frage, String antwort, String email, List<String> liste) {
-        //wenn erste frage korrekt beantwortet wurde, wird die 2. angezeigt
         if (userController.checkSQA(frage, antwort, email)) {
             ((VerticalLayout) getContent()).removeAll();
 
@@ -99,17 +107,20 @@ public class forgotPWView extends Composite<Component> {
                         email
                 ));
             });
-            VerticalLayout q2Layout = new VerticalLayout(
-                    q2,
+
+
+            VerticalLayout q2Layout = new VerticalLayout();
+            q2Layout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+            q2Layout.setSizeFull();
+
+            q2Layout.add(q2,
                     new Button("Bestätigen", event -> ((VerticalLayout) getContent()).add(pwReset(
                             liste.get(1),
                             q2.getValue(),
                             email
                     ))));
 
-
             return q2Layout;
-
         } else {
             Notification.show(String.format("Falsche Antwort! Noch %d Versuche!", (3-(++answer1Attempts)))).addThemeVariants(NotificationVariant.LUMO_ERROR);
 
@@ -122,6 +133,7 @@ public class forgotPWView extends Composite<Component> {
             return sqaLayout(email);
         }
     }
+
 
     public VerticalLayout pwReset(String frage, String antwort, String email) {
 
@@ -140,14 +152,20 @@ public class forgotPWView extends Composite<Component> {
                         confirm.getValue()
                 );
             });
-            VerticalLayout pwNeu = new VerticalLayout(
+
+            VerticalLayout pwNeu = new VerticalLayout();
+            pwNeu.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+            pwNeu.setSizeFull();
+
+            pwNeu.add(
                     reset,
                     confirm,
                     new Button("Bestätigen", event -> pwNew(
                             email,
                             reset.getValue(),
                             confirm.getValue()
-                    )));
+                    ))
+            );
 
             return pwNeu;
 
@@ -163,6 +181,7 @@ public class forgotPWView extends Composite<Component> {
             return sqaLayout(email);
         }
     }
+
 
     public void pwNew(String email, String pw, String pw2) {
         if(pw.trim().isEmpty() || pw2.trim().isEmpty()){
