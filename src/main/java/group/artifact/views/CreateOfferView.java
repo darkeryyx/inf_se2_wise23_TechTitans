@@ -3,6 +3,7 @@ package group.artifact.views;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -18,6 +19,8 @@ import group.artifact.entities.Offer;
 import javax.annotation.security.RolesAllowed;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Route("create/offer")
@@ -34,10 +37,14 @@ public class CreateOfferView extends Composite<Component> {
 
     protected Component initContent() {
         TextField description = createTextField("Beschreibung");
-        TextField business = createTextField("Branche");
+        ComboBox<String> business = new ComboBox<>("Branche");
         TextField income = createTextField("Gehalt");
         TextField job = createTextField("Jobbezeichnung");
         TextField company = createTextField("Firmen_ID"); // TODO: Firma aus Session herauslesen
+        List<String> businessList = offerController.getBusinessList();
+        ComboBox.ItemFilter<String> filter = (b, filterString) -> b
+                .toLowerCase().startsWith(filterString.toLowerCase());
+        business.setItems(filter, businessList);
 
         Button createOfferButton = new Button("Veröffentlichen", event -> createOffer(
                 job.getValue(),
