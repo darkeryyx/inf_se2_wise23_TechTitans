@@ -2,15 +2,16 @@ package group.artifact.views;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
-import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -59,35 +60,34 @@ public class RegisterView extends Composite<Component> {
         securityQuestionsComboBox.setClearButtonVisible(true);
         securityQuestionsComboBox.setRequired(true);
         securityQuestionsComboBox.setRequiredIndicatorVisible(true);
-        securityQuestionsComboBox.setWidth("300px");
+        securityQuestionsComboBox.setWidth("20rem");
         securityQuestionsComboBox.addValueChangeListener(this::onSecurityQuestionsSelected);
-        RadioButtonGroup<String> radioGroup = new RadioButtonGroup<>();
-        radioGroup.setLabel("Status");
-        radioGroup.setItems("Firma", "Student");
-        // radioGroup.setValue("Pending");
         Checkbox checkbox = new Checkbox("Ich stimme den AGBs zu");
-        VerticalLayout layout = new VerticalLayout(
-                new H2("Registrieren"),
-                email,
-                vorname,
-                nachname,
-                passwort,
-                passwort2,
-                securityQuestionsComboBox,
-                answerLayout,
-                checkbox,
-                radioGroup,
-                new Button("Bestätigen", event -> register(
+
+        HorizontalLayout line1 = new HorizontalLayout(vorname, nachname);
+        HorizontalLayout line2 = new HorizontalLayout(email);
+        email.setWidth("25rem");
+        HorizontalLayout line3 = new HorizontalLayout(passwort, passwort2);
+
+        Button submit = new Button("Bestätigen", event -> register(
                         email,
                         vorname.getValue(),
                         nachname.getValue(),
                         passwort.getValue(),
                         passwort2.getValue(),
                         checkbox.getValue().toString(),
-                        sicherheitsQA,
-                        radioGroup.getValue()))
+                        sicherheitsQA));
+        submit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        );
+        VerticalLayout layout = new VerticalLayout(
+                new H2("Registrieren"),
+                line1, 
+                line2,
+                line3,
+                securityQuestionsComboBox,
+                answerLayout,
+                checkbox,
+                submit);
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
         answerLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         return layout;
@@ -105,7 +105,7 @@ public class RegisterView extends Composite<Component> {
 
                 TextField answerField = new TextField();
                 answerField.setLabel("Antwort auf \"" + question + "\":");
-                answerField.setWidth("30%");
+                answerField.setWidth("25rem");
                 answerField.addValueChangeListener(e -> sicherheitsQA.put(question, e.getValue()));
                 answerLayout.add(answerField);
             }
@@ -115,7 +115,7 @@ public class RegisterView extends Composite<Component> {
     }
 
     private void register(EmailField email, String vorname, String nachname, String passwort, String passwort2,
-            String checkBox, Map<String, String> sicherheitsQA, String radioValue) {
+            String checkBox, Map<String, String> sicherheitsQA) {
         if (email.getValue().trim().isEmpty() || !email.getValue().matches(email.getPattern())) {
             Notification.show("Bitte eine gültige Email eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else if (vorname.trim().isEmpty()) {
@@ -129,10 +129,8 @@ public class RegisterView extends Composite<Component> {
         } else if (sicherheitsQA.size() < 2) {
             Notification.show("Bitte beantworten Sie alle Sicherheitsfragen")
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
-        } else if (radioValue == null) {
-            Notification.show("Bitte wählen Sie Ihren Status aus").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else {
-            User user = new User(vorname, nachname, passwort, email.getValue());
+            User user = new User(vorname, nachname, passwort, email.getValue(), false);
             String result = userController
                     .register(new UserDTOImpl(user, sicherheitsQA));
             if (result == "email_error") {
@@ -140,11 +138,7 @@ public class RegisterView extends Composite<Component> {
             } else {
                 userController.login(email.getValue(), passwort);
                 getUI().ifPresent(ui -> ui.access(() -> {
-                    if (radioValue.equals("Firma")) {
-                        ui.navigate(CreateCompanyProfileView.class);
-                    } else if (radioValue.equals("Student")) {
-                        ui.navigate(CreateStudentProfileView.class);
-                    }
+                    ui.navigate(RegisterVerificationView.class);
                 }));
 
             }
