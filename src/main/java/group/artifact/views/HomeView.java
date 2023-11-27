@@ -37,6 +37,7 @@ public class HomeView extends VerticalLayout {
 
         content.setWidth("80%");
 
+        add(header, content, fooder);
     }
 
     HomeView(VerticalLayout content) {

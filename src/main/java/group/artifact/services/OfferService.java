@@ -30,7 +30,7 @@ public class OfferService {
             dto.setJob(offer.getJob());
             dto.setBusiness(offer.getBusiness());
             dto.setDescription(offer.getDescription());
-            dto.setIncome(offer.getIncome());
+            dto.setIncomePerHour(offer.getIncomePerHour());
             offerDTOS.add(dto);
         }
         return offerDTOS;

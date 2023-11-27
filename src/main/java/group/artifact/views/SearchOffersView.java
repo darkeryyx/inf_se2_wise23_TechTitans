@@ -70,9 +70,9 @@ public class SearchOffersView extends HomeView {
         minIncome.addValueChangeListener(event ->offerDataProvider.addFilter(
                 offer -> {
                     try {
-                        int income = 0;
+                        float income = 0;
                         try {
-                            income = Integer.valueOf(offer.getIncome());
+                            income = offer.getIncomePerHour();
                         } catch (NumberFormatException e) {
                         }
                         if (income >= minIncome.getValue()) {
@@ -136,7 +136,7 @@ public class SearchOffersView extends HomeView {
     static HorizontalLayout gridRowLayout(OfferDTO item){
 
         Image logo = new Image ("images/fabrik.png", "images/fabrik.png");
-        Label details = new Label("Branche: " + item.getBusiness() + "\u3000\u3000" + "Gehalt: " + item.getIncome() + " €/h");
+        Label details = new Label("Branche: " + item.getBusiness() + "\u3000\u3000" + "Gehalt: " + item.getIncomePerHour() + " €/h");
         Label company = new Label(item.getCompanyName());
         Label job = new Label(item.getJob());
         Label description = new Label(item.getDescription());
