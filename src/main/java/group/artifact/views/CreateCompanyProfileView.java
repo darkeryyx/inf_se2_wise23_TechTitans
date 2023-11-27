@@ -124,7 +124,6 @@ public class CreateCompanyProfileView extends Composite<Component> {
 
     public TextArea createTextArea(String label){
         TextArea textArea = new TextArea(label);
-        textArea.setLabel("Label");
         textArea.setHelperText("beschreiben Sie Ihr Unternehmen kurz");
         textArea.setPlaceholder("Schreiben Sie hier . . . ");
         textArea.setWidth("30%");
