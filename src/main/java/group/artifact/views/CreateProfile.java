@@ -209,7 +209,7 @@ public class CreateProfile extends VerticalLayout {
         HorizontalLayout buttonLayout = new HorizontalLayout(submitButton, skipButton);
 
         companyForm.add(
-                user, name, business, employees, founded, link, companyDesription, logo, buttonLayout);
+                user, name, business, employees, founded, link, logo,companyDesription, buttonLayout);
         companyForm.setAlignItems(Alignment.CENTER);
         submitButton.addClickListener(event -> createCompany(
                 Integer.parseInt(user.getValue()),
