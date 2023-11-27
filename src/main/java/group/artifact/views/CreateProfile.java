@@ -65,10 +65,6 @@ public class CreateProfile extends VerticalLayout {
     //me time
     MemoryBuffer memoryBuffer = new MemoryBuffer();
     Upload singleFileUpload = new Upload(memoryBuffer);
-    
-    
-
-
     private Binder<Student> studentBinder = new Binder<>(Student.class);
 
     
