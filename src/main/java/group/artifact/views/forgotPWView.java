@@ -33,6 +33,10 @@ public class forgotPWView extends Composite<Component> {
         TextField email = new TextField("Bitte geben Sie Ihre Email ein");
         email.setWidth("30%");
 
+        email.addKeyDownListener(Key.ENTER, event -> {
+            checkEmail(
+                  email.getValue());
+        });
         VerticalLayout enterEmailLayout = new VerticalLayout(
                 new H2("Passwort vergessen"),
                 email,
