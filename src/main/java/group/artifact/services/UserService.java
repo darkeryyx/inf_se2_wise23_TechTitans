@@ -1,5 +1,8 @@
 package group.artifact.services;
 
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -32,6 +35,14 @@ public class UserService {
 
     public String createUser(UserDTO newUser) {
         User user = newUser.getUser();
+        try {
+            boolean x = isCommonPassword(user.getPassword()); //check if password is on List
+            //TODO: erneute aufforderung zur passworteingabe 
+            System.out.println(x);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         if (!userRepository.isEmailUnique(user.getEmail())) { // check if email already exists
             return "email_error";
         }
@@ -210,4 +221,36 @@ public class UserService {
         }
         return user;
     }
+
+        /*
+     * reads commonpasswordlist and compares it with userpassword
+     * 
+     * @param: String: registration form user password
+     * 
+     * @returns: true -> password is on list
+     *           false -> else
+     */ 
+public static boolean isCommonPassword(String passwd) throws IOException{
+        List<String> list = new ArrayList<>();
+        BufferedReader br = null;
+        try{
+        br = new BufferedReader(new FileReader("src/main/resources/best1050.txt")); //might not survive packaging to jarfile
+        String line;
+        while((line = br.readLine())!= null){
+            list.add(line);
+        }
+        } catch(IOException e){
+            e.printStackTrace();
+        }finally{
+            if (br != null){
+            br.close();
+            }
+        }
+        for(String commonpw : list){
+            if(passwd.equals(commonpw)){
+                return true;
+            }
+        }
+        return false;
+    }    
 }

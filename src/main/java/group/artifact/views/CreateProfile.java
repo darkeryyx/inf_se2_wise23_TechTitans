@@ -1,5 +1,6 @@
 package group.artifact.views;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 
 import javax.annotation.security.RolesAllowed;
@@ -22,6 +23,8 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.validator.IntegerRangeValidator;
@@ -59,7 +62,16 @@ public class CreateProfile extends VerticalLayout {
     TextField interests = new TextField("Interessen");
     TextField studentDescription = new TextField("Beschreibung");
     TextField image = new TextField("Bild");
+    //me time
+    MemoryBuffer memoryBuffer = new MemoryBuffer();
+    Upload singleFileUpload = new Upload(memoryBuffer);
+    
+    
+
+
     private Binder<Student> studentBinder = new Binder<>(Student.class);
+
+    
 
     // company fields
     TextField user = createRequiredTextField("User-ID");
@@ -111,8 +123,29 @@ public class CreateProfile extends VerticalLayout {
         VerticalLayout studentForm = new VerticalLayout();
         HorizontalLayout buttonLayout = new HorizontalLayout(submitButton, skipButton);
         studentForm.add(
-                subject, birthday, semester, skills, interests, studentDescription, image, buttonLayout);
+                subject, birthday, semester, skills, interests, studentDescription, image, singleFileUpload, buttonLayout);
         submitButton.addClickListener(e -> createStudent());
+
+        //fileupload ab hier
+        singleFileUpload.setAcceptedFileTypes("image/jpeg", "image/png", "image/gif");
+
+        singleFileUpload.addFileRejectedListener(event -> {
+        String errorMessage = event.getErrorMessage();
+
+        Notification notification = Notification.show(errorMessage, 5000,
+        Notification.Position.MIDDLE);
+        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        });
+
+        singleFileUpload.addSucceededListener(event -> {
+        InputStream fileData = memoryBuffer.getInputStream();
+        String fileName = event.getFileName();
+        long contentLength = event.getContentLength();
+        String mimeType = event.getMIMEType();
+        // ToDo: sth with file
+        System.out.println(fileData);
+         });
+         
         studentForm.setAlignItems(Alignment.CENTER);
         setUpStudentBinder();
         return studentForm;
@@ -192,7 +225,7 @@ public class CreateProfile extends VerticalLayout {
 
     private void createCompany(Integer user, String name, String business, Integer employees, LocalDate founded,
             String link, String logo, String description) {
-        Company company = new Company(name, business, employees, founded, link, description, logo);
+        Company company = new Company(name, business, employees, founded, link, logo,description);
         try {
             companyController.createCompany(company, user);
             getUI().ifPresent(ui -> ui.access(() -> {
