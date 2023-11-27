@@ -77,7 +77,6 @@ public class CreateProfile extends VerticalLayout {
     
 
     // company fields
-    TextField user = createRequiredTextField("User-ID");
     TextField name = createRequiredTextField("Firmenname");
     TextField business = createRequiredTextField("Branche");
     IntegerField employees = createIntegerField("Mitarbeiteranzahl");
@@ -193,10 +192,9 @@ public class CreateProfile extends VerticalLayout {
         HorizontalLayout buttonLayout = new HorizontalLayout(submitButton, skipButton);
 
         companyForm.add(
-                user, name, business, employees, founded, link, logo, singleFileUpload, companyDesription, buttonLayout);
+                name, business, employees, founded, link, logo, singleFileUpload, companyDesription, buttonLayout);
         companyForm.setAlignItems(Alignment.CENTER);
         submitButton.addClickListener(event -> createCompany(
-                Integer.parseInt(user.getValue()),
                 name.getValue(),
                 business.getValue(),
                 employees.getValue(),
@@ -208,10 +206,11 @@ public class CreateProfile extends VerticalLayout {
         return companyForm;
     }
 
-    private void createCompany(Integer user, String name, String business, Integer employees, LocalDate founded,
+    private void createCompany(String name, String business, Integer employees, LocalDate founded,
             String link, String logo, String description) {
         Company company = new Company(name, business, employees, founded, link, logo,description);
         try {
+            User user = userController.getCurrentUser();
             companyController.createCompany(company, user);
             getUI().ifPresent(ui -> ui.access(() -> {
                 ui.navigate(HomeView.class);

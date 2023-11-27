@@ -2,6 +2,7 @@ package group.artifact.controller;
 
 import group.artifact.dtos.CompanyDTO;
 import group.artifact.entities.Company;
+import group.artifact.entities.User;
 import group.artifact.services.CompanyService;
 
 import java.util.List;
@@ -16,8 +17,8 @@ public class CompanyController {
     @Autowired
     CompanyService companyService;
 
-    public void createCompany(Company company, Integer userId) {
-        companyService.saveProfile(company, userId);
+    public void createCompany(Company company, User user) {
+        companyService.saveProfile(company, user);
     }
 
     public List<CompanyDTO> getAllCompanies() {

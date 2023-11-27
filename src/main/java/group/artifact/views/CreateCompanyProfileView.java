@@ -54,7 +54,6 @@ public class CreateCompanyProfileView extends Composite<Component> {
         Div container = new Div(); // Container to hold layout
         container.setWidth("100%"); // Full width of the page
 
-
         //create submit button
         Button createProfileButton = new Button("Bestätigen", event -> createCompanyProfile(
                 Integer.parseInt(user.getValue()),
@@ -141,7 +140,6 @@ public class CreateCompanyProfileView extends Composite<Component> {
         link.setWidthFull();
         logo.setWidthFull();
 
-
         //add layout to container
         container.add(layout);
 
@@ -150,8 +148,6 @@ public class CreateCompanyProfileView extends Composite<Component> {
         container.getStyle().set("display", "flex");
         container.getStyle().set("flexDirection", "column");
         container.getStyle().set("alignItems", "center");
-
-
 
         return container;
     }
@@ -162,7 +158,7 @@ public class CreateCompanyProfileView extends Composite<Component> {
 
         Company company = new Company(name, business, employees, founded, link, description, logo);
         try {
-            companyController.createCompany(company, user);
+           // companyController.createCompany(company, user);
             getUI().ifPresent(ui -> ui.access(() -> {
                 ui.navigate(RegisterVerificationView.class);
             }));
