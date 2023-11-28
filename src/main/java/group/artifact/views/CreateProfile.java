@@ -268,7 +268,7 @@ public class CreateProfile extends VerticalLayout {
 
     public class UploadFileFormat extends Div {
 
-        String value;  //The uploaded image
+        String value;  //The encoded image
 
         public UploadFileFormat() {
             MemoryBuffer buffer = new MemoryBuffer();
@@ -293,17 +293,17 @@ public class CreateProfile extends VerticalLayout {
                 String mimeType = event.getMIMEType();
                 // ToDo: sth with file
                 System.out.println(fileData);
-                //setValue(InputStreamToString(mimeType,fileData));
                 try {
                     //byte[] targetArray = new byte[fileData.available()];
                     String encoded = Base64.getEncoder().encodeToString(fileData.readAllBytes());
+                    setValue(encoded);
                     //String encodedComp = Base64.getEncoder().encodeToString(targetArray);
                     System.out.println("Encoded "+encoded);
                     //System.out.println("EncodedComp "+encodedComp);
                     //System.out.println(encoded.equals(encodedComp));
 
-                    String decoded = new String(Base64.getDecoder().decode(encoded.getBytes()));
-                    System.out.println("Decoded "+decoded);
+                    //String decoded = new String(Base64.getDecoder().decode(encoded.getBytes()));
+                    //System.out.println("Decoded "+decoded);
                 } catch (IOException e) {
                  e.printStackTrace();
                 }
