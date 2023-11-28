@@ -1,0 +1,43 @@
+vaadin-button.home-Btn {
+    --lumo-primary-text-color: cyan;
+    align-items: center;
+    justify-content: space-around;
+}
+
+vaadin-button.logout-btn{
+    margin-left: auto;
+}
+
+vaadin-text-field{
+    padding: 0.5rem;
+}
+
+vaadin-horizontal-layout.header {
+    padding: 0.5rem;
+    border-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(var(--lumo-contrast-5pct), var(--lumo-contrast-5pct));
+}
+
+vaadin-vertical-layout{
+    display: block;
+}
+#ROOT-2521314 > vaadin-vertical-layout > vaadin-vertical-layout{
+    display: flex;
+    padding-top: 0;
+}
+
+#ROOT-2521314 > vaadin-vertical-layout > vaadin-vertical-layout > vaadin-vertical-layout{
+    padding: 0;
+}
+
+#ROOT-2521314 > vaadin-vertical-layout > vaadin-vertical-layout > h2{
+    margin-top: 1rem;
+}
+
+#ROOT-2521314 > vaadin-vertical-layout > vaadin-vertical-layout > vaadin-vertical-layout{
+    /* AnswerLayout */
+    display: flex;
+}
