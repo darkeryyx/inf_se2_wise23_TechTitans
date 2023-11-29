@@ -67,7 +67,7 @@ public class CreateProfile extends VerticalLayout {
     TextField subject = new TextField("Studienfach");
     DatePicker birthday = new DatePicker("Geburtsdatum");
     IntegerField semester = new IntegerField("Semester");
-    TextField skills = new TextField("mitgebrachte Fähigkeiten");
+    TextField skills = new TextField("Mitgebrachte Fähigkeiten");
     TextField interests = new TextField("Interessen");
     TextField studentDescription = new TextField("Beschreibung");
     TextField image = new TextField("Bild");
@@ -168,7 +168,7 @@ public class CreateProfile extends VerticalLayout {
         studentBinder.forField(image).bind("image");
 
         studentBinder.forField(semester).asRequired("Semester ist ein Pflichtfeld")
-                .withValidator(new IntegerRangeValidator("Zahl muss zwischen 1 bis 99 liegen", 1, 99)).bind("semester");
+                .withValidator(new IntegerRangeValidator("Zahl muss zwischen 1 und 99 liegen", 1, 99)).bind("semester");
 
         studentBinder.forField(birthday)
                 .withValidator(

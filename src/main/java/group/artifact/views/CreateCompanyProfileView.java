@@ -44,7 +44,7 @@ public class CreateCompanyProfileView extends Composite<Component> {
         TextField user = createRequiredTextField("User-ID");
         TextField name = createRequiredTextField("Firmenname");
         TextField business = createRequiredTextField("Branche");
-         var employees = createIntegerField("Mitarbeiteranzahl");
+        var employees = createIntegerField("Mitarbeiteranzahl");
         DatePicker founded = createDatePicker("Gründungsdatum");
         TextField link = createRequiredTextField("Webseite");
         TextField logo = createTextField("Logo");
@@ -190,7 +190,7 @@ public class CreateCompanyProfileView extends Composite<Component> {
 
     public TextArea createTextArea(String label){
         TextArea textArea = new TextArea(label);
-        textArea.setHelperText("beschreiben Sie Ihr Unternehmen kurz");
+        textArea.setHelperText("Beschreiben Sie Ihr Unternehmen kurz");
         textArea.setPlaceholder("Schreiben Sie hier . . . ");
         textArea.setWidth("80%");
         textArea.setHeight("30%");

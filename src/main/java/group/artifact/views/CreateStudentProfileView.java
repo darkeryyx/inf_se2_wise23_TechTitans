@@ -98,7 +98,7 @@ public class CreateStudentProfileView extends VerticalLayout {
             return;
         }
         if (studentController.studentExists(user.getUser_pk())) {
-            Notification.show("Das Studentprofil existiert bereits");
+            Notification.show("Das Studentenprofil existiert bereits");
             UI.getCurrent().navigate("");
             return;
         } /*workaround: cannot bind integer user to user user, check with binder not possible */
@@ -121,7 +121,7 @@ public class CreateStudentProfileView extends VerticalLayout {
         binder.bindInstanceFields(this);
         binder.forField(semester).
                 asRequired("Semester ist ein Pflichtfeld").
-                withValidator(new IntegerRangeValidator("Zahl muss zwischen 1 bis 99 liegen", 1, 99)).bind("semester");
+                withValidator(new IntegerRangeValidator("Zahl muss zwischen 1 und 99 liegen", 1, 99)).bind("semester");
 
 
         binder.forField(birthday)

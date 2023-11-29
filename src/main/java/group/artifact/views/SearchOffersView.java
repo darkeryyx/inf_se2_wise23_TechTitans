@@ -96,7 +96,7 @@ public class SearchOffersView extends HomeView {
 
         //Others
         RouterLink searchCompanyViewLink = new RouterLink(SearchCompaniesView.class);
-        searchCompanyViewLink.setText("-> hier geht es zur Suche von Unternehmen");
+        searchCompanyViewLink.setText("-> Hier geht es zur Suche nach Unternehmen");
         searchCompanyViewLink.getStyle().set("text-decoration", "underline");
 
         //Titel - erstmal vorläufig bis Standardheader definiert

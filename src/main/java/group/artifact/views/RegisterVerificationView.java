@@ -47,7 +47,7 @@ public class RegisterVerificationView extends VerticalLayout {
         Button verifyButton = new Button("Bestätigen", e -> {
             getUI().ifPresent(ui -> ui.access(() -> {
                 ui.navigate("/create/profile");
-                Notification.show("E-Mail erfolreich verifiziert").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                Notification.show("E-Mail erfolgreich verifiziert").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 ;
             }));
         });

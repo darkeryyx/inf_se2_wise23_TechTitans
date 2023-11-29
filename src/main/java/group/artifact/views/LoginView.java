@@ -19,6 +19,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 import group.artifact.controller.CompanyController;
@@ -161,13 +162,16 @@ public class LoginView extends Composite<Component> {
                         System.out.println("User hat kein Profil");
                         Notification notification = new Notification();
                         Anchor ref = new Anchor("create/profile", "Profil erstellen");
+                        ref.getStyle().set("text-decoration", "underline");
                         Div text = new Div(new Text("Sie haben noch kein Profil erstellt. Um ein Profil zu erstellen, klicken Sie hier:"));
+
                         Button closeButton = new Button(new Icon("lumo", "cross"));
                         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
                         closeButton.getElement().setAttribute("aria-label", "Close");
                         closeButton.addClickListener(event -> {
                             notification.close();
                         });
+
                         HorizontalLayout layout = new HorizontalLayout(text, ref, closeButton);
                         layout.setAlignItems(FlexComponent.Alignment.CENTER);
                         notification.add(layout);
@@ -177,7 +181,7 @@ public class LoginView extends Composite<Component> {
                     }
                 }));
             } else {
-                Notification.show("Falsche Email oder Passwort!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+                Notification.show("Falsche E-Mail oder falsches Passwort!").addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
         }
     }

@@ -44,7 +44,7 @@ public class ViewStudentProfile extends VerticalLayout {
     TextField subject = createTextField("Studienfach");
     DatePicker birthday = createDatePicker("Geburtsdatum");
     IntegerField semester = createIntegerField("Semester");
-    TextField skills = createTextField("mitgebrachte Fähigkeiten");
+    TextField skills = createTextField("Mitgebrachte Fähigkeiten");
     TextField interests = createTextField("Interessen");
     TextField description = createTextField("Beschreibung");
     TextField image = createTextField("Bild");
