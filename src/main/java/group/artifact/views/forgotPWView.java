@@ -31,7 +31,7 @@ public class forgotPWView extends Composite<Component> {
 
 
     protected Component initContent() {
-        TextField email = new TextField("Bitte geben Sie Ihre Email ein");
+        TextField email = new TextField("Bitte geben Sie Ihre E-Mail ein");
         email.setWidth("30%");
 
         email.addKeyDownListener(Key.ENTER, event -> {
@@ -79,7 +79,7 @@ public class forgotPWView extends Composite<Component> {
         sqaLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
         sqaLayout.setSizeFull();
 
-        sqaLayout.add(new H5("Sie haben jeweils nur 3 Versuche um die Sicherheitsfragen korrekt zu beantworten!"),
+        sqaLayout.add(new H5("Sie haben jeweils nur 3 Versuche, um die Sicherheitsfragen korrekt zu beantworten!"),
                 q1,
                 new Button("Bestätigen", event -> ((VerticalLayout) getContent()).add(checkSQA(
                         sQuestions.get(0),

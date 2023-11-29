@@ -80,7 +80,7 @@ public class SearchCompaniesView extends HomeView {
 
         //Others
         RouterLink searchOffersViewLink = new RouterLink(SearchOffersView.class);
-        searchOffersViewLink.setText("-> hier geht es zur Suche von Stellenangeboten");
+        searchOffersViewLink.setText("-> Hier geht es zur Suche nach Stellenangeboten");
         searchOffersViewLink.getStyle().set("text-decoration", "underline");
 
         //Titel - erstmal vorläufig bis Standardheader definiert

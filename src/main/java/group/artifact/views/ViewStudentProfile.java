@@ -45,10 +45,9 @@ public class ViewStudentProfile extends VerticalLayout {
     TextField subject = createTextField("Studienfach");
     DatePicker birthday = createDatePicker("Geburtsdatum");
     IntegerField semester = createIntegerField("Semester");
-    TextField skills = createTextField("mitgebrachte Fähigkeiten");
+    TextField skills = createTextField("Mitgebrachte Fähigkeiten");
     TextField interests = createTextField("Interessen");
     TextField description = createTextField("Beschreibung");
-    TextField image = createTextField("Bild");
 
     Binder<StudentDTO> binder = new Binder<>(StudentDTO.class);
 
@@ -72,29 +71,38 @@ public class ViewStudentProfile extends VerticalLayout {
 
     private Component buildForm() {
 
-        //Image testImage = generateImage(userController.getCurrentUser());
-        Image testImage = generateImage();
-
-        if (testImage != null) {
-            image.setWidth("75px");
-            image.setHeight("75px");
-        }
+        Image image = generateImage();
 
         VerticalLayout formLayout = new VerticalLayout();
         HorizontalLayout header = new HorizontalLayout(
                 new H2 ("Studentenprofil"));
-        VerticalLayout profile = new VerticalLayout(
-                name,
-                surname,
-                email,
-                subject,
-                birthday,
-                semester,
-                skills,
-                interests,
-                description,
-                //image,
-                testImage);
+        VerticalLayout profile = new VerticalLayout();
+        if (image != null) {
+            image.setWidth("50px");
+            image.setHeight("50px");
+            profile.add(
+                    name,
+                    surname,
+                    email,
+                    subject,
+                    birthday,
+                    semester,
+                    skills,
+                    interests,
+                    description,
+                    image);
+        } else {
+            profile.add(
+                    name,
+                    surname,
+                    email,
+                    subject,
+                    birthday,
+                    semester,
+                    skills,
+                    interests,
+                    description);
+        }
         profile.setAlignItems(Alignment.CENTER);
         formLayout.add(header,profile, editButton, saveButton);
         formLayout.setAlignItems(FlexComponent.Alignment.CENTER);
@@ -180,16 +188,14 @@ public class ViewStudentProfile extends VerticalLayout {
         image.setReadOnly(!editable);
     }
     public Image generateImage() {
-        //Der übergebene User ist der aktuelle User
         Student student = userController.getCurrentUser().getStudent();
-        //String decoded = new String(Base64.getDecoder().decode(img.getBytes()));
         String enc = student.getImage();
-        //String enc = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+        System.out.println("Bild in DB? "+ (enc!=null));
+        if (enc==null){
+            return null;
+        }
 
         StreamResource sr = new StreamResource("student", () ->  {
-            //Student student = user.getStudent();
-            //String img = student.getImage();
-            //String decoded = new String(Base64.getDecoder().decode(img.getBytes()));
             byte[] decoded = Base64.getDecoder().decode(enc);
             //byte [] arr = HexFormat.of().parseHex("89504e470d0a1a0a0000000d49484452000000050000000508060000008d6f26e50000001c4944415408d763f8ffff3fc37f062005c3201284d031f18258cd04000ef535cbd18e0e1f0000000049454e44ae426082");
             //System.out.println(HexFormat.of().parseHex("89504e470d0a1a0a0000000d49484452000000050000000508060000008d6f26e50000001c4944415408d763f8ffff3fc37f062005c3201284d031f18258cd04000ef535cbd18e0e1f0000000049454e44ae426082"));

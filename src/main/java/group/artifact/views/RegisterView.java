@@ -91,11 +91,11 @@ public class RegisterView extends VerticalLayout {
         final List<String> allSecurityQuestions = Arrays.asList(
                 "Wie lautet der Mädchenname Ihrer Mutter?",
                 "In welcher Stadt wurden Sie geboren?",
-                "Wie lautet der Name Ihres ersten Haustiers?",
+                "Wie lautet der Name Ihres ersten Haustieres?",
                 "In welcher Stadt bzw. welchem Ort haben sich Ihre Eltern kennengelernt?",
                 "Wie lautet der zweite Vorname Ihrer Oma?",
                 "Wie heißt die Stadt, in der Sie sich verlaufen haben?",
-                "Wie heißt der Lehrer, der ihnen Ihre erste 1 gab?");
+                "Wie heißt der Lehrer, der Ihnen Ihre erste 1 gab?");
         Collections.shuffle(allSecurityQuestions);
         List<String> selectedSecurityQuestions = allSecurityQuestions.subList(0, 3);
 
@@ -131,7 +131,7 @@ public class RegisterView extends VerticalLayout {
         securityQuestionsComboBox.setRequiredIndicatorVisible(true);
         securityQuestionsComboBox.setWidth("20rem");
         securityQuestionsComboBox.addValueChangeListener(this::onSecurityQuestionsSelected);
-        Checkbox checkbox = new Checkbox("Ich stimme den AGBs zu");
+        Checkbox checkbox = new Checkbox("Ich stimme den AGB zu");
 
         HorizontalLayout line1 = new HorizontalLayout(vorname, nachname);
         HorizontalLayout line2 = new HorizontalLayout(email);
@@ -205,7 +205,7 @@ public class RegisterView extends VerticalLayout {
     public void register(EmailField email, String vorname, String nachname, String passwort, String passwort2,
                          String checkBox, Map<String, String> sicherheitsQA) {
         if (email.getValue().trim().isEmpty() || !email.getValue().matches(email.getPattern())) {
-            Notification.show("Bitte eine gültige Email eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            Notification.show("Bitte eine gültige E-Mail eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else if (vorname.trim().isEmpty()) {
             Notification.show("Bitte einen Vornamen eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else if (nachname.trim().isEmpty()) {
@@ -213,7 +213,7 @@ public class RegisterView extends VerticalLayout {
         } else if (!passwort.equals(passwort2)) {
             Notification.show("Passwörter stimmen nicht überein").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else if (checkBox.equals("false")) {
-            Notification.show("Bitte stimme unseren AGB zu").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            Notification.show("Bitte stimmen Sie unseren AGB zu").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else if (sicherheitsQA.size() < 2) {
             Notification.show("Bitte beantworten Sie alle Sicherheitsfragen").addThemeVariants(NotificationVariant.LUMO_ERROR);
         }else if(!userController.pwNumberValid(passwort) ||!userController.pwSpecialCharValid(passwort)||!userController.pwUpperCaseValid(passwort) ||!userController.pwLengthValid(passwort)) {
