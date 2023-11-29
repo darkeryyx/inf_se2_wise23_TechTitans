@@ -25,6 +25,7 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import group.artifact.controller.UserController;
 import group.artifact.dtos.impl.UserDTOImpl;
@@ -36,7 +37,7 @@ import javax.annotation.security.RolesAllowed;
 import java.util.*;
 
 @Route("register")
-@RolesAllowed("ROLE_USER")
+@AnonymousAllowed
 @CssImport("./css/RegisterView.css")
 
 public class RegisterView extends VerticalLayout {
