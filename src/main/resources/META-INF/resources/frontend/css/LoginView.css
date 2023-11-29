@@ -4,3 +4,8 @@ img {
     border-radius: 2vw;
     border: 2px solid black;
 }
+
+#ROOT-2521314 > vaadin-horizontal-layout > vaadin-vertical-layout:nth-child(2){
+    /*LoginLayout*/
+    display:flex;
+}
