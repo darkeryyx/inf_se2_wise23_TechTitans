@@ -5,9 +5,20 @@ import java.util.Map;
 import group.artifact.dtos.UserDTO;
 import group.artifact.entities.User;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
+@NoArgsConstructor
+@Getter
+@Setter
 public class UserDTOImpl implements UserDTO {
+
+    private String name;
+    private String surname;
+    private String email;
+
     User user;
     Map<String, String> sqa;
 
