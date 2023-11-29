@@ -39,8 +39,11 @@ public class forgotPWView extends Composite<Component> {
                   email.getValue());
         });
         VerticalLayout enterEmailLayout = new VerticalLayout();
-        enterEmailLayout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+        enterEmailLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        enterEmailLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        enterEmailLayout.getStyle().set("display", "flex");
         enterEmailLayout.setSizeFull();
+        
 
 
         enterEmailLayout.add(new H2("Passwort vergessen"), email,
