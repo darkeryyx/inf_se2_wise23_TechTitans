@@ -89,4 +89,12 @@ public class UserController {
     public User getCurrentUser() {
         return userService.getCurrentUser(VaadinService.getCurrentRequest().getCookies());
     }
+
+    public UserDTO getUserDTO(Integer id) {
+        return userService.getUserDTO(id);
+    }
+
+    public void updateUser(UserDTO userDTO, Integer id) {
+        userService.updateUser(userDTO, id);
+    }
 }
