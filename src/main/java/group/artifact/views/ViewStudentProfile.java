@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -14,13 +15,20 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
 import group.artifact.controller.StudentController;
 import group.artifact.controller.UserController;
 import group.artifact.dtos.StudentDTO;
+import group.artifact.entities.Student;
 import group.artifact.entities.User;
 import javax.annotation.PostConstruct;
 import javax.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.ByteArrayInputStream;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HexFormat;
 
 @Route("view/student")
 @RolesAllowed("ROLE_USER")
@@ -47,7 +55,9 @@ public class ViewStudentProfile extends VerticalLayout {
     Button editButton = new Button("Bearbeiten");
     Button saveButton = new Button("Speichern");
 
-    public ViewStudentProfile() {
+    public ViewStudentProfile(UserController userController, StudentController studentController) {
+        this.studentController = studentController;
+        this.userController = userController;
         setSizeFull();
         add(buildForm());
         editButton.addClickListener(e -> edit());
@@ -62,6 +72,14 @@ public class ViewStudentProfile extends VerticalLayout {
 
     private Component buildForm() {
 
+        //Image testImage = generateImage(userController.getCurrentUser());
+        Image testImage = generateImage();
+
+        if (testImage != null) {
+            image.setWidth("75px");
+            image.setHeight("75px");
+        }
+
         VerticalLayout formLayout = new VerticalLayout();
         HorizontalLayout header = new HorizontalLayout(
                 new H2 ("Studentenprofil"));
@@ -75,7 +93,8 @@ public class ViewStudentProfile extends VerticalLayout {
                 skills,
                 interests,
                 description,
-                image);
+                //image,
+                testImage);
         profile.setAlignItems(Alignment.CENTER);
         formLayout.add(header,profile, editButton, saveButton);
         formLayout.setAlignItems(FlexComponent.Alignment.CENTER);
@@ -159,6 +178,28 @@ public class ViewStudentProfile extends VerticalLayout {
         interests.setReadOnly(!editable);
         description.setReadOnly(!editable);
         image.setReadOnly(!editable);
+    }
+    public Image generateImage() {
+        //Der übergebene User ist der aktuelle User
+        Student student = userController.getCurrentUser().getStudent();
+        //String decoded = new String(Base64.getDecoder().decode(img.getBytes()));
+        String enc = student.getImage();
+        //String enc = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+
+        StreamResource sr = new StreamResource("student", () ->  {
+            //Student student = user.getStudent();
+            //String img = student.getImage();
+            //String decoded = new String(Base64.getDecoder().decode(img.getBytes()));
+            byte[] decoded = Base64.getDecoder().decode(enc);
+            //byte [] arr = HexFormat.of().parseHex("89504e470d0a1a0a0000000d49484452000000050000000508060000008d6f26e50000001c4944415408d763f8ffff3fc37f062005c3201284d031f18258cd04000ef535cbd18e0e1f0000000049454e44ae426082");
+            //System.out.println(HexFormat.of().parseHex("89504e470d0a1a0a0000000d49484452000000050000000508060000008d6f26e50000001c4944415408d763f8ffff3fc37f062005c3201284d031f18258cd04000ef535cbd18e0e1f0000000049454e44ae426082"));
+            //System.out.println(new String(decoded));
+            return new ByteArrayInputStream(decoded);
+        });
+        sr.setContentType("image/png");
+        Image image = new Image(sr, "Profilbild");
+
+        return image;
     }
 }
 

@@ -1,15 +1,17 @@
 package group.artifact.views;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.Base64;
 
 import javax.annotation.security.RolesAllowed;
 
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.upload.UploadI18N;
+import com.vaadin.flow.internal.MessageDigestUtil;
 import com.vaadin.flow.component.html.Div;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Component;
@@ -70,14 +72,12 @@ public class CreateProfile extends VerticalLayout {
     TextField studentDescription = new TextField("Beschreibung");
     TextField image = new TextField("Bild");
     //me time
-    //MemoryBuffer memoryBuffer = new MemoryBuffer();
     UploadFileFormat singleFileUpload = new UploadFileFormat();
     private Binder<Student> studentBinder = new Binder<>(Student.class);
 
     
 
     // company fields
-    TextField user = createRequiredTextField("User-ID");
     TextField name = createRequiredTextField("Firmenname");
     TextField business = createRequiredTextField("Branche");
     IntegerField employees = createIntegerField("Mitarbeiteranzahl");
@@ -193,25 +193,26 @@ public class CreateProfile extends VerticalLayout {
         HorizontalLayout buttonLayout = new HorizontalLayout(submitButton, skipButton);
 
         companyForm.add(
-                user, name, business, employees, founded, link, logo, singleFileUpload, companyDesription, buttonLayout);
+                name, business, employees, founded, link, logo, singleFileUpload, companyDesription, buttonLayout);
         companyForm.setAlignItems(Alignment.CENTER);
         submitButton.addClickListener(event -> createCompany(
-                Integer.parseInt(user.getValue()),
                 name.getValue(),
                 business.getValue(),
                 employees.getValue(),
                 founded.getValue(),
                 link.getValue(),
                 logo.getValue(),
+                //singleFileUpload.getValue(),
                 companyDesription.getValue()));
 
         return companyForm;
     }
 
-    private void createCompany(Integer user, String name, String business, Integer employees, LocalDate founded,
+    private void createCompany(String name, String business, Integer employees, LocalDate founded,
             String link, String logo, String description) {
         Company company = new Company(name, business, employees, founded, link, logo,description);
         try {
+            User user = userController.getCurrentUser();
             companyController.createCompany(company, user);
             getUI().ifPresent(ui -> ui.access(() -> {
                 ui.navigate(HomeView.class);
@@ -267,6 +268,8 @@ public class CreateProfile extends VerticalLayout {
 
     public class UploadFileFormat extends Div {
 
+        String value;  //The encoded image
+
         public UploadFileFormat() {
             MemoryBuffer buffer = new MemoryBuffer();
             Upload upload = new Upload(buffer);
@@ -290,14 +293,20 @@ public class CreateProfile extends VerticalLayout {
                 String mimeType = event.getMIMEType();
                 // ToDo: sth with file
                 System.out.println(fileData);
-            /*
-            try {
-                byte[] targetArray = new byte[fileData.available()];
-             fileData.read(targetArray);
-            } catch (IOException e) {
-               Notification.show("IO Exception.");
-            }
-            */
+                try {
+                    //byte[] targetArray = new byte[fileData.available()];
+                    String encoded = Base64.getEncoder().encodeToString(fileData.readAllBytes());
+                    setValue(encoded);
+                    //String encodedComp = Base64.getEncoder().encodeToString(targetArray);
+                    System.out.println("Encoded "+encoded);
+                    //System.out.println("EncodedComp "+encodedComp);
+                    //System.out.println(encoded.equals(encodedComp));
+
+                    //String decoded = new String(Base64.getDecoder().decode(encoded.getBytes()));
+                    //System.out.println("Decoded "+decoded);
+                } catch (IOException e) {
+                 e.printStackTrace();
+                }
             });
 
             H4 title = new H4("Bild hochladen");
@@ -306,6 +315,12 @@ public class CreateProfile extends VerticalLayout {
             hint.getStyle().set("color", "var(--lumo-secondary-text-color)");
 
             add(title, hint, upload);
+        }
+        public void setValue(String v){
+            value = v;
+        }
+        public String getValue() {
+            return value;
         }
 
     }

@@ -1,5 +1,4 @@
 package group.artifact.views;
-
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
@@ -14,10 +13,13 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import group.artifact.controller.CompanyController;
 import group.artifact.controller.OfferController;
+import group.artifact.controller.UserController;
 import group.artifact.entities.Company;
 import group.artifact.entities.Offer;
 
 import javax.annotation.security.RolesAllowed;
+
+import group.artifact.entities.User;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Arrays;
@@ -29,9 +31,12 @@ import java.util.Optional;
 public class CreateOfferView extends Composite<Component> {
     private OfferController offerController;
 
+    private UserController userController;
+
     private CompanyController companyController;
 
-    public CreateOfferView(OfferController offerController, CompanyController companyController) {
+    public CreateOfferView(OfferController offerController, CompanyController companyController, UserController userController) {
+        this.userController = userController;
         this.offerController = offerController;
         this.companyController = companyController;
     }
@@ -41,7 +46,6 @@ public class CreateOfferView extends Composite<Component> {
         ComboBox<String> business = new ComboBox<>("Branche");
         NumberField income = new NumberField("Stundenlohn");
         TextField job = createTextField("Jobbezeichnung");
-        TextField company = createTextField("Firmen_ID"); // TODO: Firma aus Session herauslesen
         List<String> businessList = offerController.getBusinessList();
         ComboBox.ItemFilter<String> filter = (b, filterString) -> b
                 .toLowerCase().startsWith(filterString.toLowerCase());
@@ -51,8 +55,8 @@ public class CreateOfferView extends Composite<Component> {
                 job.getValue(),
                 business.getValue(),
                 description.getValue(),
-                income.getValue().floatValue(),
-                Integer.parseInt(company.getValue())));
+                income.getValue().floatValue())
+        );
 
         VerticalLayout layout = new VerticalLayout(
                 new H2("Jobausschreibung erstellen"),
@@ -60,7 +64,6 @@ public class CreateOfferView extends Composite<Component> {
                 business,
                 description,
                 income,
-                company,
                 createOfferButton);
         if (business.isInvalid() | job.isInvalid() | description.isInvalid() | income.isInvalid())
             Notification.show("Bitte füllen Sie das erforderliche Feld aus.");
@@ -68,9 +71,10 @@ public class CreateOfferView extends Composite<Component> {
         return layout;
     }
 
-    private void createOffer(String job, String business, String description, Float income, Integer company) {
+    private void createOffer(String job, String business, String description, Float income) {
 
-        Optional<Company> c = companyController.findByID(company);
+        User user = userController.getCurrentUser();
+        Optional<Company> c = companyController.findByID(user.getUser_pk());
         if(c.isPresent()) {
             Offer offer = new Offer(c.get(), job, business, description, income);
             try {

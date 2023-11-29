@@ -71,7 +71,19 @@ public class UserController {
 
     public void pwNew(String email, String pw) {
         userService.pwNew(email, pw);
+    }
 
+    public boolean pwLengthValid(String pw){
+        return userService.pwLengthValid(pw);
+    }
+    public boolean pwUpperCaseValid(String pw){
+        return userService.pwUpperCaseValid(pw);
+    }
+    public boolean pwSpecialCharValid(String pw){
+        return userService.pwSpecialCharValid(pw);
+    }
+    public boolean pwNumberValid(String pw){
+        return userService.pwNumberValid(pw);
     }
 
     public User getCurrentUser() {

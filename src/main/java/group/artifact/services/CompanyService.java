@@ -25,13 +25,10 @@ public class CompanyService {
     private EntityManager entityManager;
 
     @Transactional
-    public void saveProfile(Company company, Integer userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isPresent()) {
-            User user = entityManager.merge(userOptional.get()); // get the user in persistence context
+    public void saveProfile(Company company, User newUser) {
+            User user = entityManager.merge(newUser); // get the user in persistence context
             company.setUser(user); // use the managed instance
             companyRepository.save(company);
-        }
     }
 
     public List<CompanyDTO> getAllCompanies() {
