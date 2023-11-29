@@ -8,7 +8,7 @@ import java.util.Base64;
 
 import javax.annotation.security.RolesAllowed;
 
-import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.internal.MessageDigestUtil;
@@ -17,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Component;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -70,9 +68,8 @@ public class CreateProfile extends VerticalLayout {
     TextField skills = new TextField("Mitgebrachte Fähigkeiten");
     TextField interests = new TextField("Interessen");
     TextField studentDescription = new TextField("Beschreibung");
-    TextField image = new TextField("Bild");
-    //me time
     UploadFileFormat singleFileUpload = new UploadFileFormat();
+    //UploadFileFormatTest uploadTest = new UploadFileFormatTest();
     private Binder<Student> studentBinder = new Binder<>(Student.class);
 
     
@@ -127,7 +124,7 @@ public class CreateProfile extends VerticalLayout {
         HorizontalLayout buttonLayout = new HorizontalLayout(submitButton, skipButton);
 
         studentForm.add(
-                subject, birthday, semester, skills, interests, studentDescription, image, singleFileUpload, buttonLayout);
+                subject, birthday, semester, skills, interests, studentDescription, singleFileUpload, buttonLayout);
         submitButton.addClickListener(e -> createStudent());
          
         studentForm.setAlignItems(Alignment.CENTER);
@@ -165,7 +162,8 @@ public class CreateProfile extends VerticalLayout {
         studentBinder.forField(skills).bind("skills");
         studentBinder.forField(interests).bind("interests");
         studentBinder.forField(studentDescription).bind("description");
-        studentBinder.forField(image).bind("image");
+        studentBinder.forField(singleFileUpload).bind("image");
+        //studentBinder.forField(uploadTest.getElement().getAttribute("value")).bind("image");
 
         studentBinder.forField(semester).asRequired("Semester ist ein Pflichtfeld")
                 .withValidator(new IntegerRangeValidator("Zahl muss zwischen 1 und 99 liegen", 1, 99)).bind("semester");
@@ -266,11 +264,13 @@ public class CreateProfile extends VerticalLayout {
         return integerField;
     }
 
-    public class UploadFileFormat extends Div {
+    @Tag("div")
+    public class UploadFileFormat extends AbstractSinglePropertyField<UploadFileFormat, String> {
 
         String value;  //The encoded image
 
         public UploadFileFormat() {
+            super("image","",false);
             MemoryBuffer buffer = new MemoryBuffer();
             Upload upload = new Upload(buffer);
 
@@ -288,10 +288,6 @@ public class CreateProfile extends VerticalLayout {
 
             upload.addSucceededListener(event -> {
                 InputStream fileData = buffer.getInputStream();
-                String fileName = event.getFileName();
-                long contentLength = event.getContentLength();
-                String mimeType = event.getMIMEType();
-                // ToDo: sth with file
                 System.out.println(fileData);
                 try {
                     //byte[] targetArray = new byte[fileData.available()];
@@ -299,11 +295,8 @@ public class CreateProfile extends VerticalLayout {
                     setValue(encoded);
                     //String encodedComp = Base64.getEncoder().encodeToString(targetArray);
                     System.out.println("Encoded "+encoded);
-                    //System.out.println("EncodedComp "+encodedComp);
-                    //System.out.println(encoded.equals(encodedComp));
 
                     //String decoded = new String(Base64.getDecoder().decode(encoded.getBytes()));
-                    //System.out.println("Decoded "+decoded);
                 } catch (IOException e) {
                  e.printStackTrace();
                 }
@@ -324,5 +317,56 @@ public class CreateProfile extends VerticalLayout {
         }
 
     }
+
+
+    @Tag("div")
+    public class UploadFileFormatTest extends Component {
+
+        String value;  //The encoded image
+        private Upload up;
+
+        public UploadFileFormatTest() {
+            MemoryBuffer buffer = new MemoryBuffer();
+            up = new Upload(buffer);
+
+            up.setAcceptedFileTypes("image/jpeg", "image/png", "image/gif");
+            int maxFileSizeInBytes = 1024 * 1024; // 1MB
+            up.setMaxFileSize(maxFileSizeInBytes);
+
+            up.addFileRejectedListener(event -> {
+                String errorMessage = event.getErrorMessage();
+
+                Notification notification = Notification.show(errorMessage, 5000,
+                        Notification.Position.MIDDLE);
+                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            });
+
+            up.addSucceededListener(event -> {
+                InputStream fileData = buffer.getInputStream();
+                try {
+                    String encoded = Base64.getEncoder().encodeToString(fileData.readAllBytes());
+                    setValue(encoded);
+                    getElement().setAttribute("value",getValue());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            H4 title = new H4("Bild hochladen");
+            title.getStyle().set("margin-top", "0");
+            Paragraph hint = new Paragraph("Maximale Dateigröße: 1 MB. Akzeptierte Formate: jpeg, png, gif.");
+            hint.getStyle().set("color", "var(--lumo-secondary-text-color)");
+
+            add(title, hint, up);
+        }
+        public void setValue(String v){
+            value = v;
+        }
+        public String getValue() {
+            return value;
+        }
+
+    }
+
 
 }
