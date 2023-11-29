@@ -319,6 +319,7 @@ public class CreateProfile extends VerticalLayout {
     }
 
 
+    /*
     @Tag("div")
     public class UploadFileFormatTest extends Component {
 
@@ -367,6 +368,7 @@ public class CreateProfile extends VerticalLayout {
         }
 
     }
+     */
 
 
 }
