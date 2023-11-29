@@ -1,6 +1,7 @@
 package group.artifact.views;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
@@ -50,10 +51,11 @@ public class ViewStudentProfile extends VerticalLayout {
 
     Binder<StudentDTO> binder = new Binder<>(StudentDTO.class);
 
-    public ViewStudentProfile() {
+    public ViewStudentProfile(UserController userController, StudentController studentController) {
+        this.studentController = studentController;
+        this.userController = userController;
         setSizeFull();
-        add(buildForm());
-    }
+        add(buildForm());}
 
     @PostConstruct
     public void init() {
@@ -119,13 +121,12 @@ public class ViewStudentProfile extends VerticalLayout {
         dP.setReadOnly(true);
         return dP;
     }
-
     public Image generateImage() {
         //Der übergebene User ist der aktuelle User
-        //Student student = user.getStudent();
-        //String img = student.getImage();
+        Student student = userController.getCurrentUser().getStudent();
         //String decoded = new String(Base64.getDecoder().decode(img.getBytes()));
-        String enc = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+        String enc = student.getImage();
+        //String enc = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
 
         StreamResource sr = new StreamResource("student", () ->  {
             //Student student = user.getStudent();
