@@ -10,6 +10,7 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -20,10 +21,13 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
+import group.artifact.controller.CompanyController;
 import group.artifact.controller.OfferController;
+import group.artifact.controller.StudentController;
 import group.artifact.controller.UserController;
 
 import group.artifact.dtos.OfferDTO;
+import group.artifact.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -37,6 +41,10 @@ public class LoginView extends Composite<Component> {
     private UserController userController;
     @Autowired
     private OfferController offerController;
+    @Autowired
+    private StudentController studentController;
+    @Autowired
+    private CompanyController companyController;
 
     protected Component initContent() {
         TextField email = new TextField("Email");
@@ -141,9 +149,32 @@ public class LoginView extends Composite<Component> {
             Notification.show("Bitte Passwort eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else {
             if (userController.login(email, password)) {
+                System.out.println("Login erfolgreich");
                 getUI().ifPresent(ui -> ui.access(() -> {
                     ui.navigate("/home");
-                    Notification.show("Login erfolgreich!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                    User user = userController.getCurrentUser();
+                    //System.out.println(user==null);
+                    if (studentController.studentExists(user.getUser_pk()) || (companyController.companyExists(user.getUser_pk()))) {
+                        System.out.println("User hat Profil");
+                        Notification.show("Login erfolgreich!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                    } else {
+                        System.out.println("User hat kein Profil");
+                        Notification notification = new Notification();
+                        Anchor ref = new Anchor("create/profile", "Profil erstellen");
+                        Div text = new Div(new Text("Sie haben noch kein Profil erstellt. Um ein Profil zu erstellen, klicken Sie hier:"));
+                        Button closeButton = new Button(new Icon("lumo", "cross"));
+                        closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+                        closeButton.getElement().setAttribute("aria-label", "Close");
+                        closeButton.addClickListener(event -> {
+                            notification.close();
+                        });
+                        HorizontalLayout layout = new HorizontalLayout(text, ref, closeButton);
+                        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+                        notification.add(layout);
+
+                        Notification.show("Login erfolgreich!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                        notification.open();
+                    }
                 }));
             } else {
                 Notification.show("Falsche Email oder Passwort!").addThemeVariants(NotificationVariant.LUMO_ERROR);
