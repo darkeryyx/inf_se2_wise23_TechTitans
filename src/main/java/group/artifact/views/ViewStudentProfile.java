@@ -19,6 +19,8 @@ import com.vaadin.flow.server.StreamResource;
 import group.artifact.controller.StudentController;
 import group.artifact.controller.UserController;
 import group.artifact.dtos.StudentDTO;
+import group.artifact.dtos.UserDTO;
+import group.artifact.dtos.impl.UserDTOImpl;
 import group.artifact.entities.Student;
 import group.artifact.entities.User;
 import javax.annotation.PostConstruct;
@@ -117,6 +119,10 @@ public class ViewStudentProfile extends VerticalLayout {
             return;
         }
         StudentDTO student = studentController.viewStudentProfile(user.getUser_pk());
+        UserDTO userDto = userController.getUserDTO(user.getUser_pk());
+        student.setName(userDto.getName());
+        student.setSurname(userDto.getSurname());
+        student.setEmail(userDto.getEmail());
         binder.bindInstanceFields(this);
         binder.readBean(student);
     }
@@ -164,7 +170,16 @@ public class ViewStudentProfile extends VerticalLayout {
                 return;
             }
             binder.writeBean(studentDto);
+
+            UserDTO userDto = new UserDTOImpl();
+            userDto.setName(studentDto.getName());
+            userDto.setSurname(studentDto.getSurname());
+            userDto.setEmail(studentDto.getEmail());
+
             studentController.updateStudentProfile(studentDto, user.getUser_pk());
+            userController.updateUser(userDto, user.getUser_pk());
+            Notification.show("Studentenprofil erfolgreich gespeichert.");
+
             setEditable(false);
         } catch (ValidationException ex) {
             Notification.show("Validierungsfehler: " + ex.getMessage());
@@ -185,7 +200,7 @@ public class ViewStudentProfile extends VerticalLayout {
         skills.setReadOnly(!editable);
         interests.setReadOnly(!editable);
         description.setReadOnly(!editable);
-        image.setReadOnly(!editable);
+        //image.setReadOnly(!editable);
     }
     public Image generateImage() {
         Student student = userController.getCurrentUser().getStudent();
