@@ -69,10 +69,8 @@ public class CreateProfile extends VerticalLayout {
     TextField interests = new TextField("Interessen");
     TextField studentDescription = new TextField("Beschreibung");
     UploadFileFormat singleFileUpload = new UploadFileFormat();
-    //UploadFileFormatTest uploadTest = new UploadFileFormatTest();
+    // UploadFileFormatTest uploadTest = new UploadFileFormatTest();
     private Binder<Student> studentBinder = new Binder<>(Student.class);
-
-    
 
     // company fields
     TextField name = createRequiredTextField("Firmenname");
@@ -122,11 +120,13 @@ public class CreateProfile extends VerticalLayout {
         // create and return the student form component
         VerticalLayout studentForm = new VerticalLayout();
         HorizontalLayout buttonLayout = new HorizontalLayout(submitButton, skipButton);
+        VerticalLayout uploadLayout = new VerticalLayout(singleFileUpload.title, singleFileUpload.hint, singleFileUpload.upload);
+        uploadLayout.setAlignItems(Alignment.CENTER);
 
         studentForm.add(
-                subject, birthday, semester, skills, interests, studentDescription, singleFileUpload, buttonLayout);
+                subject, birthday, semester, skills, interests, studentDescription, uploadLayout, buttonLayout);
         submitButton.addClickListener(e -> createStudent());
-         
+
         studentForm.setAlignItems(Alignment.CENTER);
         setUpStudentBinder();
         return studentForm;
@@ -163,7 +163,7 @@ public class CreateProfile extends VerticalLayout {
         studentBinder.forField(interests).bind("interests");
         studentBinder.forField(studentDescription).bind("description");
         studentBinder.forField(singleFileUpload).bind("image");
-        //studentBinder.forField(uploadTest.getElement().getAttribute("value")).bind("image");
+        // studentBinder.forField(uploadTest.getElement().getAttribute("value")).bind("image");
 
         studentBinder.forField(semester).asRequired("Semester ist ein Pflichtfeld")
                 .withValidator(new IntegerRangeValidator("Zahl muss zwischen 1 und 99 liegen", 1, 99)).bind("semester");
@@ -189,9 +189,12 @@ public class CreateProfile extends VerticalLayout {
         // create and return the company form component
         VerticalLayout companyForm = new VerticalLayout();
         HorizontalLayout buttonLayout = new HorizontalLayout(submitButton, skipButton);
+        VerticalLayout uploadLayout = new VerticalLayout(singleFileUpload.title, singleFileUpload.hint,
+                singleFileUpload.upload);
+        uploadLayout.setAlignItems(Alignment.CENTER);
 
         companyForm.add(
-                name, business, employees, founded, link, logo, singleFileUpload, companyDesription, buttonLayout);
+                name, business, employees, founded, link, logo, uploadLayout, companyDesription, buttonLayout);
         companyForm.setAlignItems(Alignment.CENTER);
         submitButton.addClickListener(event -> createCompany(
                 name.getValue(),
@@ -200,7 +203,7 @@ public class CreateProfile extends VerticalLayout {
                 founded.getValue(),
                 link.getValue(),
                 logo.getValue(),
-                //singleFileUpload.getValue(),
+                // singleFileUpload.getValue(),
                 companyDesription.getValue()));
 
         return companyForm;
@@ -208,7 +211,7 @@ public class CreateProfile extends VerticalLayout {
 
     private void createCompany(String name, String business, Integer employees, LocalDate founded,
             String link, String logo, String description) {
-        Company company = new Company(name, business, employees, founded, link, logo,description);
+        Company company = new Company(name, business, employees, founded, link, logo, description);
         try {
             User user = userController.getCurrentUser();
             companyController.createCompany(company, user);
@@ -267,12 +270,15 @@ public class CreateProfile extends VerticalLayout {
     @Tag("div")
     public class UploadFileFormat extends AbstractSinglePropertyField<UploadFileFormat, String> {
 
-        String value;  //The encoded image
+        String value; // The encoded image
+        H4 title;
+        Paragraph hint;
+        Upload upload;
 
         public UploadFileFormat() {
-            super("image","",false);
+            super("image", "", false);
             MemoryBuffer buffer = new MemoryBuffer();
-            Upload upload = new Upload(buffer);
+            upload = new Upload(buffer);
 
             upload.setAcceptedFileTypes("image/jpeg", "image/png", "image/gif");
             int maxFileSizeInBytes = 1024 * 1024; // 1MB
@@ -290,85 +296,84 @@ public class CreateProfile extends VerticalLayout {
                 InputStream fileData = buffer.getInputStream();
                 System.out.println(fileData);
                 try {
-                    //byte[] targetArray = new byte[fileData.available()];
+                    // byte[] targetArray = new byte[fileData.available()];
                     String encoded = Base64.getEncoder().encodeToString(fileData.readAllBytes());
                     setValue(encoded);
-                    //String encodedComp = Base64.getEncoder().encodeToString(targetArray);
-                    System.out.println("Encoded "+encoded);
+                    // String encodedComp = Base64.getEncoder().encodeToString(targetArray);
+                    System.out.println("Encoded " + encoded);
 
-                    //String decoded = new String(Base64.getDecoder().decode(encoded.getBytes()));
-                } catch (IOException e) {
-                 e.printStackTrace();
-                }
-            });
-
-            H4 title = new H4("Bild hochladen");
-            title.getStyle().set("margin-top", "0");
-            Paragraph hint = new Paragraph("Maximale Dateigröße: 1 MB. Akzeptierte Formate: jpeg, png, gif.");
-            hint.getStyle().set("color", "var(--lumo-secondary-text-color)");
-
-            add(title, hint, upload);
-        }
-        public void setValue(String v){
-            value = v;
-        }
-        public String getValue() {
-            return value;
-        }
-
-    }
-
-
-    /*
-    @Tag("div")
-    public class UploadFileFormatTest extends Component {
-
-        String value;  //The encoded image
-        private Upload up;
-
-        public UploadFileFormatTest() {
-            MemoryBuffer buffer = new MemoryBuffer();
-            up = new Upload(buffer);
-
-            up.setAcceptedFileTypes("image/jpeg", "image/png", "image/gif");
-            int maxFileSizeInBytes = 1024 * 1024; // 1MB
-            up.setMaxFileSize(maxFileSizeInBytes);
-
-            up.addFileRejectedListener(event -> {
-                String errorMessage = event.getErrorMessage();
-
-                Notification notification = Notification.show(errorMessage, 5000,
-                        Notification.Position.MIDDLE);
-                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            });
-
-            up.addSucceededListener(event -> {
-                InputStream fileData = buffer.getInputStream();
-                try {
-                    String encoded = Base64.getEncoder().encodeToString(fileData.readAllBytes());
-                    setValue(encoded);
-                    getElement().setAttribute("value",getValue());
+                    // String decoded = new String(Base64.getDecoder().decode(encoded.getBytes()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
 
-            H4 title = new H4("Bild hochladen");
+            title = new H4("Bild hochladen");
             title.getStyle().set("margin-top", "0");
-            Paragraph hint = new Paragraph("Maximale Dateigröße: 1 MB. Akzeptierte Formate: jpeg, png, gif.");
+            hint = new Paragraph("Maximale Dateigröße: 1 MB. Akzeptierte Formate: jpeg, png, gif.");
             hint.getStyle().set("color", "var(--lumo-secondary-text-color)");
-
-            add(title, hint, up);
         }
-        public void setValue(String v){
+
+        public void setValue(String v) {
             value = v;
         }
+
         public String getValue() {
             return value;
         }
 
     }
-     */
 
+    /*
+     * @Tag("div")
+     * public class UploadFileFormatTest extends Component {
+     * 
+     * String value; //The encoded image
+     * private Upload up;
+     * 
+     * public UploadFileFormatTest() {
+     * MemoryBuffer buffer = new MemoryBuffer();
+     * up = new Upload(buffer);
+     * 
+     * up.setAcceptedFileTypes("image/jpeg", "image/png", "image/gif");
+     * int maxFileSizeInBytes = 1024 * 1024; // 1MB
+     * up.setMaxFileSize(maxFileSizeInBytes);
+     * 
+     * up.addFileRejectedListener(event -> {
+     * String errorMessage = event.getErrorMessage();
+     * 
+     * Notification notification = Notification.show(errorMessage, 5000,
+     * Notification.Position.MIDDLE);
+     * notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+     * });
+     * 
+     * up.addSucceededListener(event -> {
+     * InputStream fileData = buffer.getInputStream();
+     * try {
+     * String encoded = Base64.getEncoder().encodeToString(fileData.readAllBytes());
+     * setValue(encoded);
+     * getElement().setAttribute("value",getValue());
+     * } catch (IOException e) {
+     * e.printStackTrace();
+     * }
+     * });
+     * 
+     * H4 title = new H4("Bild hochladen");
+     * title.getStyle().set("margin-top", "0");
+     * Paragraph hint = new
+     * Paragraph("Maximale Dateigröße: 1 MB. Akzeptierte Formate: jpeg, png, gif.");
+     * hint.getStyle().set("color", "var(--lumo-secondary-text-color)");
+     * 
+     * add(title, hint, up);
+     * }
+     * public void setValue(String v){
+     * value = v;
+     * }
+     * public String getValue() {
+     * return value;
+     * }
+     * 
+     * }
+     */
 
 }

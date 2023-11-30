@@ -73,6 +73,7 @@ public class SearchCompaniesView extends HomeView {
         businessComboBox.setWidth("15%");
         searchField.setWidth("85%");
         searchField.setPrefixComponent( new Icon (VaadinIcon.SEARCH));
+        searchField.getStyle().set("display", "flex"); //-> Default css nachtrag
 
         HorizontalLayout searchings = new HorizontalLayout(businessComboBox, searchField);
         searchings.setWidth("70%");
@@ -108,10 +109,10 @@ public class SearchCompaniesView extends HomeView {
         return layout;
     }
 
-    static HorizontalLayout gridRowLayout(CompanyDTO item){
+    static HorizontalLayout gridRowLayout(CompanyDTO item) {
 
         Anchor link = new Anchor(item.getLink(), item.getLink());
-        Image logo = new Image ("images/fabrik.png", "images/fabrik.png");
+        Image logo = new Image("images/fabrik.png", "images/fabrik.png");
         Label business = new Label("Branche: " + item.getBusiness());
         Label company = new Label(item.getName());
         Label description = new Label(item.getDescription());
@@ -133,16 +134,17 @@ public class SearchCompaniesView extends HomeView {
         description.getStyle().set("overflow", "hidden");
         description.getStyle().set("text-overflow", "ellipsis");
         description.getStyle().set("max-height", "3em");
-        description.setWhiteSpace(HasText.WhiteSpace.NORMAL)  ;
+        description.setWhiteSpace(HasText.WhiteSpace.NORMAL);
 
-        link.getStyle().set("font-size","10pt");
+        link.getStyle().set("font-size", "10pt");
         link.getStyle().set("font-weight", "bold");
         link.setTarget("_blank");
         link.setWhiteSpace(HasText.WhiteSpace.NORMAL);
 
         VerticalLayout infoLayout = new VerticalLayout(company, business, description, link);
-        infoLayout.setSpacing(false);
+        infoLayout.setSpacing(true);
         infoLayout.setAlignItems(Alignment.START);
+        infoLayout.getStyle().set("display", "flex"); //-> Default css nachtrag
 
         //RowLayout
         HorizontalLayout layout = new HorizontalLayout(logoLayout, infoLayout);
@@ -153,3 +155,5 @@ public class SearchCompaniesView extends HomeView {
     }
 
 }
+
+

@@ -124,6 +124,7 @@ public class SearchOffersView extends HomeView {
                 searchings,
                 grid
         );
+
         layout.setAlignSelf(Alignment.END, searchCompanyViewLink);
         layout.setAlignSelf(Alignment.CENTER, searchings,grid, viewTitle);
         layout.setSizeFull();
@@ -166,6 +167,7 @@ public class SearchOffersView extends HomeView {
         VerticalLayout infoLayout = new VerticalLayout(company,job,details, description);
         infoLayout.setSpacing(false);
         infoLayout.setAlignItems(Alignment.START);
+        infoLayout.getStyle().set("display", "flex"); //-> Default css nachtrag
 
         
         //RowLayout
