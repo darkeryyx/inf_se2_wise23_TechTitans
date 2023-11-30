@@ -27,4 +27,9 @@ public class StudentController {
     public boolean studentExists(Integer id) {
         return studentService.studentExists(id);
     }
+
+    public void updateStudentProfile(StudentDTO studentDTO, Integer id) {
+        studentService.updateProfile(studentDTO, id);
+    }
+
 }

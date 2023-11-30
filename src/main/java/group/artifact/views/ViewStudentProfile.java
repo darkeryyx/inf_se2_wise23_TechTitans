@@ -13,11 +13,14 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import group.artifact.controller.StudentController;
 import group.artifact.controller.UserController;
 import group.artifact.dtos.StudentDTO;
+import group.artifact.dtos.UserDTO;
+import group.artifact.dtos.impl.UserDTOImpl;
 import group.artifact.entities.Student;
 import group.artifact.entities.User;
 import javax.annotation.PostConstruct;
@@ -50,11 +53,18 @@ public class ViewStudentProfile extends VerticalLayout {
 
     Binder<StudentDTO> binder = new Binder<>(StudentDTO.class);
 
+    Button editButton = new Button("Bearbeiten");
+    Button saveButton = new Button("Speichern");
+
     public ViewStudentProfile(UserController userController, StudentController studentController) {
         this.studentController = studentController;
         this.userController = userController;
         setSizeFull();
-        add(buildForm());}
+        add(buildForm());
+        editButton.addClickListener(e -> edit());
+        saveButton.addClickListener(e -> save());
+        saveButton.setVisible(false);
+    }
 
     @PostConstruct
     public void init() {
@@ -96,7 +106,7 @@ public class ViewStudentProfile extends VerticalLayout {
                     description);
         }
         profile.setAlignItems(Alignment.CENTER);
-        formLayout.add(header,profile);
+        formLayout.add(header,profile, editButton, saveButton);
         formLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         return formLayout;
     }
@@ -109,6 +119,10 @@ public class ViewStudentProfile extends VerticalLayout {
             return;
         }
         StudentDTO student = studentController.viewStudentProfile(user.getUser_pk());
+        UserDTO userDto = userController.getUserDTO(user.getUser_pk());
+        student.setName(userDto.getName());
+        student.setSurname(userDto.getSurname());
+        student.setEmail(userDto.getEmail());
         binder.bindInstanceFields(this);
         binder.readBean(student);
     }
@@ -128,6 +142,65 @@ public class ViewStudentProfile extends VerticalLayout {
         DatePicker dP = new DatePicker(s);
         dP.setReadOnly(true);
         return dP;
+    }
+
+    private void edit(){
+
+        User user = userController.getCurrentUser();
+        if ( user.getUser_pk() != null) {
+            StudentDTO studentDto = studentController.viewStudentProfile( user.getUser_pk());
+            if (studentDto != null) {
+                binder.setBean(studentDto);
+                setEditable(true);
+            } else {
+                Notification.show("Student nicht gefunden.");
+            }
+        } else {
+            Notification.show("Bitte geben Sie eine gültige ID ein.");
+        }
+
+    }
+    private void save() {
+        User user = userController.getCurrentUser();
+        try {
+            StudentDTO studentDto = binder.getBean();
+            if (studentDto == null) {
+                System.out.println("StudentDto ist null!");
+                Notification.show("Keine Daten zum Speichern.");
+                return;
+            }
+            binder.writeBean(studentDto);
+
+            UserDTO userDto = new UserDTOImpl();
+            userDto.setName(studentDto.getName());
+            userDto.setSurname(studentDto.getSurname());
+            userDto.setEmail(studentDto.getEmail());
+
+            studentController.updateStudentProfile(studentDto, user.getUser_pk());
+            userController.updateUser(userDto, user.getUser_pk());
+            Notification.show("Studentenprofil erfolgreich gespeichert.");
+
+            setEditable(false);
+        } catch (ValidationException ex) {
+            Notification.show("Validierungsfehler: " + ex.getMessage());
+        }
+    }
+
+
+    private void setEditable(boolean editable) {
+        saveButton.setVisible(editable);
+        editButton.setVisible(!editable);
+
+        name.setReadOnly(!editable);
+        surname.setReadOnly(!editable);
+        email.setReadOnly(!editable);
+        subject.setReadOnly(!editable);
+        birthday.setReadOnly(!editable);
+        semester.setReadOnly(!editable);
+        skills.setReadOnly(!editable);
+        interests.setReadOnly(!editable);
+        description.setReadOnly(!editable);
+        //image.setReadOnly(!editable);
     }
     public Image generateImage() {
         Student student = userController.getCurrentUser().getStudent();

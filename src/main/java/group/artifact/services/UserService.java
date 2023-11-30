@@ -13,6 +13,7 @@ import java.util.Base64.Encoder;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import group.artifact.dtos.impl.UserDTOImpl;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -286,6 +287,25 @@ public static boolean isCommonPassword(String passwd) throws IOException{
     public boolean pwNumberValid(String pw){
         String numbers = "(.*[0,1,2,3,4,5,6,7,8,9].*$)";
         return pw.matches(numbers) ;
+    }
+
+    public UserDTO getUserDTO(Integer id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("User not found"));
+        UserDTO dto = new UserDTOImpl();
+        dto.setName(user.getName());
+        dto.setSurname(user.getSurname());
+        dto.setEmail(user.getEmail());
+        return dto;
+    }
+
+    public void updateUser(UserDTO userDTO, Integer userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("User not found"));
+        user.setName(userDTO.getName());
+        user.setSurname(userDTO.getSurname());
+        user.setEmail(userDTO.getEmail());
+        userRepository.save(user);
     }
 
 }

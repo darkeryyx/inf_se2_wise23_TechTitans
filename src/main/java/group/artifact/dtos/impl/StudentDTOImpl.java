@@ -2,12 +2,16 @@ package group.artifact.dtos.impl;
 
 import group.artifact.dtos.StudentDTO;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
+@Getter
+@Setter
 public class StudentDTOImpl implements StudentDTO {
     private String name;
     private String surname;
