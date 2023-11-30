@@ -58,7 +58,6 @@ public class CreateProfile extends VerticalLayout {
 
     // general buttons
     private Component currentForm;
-    private Button submitButton = new Button("Bestätigen");
     private Button skipButton = new Button("Überspringen", e -> UI.getCurrent().navigate("home"));
 
     // student fields
@@ -101,7 +100,6 @@ public class CreateProfile extends VerticalLayout {
         currentForm = createStudentForm();
         add(currentForm);
 
-        submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         // add a selection listener to change the form based on the selected tab
         tabs.addSelectedChangeListener(event -> {
             remove(currentForm);
@@ -118,9 +116,13 @@ public class CreateProfile extends VerticalLayout {
 
     private Component createStudentForm() {
         // create and return the student form component
+        Button submitButton = new Button("Bestätigen");
+        submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
         VerticalLayout studentForm = new VerticalLayout();
         HorizontalLayout buttonLayout = new HorizontalLayout(submitButton, skipButton);
-        VerticalLayout uploadLayout = new VerticalLayout(singleFileUpload.title, singleFileUpload.hint, singleFileUpload.upload);
+        VerticalLayout uploadLayout = new VerticalLayout(singleFileUpload.title, singleFileUpload.hint,
+                singleFileUpload.upload);
         uploadLayout.setAlignItems(Alignment.CENTER);
 
         studentForm.add(
@@ -187,6 +189,9 @@ public class CreateProfile extends VerticalLayout {
 
     private Component createCompanyForm() {
         // create and return the company form component
+        Button submitButton = new Button("Bestätigen");
+        submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
         VerticalLayout companyForm = new VerticalLayout();
         HorizontalLayout buttonLayout = new HorizontalLayout(submitButton, skipButton);
         VerticalLayout uploadLayout = new VerticalLayout(singleFileUpload.title, singleFileUpload.hint,
