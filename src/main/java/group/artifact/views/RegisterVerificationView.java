@@ -14,12 +14,22 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
+import group.artifact.controller.EmailController;
+import group.artifact.controller.UserController;
+import group.artifact.entities.User;
+
 import javax.annotation.security.RolesAllowed;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("register/verify")
 @RolesAllowed("ROLE_USER")
 @CssImport("./css/RegisterVerificationView.css")
 public class RegisterVerificationView extends VerticalLayout {
+    @Autowired
+    EmailController emailController;
+    @Autowired
+    UserController userController;
 
     public RegisterVerificationView() {
         addClassName("register-verification-view");
@@ -29,8 +39,13 @@ public class RegisterVerificationView extends VerticalLayout {
 
         Paragraph text = new Paragraph("Bitte geben Sie den Code ein, den Sie per E-Mail erhalten haben.");
         add(text);
-        Anchor resendLink = new Anchor("/", "erneut senden");
-        add(resendLink);
+        Button resendButton = new Button("Erneut senden", e -> {
+            User user = userController.getCurrentUser();
+            emailController.sendVerificationEmail(user.getEmail(), user.getSurname());
+            Notification.show("E-Mail erfolgreich versendet").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        });
+        resendButton.addClassName("link-button");
+        add(resendButton);
         
         HorizontalLayout inputFields = new HorizontalLayout();
         TextField[] codeFields = new TextField[5];

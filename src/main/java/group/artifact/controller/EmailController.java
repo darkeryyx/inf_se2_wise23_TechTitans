@@ -11,7 +11,10 @@ public class EmailController {
     @Autowired
     EmailService emailService;
 
-    public void sendEmail(String adress, String subject, String text) {
-        emailService.sendEmail(adress, subject, text);
+    public void sendVerificationEmail(String to, String surname) {
+        String address = to;
+        String title = "Sicherheitsmaßnahme Techtitans - Bestätigen Sie ihre E-Mail!";
+        String text = "Sehr geehrte/r Frau/Herr " + surname + "\n\nbitte bestätigen Sie Ihre E-Mail-Adresse mit dem folgenden Code:\n\n83923\n\nViele Grüße,\nIhr TechTitans-Team";
+        emailService.sendEmail(address, title, text);
     }
 }
