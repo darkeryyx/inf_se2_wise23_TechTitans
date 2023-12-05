@@ -56,5 +56,11 @@ public class User {
 
     @NonNull
     @Column(nullable = false)
-    private boolean locked;
+    private Boolean locked;
+    /*
+     * initial: null
+     * after registration: pin with 5 chars
+     * when validated: !true (char not boolean)
+     */
+    private String pin;
 }

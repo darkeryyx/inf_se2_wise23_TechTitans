@@ -50,27 +50,12 @@ public class UserService {
         try {
             user.setSalt(generateSalt(16)); // generate salt
             user.setPassword(generateHash(user.getPassword(), user.getSalt())); // hash pw
-
-                 /*      KOMMENTARE NICH MIT PUSHEN NUR FÜR MICH ZUM VERSTÄNDNIS
-            List<String> sQuestions =getQuestions(newUser.getEmail());
-          //  Map<String, String> sQuestions = newUser.getSQA();
-     //       if(antwort.equals(user.getSQA().get(frage))){
-            String firstQ = sQuestions.get(0);
-            newUser.setSQA(firstQ, generateHash(newUser.getSQA().get(firstQ),newUser.getSalt())); //geht net,weil kann ja net map<string,<string> mit <frage,antwort> ersetzen ist ja keine map, müsste getSQA.put benutzten und paar reinzutun in map
-            Map<String, String> sQuestisdons = newUser.getSQA();
-            newUser.setSQA(sQuestisdons); //map mit map ersetzen, könnte vllt auch so machen-> neue map, fragen und gehashedn antworte nrein und dann setSQA(neue sqa) aber untere version viel besser */
-            //   List<String> sQuestions = getQuestions(newUser.getEmail()); //das funkt net weil getQuestions auf repository zugreift aber user is ja noch net in db gespeichert
-
-            //antworten der sFragen hashen
-       /*     Set<String> sQuestions = newUser.getSQA().keySet();
-            for (String question : sQuestions) {
-                String hashedAnswer = generateHash(newUser.getSQA().get(question), newUser.getSalt());
-                newUser.getSQA().put(question, hashedAnswer); //ersetzt die antworten der vorhandenen keys(questions) mit den gehashden antworten
-            }*/
             String hashedAnswer1 = generateHash(user.getAnswer1(), user.getSalt());
             user.setAnswer1(hashedAnswer1);
             String hashedAnswer2 = generateHash(user.getAnswer2(), user.getSalt());
             user.setAnswer2(hashedAnswer2);
+            String pin = UUID.randomUUID().toString().substring(0, 5).toUpperCase(); // generate pin
+            user.setPin(pin);
 
             userRepository.save(user); // save to DB
             return "true";
@@ -304,4 +289,25 @@ public static boolean isCommonPassword(String passwd) throws IOException{
         userRepository.save(user);
     }
 
+    public User getUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
+
+    public boolean removeUser(String email) {
+        User user = userRepository.findUserByEmail(email);
+        if (user == null) {
+            return false;
+        }
+        userRepository.delete(user);
+        return true;
+    }
+
+    public boolean verfiyEmail(User user, String pin) {
+        if (user.getPin().equals(pin)) {
+            user.setPin("!true");
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
 }

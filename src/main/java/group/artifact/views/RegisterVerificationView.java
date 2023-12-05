@@ -21,6 +21,7 @@ import group.artifact.entities.User;
 import javax.annotation.security.RolesAllowed;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGenerator;
 
 @Route("register/verify")
 @RolesAllowed("ROLE_USER")
@@ -46,7 +47,7 @@ public class RegisterVerificationView extends VerticalLayout {
         });
         resendButton.addClassName("link-button");
         add(resendButton);
-        
+
         HorizontalLayout inputFields = new HorizontalLayout();
         TextField[] codeFields = new TextField[5];
         for (int i = 0; i < codeFields.length; i++) {
@@ -55,15 +56,30 @@ public class RegisterVerificationView extends VerticalLayout {
             field.setMaxLength(1); // allow only one char
             field.setWidth("15vw");
             field.setHeight("15vh");
+            codeFields[i] = field; // add each field to the array
             inputFields.add(field); // add each field to the horizontal layout
         }
         add(inputFields); // add inputs to the main layout
 
         Button verifyButton = new Button("Bestätigen", e -> {
             getUI().ifPresent(ui -> ui.access(() -> {
-                ui.navigate("/create/profile");
-                Notification.show("E-Mail erfolgreich verifiziert").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                ;
+                // create an array to store the input values
+                String pin = "";
+
+                // iterate through the TextField array and retrieve the values
+                for (int i = 0; i < codeFields.length; i++) {
+                    TextField field = codeFields[i];
+                    String fieldValue = field.getValue(); // get the value from the TextField
+                    pin += fieldValue; // add the value to the pin string
+                }
+                if (userController.verifyEmail(userController.getCurrentUser(), pin)) {
+                    ui.navigate("/create/profile");
+                    Notification.show("E-Mail erfolgreich verifiziert")
+                            .addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                } else {
+                    Notification.show("E-Mail konnte nicht verifiziert werden!")
+                            .addThemeVariants(NotificationVariant.LUMO_ERROR);
+                }
             }));
         });
         verifyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

@@ -97,4 +97,8 @@ public class UserController {
     public void updateUser(UserDTO userDTO, Integer id) {
         userService.updateUser(userDTO, id);
     }
+
+    public boolean verifyEmail(User user, String pin) {
+        return userService.verfiyEmail(user, pin);
+    }
 }
