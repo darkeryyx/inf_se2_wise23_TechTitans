@@ -88,18 +88,14 @@ public class UserService {
     }
 
     public boolean getLocked(String email){
-        User u= userRepository.findUserByEmail(email);
+        User user = userRepository.findUserByEmail(email);
 
-        return u.isLocked();
+        return user.getLocked();
     }
 
     public boolean authenticate(String email, String password) {
         User user = userRepository.findUserByEmail(email);
-        if(user.isLocked()){
-            return false;
-        }
-
-        if (user == null) {
+        if(user == null || user.getLocked()){
             return false;
         }
         String salt = user.getSalt();
