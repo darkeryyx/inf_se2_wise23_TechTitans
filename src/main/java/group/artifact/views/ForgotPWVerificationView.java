@@ -13,6 +13,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 import group.artifact.controller.EmailController;
 import group.artifact.controller.UserController;
@@ -21,12 +22,10 @@ import group.artifact.entities.User;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.security.RolesAllowed;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("forgotPW/verify")
-@RolesAllowed("ROLE_USER")
+@AnonymousAllowed
 @CssImport("./css/RegisterVerificationView.css")
 public class ForgotPWVerificationView extends VerticalLayout implements BeforeEnterObserver {
     @Autowired

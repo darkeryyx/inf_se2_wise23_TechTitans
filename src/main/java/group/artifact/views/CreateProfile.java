@@ -1,6 +1,5 @@
 package group.artifact.views;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -11,8 +10,6 @@ import javax.annotation.security.RolesAllowed;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.internal.MessageDigestUtil;
-import com.vaadin.flow.component.html.Div;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Component;
 import org.springframework.dao.DataIntegrityViolationException;

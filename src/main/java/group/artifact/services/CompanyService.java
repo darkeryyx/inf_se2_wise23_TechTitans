@@ -5,7 +5,6 @@ import group.artifact.dtos.impl.CompanyDTOImpl;
 import group.artifact.entities.Company;
 import group.artifact.entities.User;
 import group.artifact.repositories.CompanyRepository;
-import group.artifact.repositories.UserRepository;
 import javax.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CompanyService {
 
     private CompanyRepository companyRepository;
-    private UserRepository userRepository;
     private EntityManager entityManager;
 
     @Transactional

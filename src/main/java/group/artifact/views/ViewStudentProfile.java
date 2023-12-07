@@ -28,9 +28,7 @@ import javax.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayInputStream;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.HexFormat;
 
 @Route("view/student")
 @RolesAllowed("ROLE_USER")
