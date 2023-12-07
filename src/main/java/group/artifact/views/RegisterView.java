@@ -14,6 +14,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -80,7 +81,8 @@ public class RegisterView extends VerticalLayout {
     }
 
     private void createMain(){
-        VerticalLayout main = new VerticalLayout();
+        FlexLayout main = new FlexLayout();
+        main.setFlexDirection(FlexLayout.FlexDirection.COLUMN);
         final List<String> allSecurityQuestions = Arrays.asList(
                 "Wie lautet der Mädchenname Ihrer Mutter?",
                 "In welcher Stadt wurden Sie geboren?",
