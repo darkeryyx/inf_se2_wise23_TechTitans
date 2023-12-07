@@ -27,20 +27,26 @@ public class UserController {
         return userService.createUser(newUser);
     }
 
-    public void lock(String email){
+    public void lock(String email) {
         userService.lock(email);
     }
 
-    public boolean getLocked(String email){
+    public void unlock(String email) {
+        userService.unlock(email);
+    }
+
+    public boolean getLocked(String email) {
         return userService.getLocked(email);
     }
+
     public boolean login(String email, String passwort) {
         if (userService.authenticate(email, passwort)) {
             Cookie cookie = userService.setSessionCookie(email);
-            //VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
-            //samesite funktioniert seit downgrade nicht, häßlicher workaround
-            //VaadinService.getCurrentResponse().addCookie(cookie);
-            VaadinService.getCurrentResponse().setHeader("Set-Cookie", ""+ cookie.getName() +"="+ cookie.getValue() +";Max-Age=1200;HttpOnly; SameSite=lax");
+            // VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
+            // samesite funktioniert seit downgrade nicht, häßlicher workaround
+            // VaadinService.getCurrentResponse().addCookie(cookie);
+            VaadinService.getCurrentResponse().setHeader("Set-Cookie",
+                    "" + cookie.getName() + "=" + cookie.getValue() + ";Max-Age=1200;HttpOnly; SameSite=lax");
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     email, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
             SecurityContextHolder.getContext().setAuthentication(auth);
@@ -73,21 +79,28 @@ public class UserController {
         userService.pwNew(email, pw);
     }
 
-    public boolean pwLengthValid(String pw){
+    public boolean pwLengthValid(String pw) {
         return userService.pwLengthValid(pw);
     }
-    public boolean pwUpperCaseValid(String pw){
+
+    public boolean pwUpperCaseValid(String pw) {
         return userService.pwUpperCaseValid(pw);
     }
-    public boolean pwSpecialCharValid(String pw){
+
+    public boolean pwSpecialCharValid(String pw) {
         return userService.pwSpecialCharValid(pw);
     }
-    public boolean pwNumberValid(String pw){
+
+    public boolean pwNumberValid(String pw) {
         return userService.pwNumberValid(pw);
     }
 
     public User getCurrentUser() {
         return userService.getCurrentUser(VaadinService.getCurrentRequest().getCookies());
+    }
+
+    public User getUserByEmail(String email) {
+        return userService.getUserByEmail(email);
     }
 
     public UserDTO getUserDTO(Integer id) {
@@ -96,6 +109,10 @@ public class UserController {
 
     public void updateUser(UserDTO userDTO, Integer id) {
         userService.updateUser(userDTO, id);
+    }
+
+    public void generateVerificationCode(User user) {
+        userService.generateVerificationCode(user);
     }
 
     public boolean verifyEmail(User user, String pin) {

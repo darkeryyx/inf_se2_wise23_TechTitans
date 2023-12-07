@@ -3,8 +3,6 @@ package group.artifact.views;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.orderedlayout.BoxSizing;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.IntegerField;
@@ -158,7 +156,7 @@ public class CreateCompanyProfileView extends Composite<Component> {
 
         Company company = new Company(name, business, employees, founded, link, description, logo);
         try {
-           // companyController.createCompany(company, user);
+            // companyController.createCompany(company, user);
             getUI().ifPresent(ui -> ui.access(() -> {
                 ui.navigate(RegisterVerificationView.class);
             }));

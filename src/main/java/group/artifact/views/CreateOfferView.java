@@ -22,7 +22,6 @@ import javax.annotation.security.RolesAllowed;
 import group.artifact.entities.User;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 

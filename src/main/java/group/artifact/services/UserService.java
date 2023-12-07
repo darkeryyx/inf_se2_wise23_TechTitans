@@ -72,6 +72,12 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void unlock(String email) {
+        User user = userRepository.findUserByEmail(email);
+        user.setLocked(false);
+        userRepository.save(user);
+    }
+
     public boolean getLocked(String email){
         User user = userRepository.findUserByEmail(email);
 
@@ -286,6 +292,12 @@ public static boolean isCommonPassword(String passwd) throws IOException{
         user.setName(userDTO.getName());
         user.setSurname(userDTO.getSurname());
         user.setEmail(userDTO.getEmail());
+        userRepository.save(user);
+    }
+
+    public void generateVerificationCode(User user) {
+        String pin = UUID.randomUUID().toString().substring(0, 5).toUpperCase(); // generate pin
+        user.setPin(pin);
         userRepository.save(user);
     }
 

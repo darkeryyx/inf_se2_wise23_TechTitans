@@ -26,9 +26,8 @@ public class forgotPWView extends Composite<Component> {
 
     @Autowired
     private UserController userController;
-    private int answer1Attempts=0;
-    private int answer2Attempts=0;
-
+    private int answer1Attempts = 0;
+    private int answer2Attempts = 0;
 
     protected Component initContent() {
         TextField email = new TextField("Bitte geben Sie Ihre E-Mail ein");
@@ -36,15 +35,13 @@ public class forgotPWView extends Composite<Component> {
 
         email.addKeyDownListener(Key.ENTER, event -> {
             checkEmail(
-                  email.getValue());
+                    email.getValue());
         });
         VerticalLayout enterEmailLayout = new VerticalLayout();
         enterEmailLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         enterEmailLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         enterEmailLayout.getStyle().set("display", "flex");
         enterEmailLayout.setSizeFull();
-        
-
 
         enterEmailLayout.add(new H2("Passwort vergessen"), email,
                 new Button("Bestätigen", event -> checkEmail(email.getValue())));
@@ -55,7 +52,8 @@ public class forgotPWView extends Composite<Component> {
     private void checkEmail(String email) {
         if (email.trim().isEmpty()) {
             Notification.show("Bitte E-Mail eingeben").addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }else if(userController.getLocked(email)){
+        } else if (userController.getLocked(email)) {
+            getUI().ifPresent(ui -> ui.navigate("forgotPW/verify?email=" + email));
         } else {
             List<String> sqa = userController.getQList(email);
             if (!sqa.isEmpty()) {
@@ -88,13 +86,10 @@ public class forgotPWView extends Composite<Component> {
                         sQuestions.get(0),
                         q1.getValue(),
                         email,
-                        sQuestions
-                ))));
+                        sQuestions))));
 
         return sqaLayout;
     }
-
-
 
     public VerticalLayout checkSQA(String frage, String antwort, String email, List<String> liste) {
         if (userController.checkSQA(frage, antwort, email)) {
@@ -107,10 +102,8 @@ public class forgotPWView extends Composite<Component> {
                 ((VerticalLayout) getContent()).add(pwReset(
                         liste.get(1),
                         q2.getValue(),
-                        email
-                ));
+                        email));
             });
-
 
             VerticalLayout q2Layout = new VerticalLayout();
             q2Layout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
@@ -120,14 +113,14 @@ public class forgotPWView extends Composite<Component> {
                     new Button("Bestätigen", event -> ((VerticalLayout) getContent()).add(pwReset(
                             liste.get(1),
                             q2.getValue(),
-                            email
-                    ))));
+                            email))));
 
             return q2Layout;
         } else {
-            Notification.show(String.format("Falsche Antwort! Noch %d Versuche!", (3-(++answer1Attempts)))).addThemeVariants(NotificationVariant.LUMO_ERROR);
+            Notification.show(String.format("Falsche Antwort! Noch %d Versuche!", (3 - (++answer1Attempts))))
+                    .addThemeVariants(NotificationVariant.LUMO_ERROR);
 
-            if(answer1Attempts==3){
+            if (answer1Attempts == 3) {
                 userController.lock(email);
                 Notification.show("Account gesperrt!").addThemeVariants(NotificationVariant.LUMO_ERROR);
                 getUI().ifPresent(ui -> ui.navigate("login"));
@@ -136,7 +129,6 @@ public class forgotPWView extends Composite<Component> {
             return sqaLayout(email);
         }
     }
-
 
     public VerticalLayout pwReset(String frage, String antwort, String email) {
 
@@ -152,8 +144,7 @@ public class forgotPWView extends Composite<Component> {
                 pwNew(
                         email,
                         reset.getValue(),
-                        confirm.getValue()
-                );
+                        confirm.getValue());
             });
 
             VerticalLayout pwNeu = new VerticalLayout();
@@ -166,16 +157,15 @@ public class forgotPWView extends Composite<Component> {
                     new Button("Bestätigen", event -> pwNew(
                             email,
                             reset.getValue(),
-                            confirm.getValue()
-                    ))
-            );
+                            confirm.getValue())));
 
             return pwNeu;
 
         } else {
-            Notification.show(String.format("Falsche Antwort! Noch %d Versuche!", (3-(++answer2Attempts)))).addThemeVariants(NotificationVariant.LUMO_ERROR);
+            Notification.show(String.format("Falsche Antwort! Noch %d Versuche!", (3 - (++answer2Attempts))))
+                    .addThemeVariants(NotificationVariant.LUMO_ERROR);
 
-            if(answer2Attempts==3){
+            if (answer2Attempts == 3) {
                 userController.lock(email);
                 Notification.show("Account gesperrt!").addThemeVariants(NotificationVariant.LUMO_ERROR);
                 getUI().ifPresent(ui -> ui.navigate("login"));
@@ -185,13 +175,12 @@ public class forgotPWView extends Composite<Component> {
         }
     }
 
-
     public void pwNew(String email, String pw, String pw2) {
-        if(pw.trim().isEmpty() || pw2.trim().isEmpty()){
+        if (pw.trim().isEmpty() || pw2.trim().isEmpty()) {
             Notification.show("Bitte ein Passwort eingeben!").addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }else if(!pw.equals(pw2)){
+        } else if (!pw.equals(pw2)) {
             Notification.show("Passwörter stimmen nicht überein").addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }else {
+        } else {
             userController.pwNew(email, pw);
             Notification.show("Passwort erfolgreich zurückgesetzt").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             UI.getCurrent().navigate("login");

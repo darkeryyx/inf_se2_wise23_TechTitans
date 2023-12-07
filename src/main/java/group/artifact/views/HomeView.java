@@ -20,6 +20,7 @@ public class HomeView extends VerticalLayout {
         Anchor register = new Anchor("register", "Registrieren");
         Anchor registerVerify = new Anchor("register/verify", "E-Mail bestätigen");
         Anchor forgotPW = new Anchor("forgotPW", "Passwort vergessen?");
+        Anchor forgotPWVerify = new Anchor("forgotPW/verify", "Passwort vergessen gesperrt?");
 
         Anchor createProfile = new Anchor("create/profile", "Profil erstellen");
         Anchor createOfferView = new Anchor("create/offer", "Angebot erstellen");
@@ -29,7 +30,8 @@ public class HomeView extends VerticalLayout {
 
         Anchor viewStudentProfile = new Anchor("view/student", "Studentenprofil ansehen");
 
-        header = new HorizontalLayout(login, register, registerVerify, forgotPW, createProfile, createOfferView, searchCompaniesView, searchOffersView, viewStudentProfile);
+        header = new HorizontalLayout(login, register, registerVerify, forgotPW, forgotPWVerify, createProfile, createOfferView,
+                searchCompaniesView, searchOffersView, viewStudentProfile);
 
         content = new VerticalLayout();
 
@@ -64,7 +66,7 @@ public class HomeView extends VerticalLayout {
         this.fooder = fooder;
     }
 
-    void add(){
+    void add() {
         add(header, content, fooder);
     }
 

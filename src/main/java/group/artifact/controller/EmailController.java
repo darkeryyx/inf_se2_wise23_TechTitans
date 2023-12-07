@@ -26,4 +26,16 @@ public class EmailController {
                 + "\n\nViele Grüße,\nIhr TechTitans-Team";
         emailService.sendEmail(address, title, text);
     }
+
+    public void unlockAccountEmail(String to, String surname) {
+        User user = userService.getUserByEmail(to);
+        String pin = user.getPin();
+
+        String address = to;
+        String title = "Sicherheitsmaßnahme Techtitans - Entsperren Sie ihren Account!";
+        String text = "Sehr geehrte/r Frau/Herr " + surname
+                + "\n\nbitte entsperren Sie Ihren Account mit dem folgenden Code:\n\n" + pin
+                + "\n\nViele Grüße,\nIhr TechTitans-Team";
+        emailService.sendEmail(address, title, text);
+    }
 }

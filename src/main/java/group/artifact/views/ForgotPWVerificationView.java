@@ -1,6 +1,5 @@
 package group.artifact.views;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -11,36 +10,55 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 
 import group.artifact.controller.EmailController;
 import group.artifact.controller.UserController;
 import group.artifact.entities.User;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.security.RolesAllowed;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route("register/verify")
+@Route("forgotPW/verify")
 @RolesAllowed("ROLE_USER")
 @CssImport("./css/RegisterVerificationView.css")
-public class RegisterVerificationView extends VerticalLayout {
+public class ForgotPWVerificationView extends VerticalLayout implements BeforeEnterObserver {
     @Autowired
     EmailController emailController;
     @Autowired
     UserController userController;
 
-    public RegisterVerificationView() {
+    private String email;
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        Map<String, List<String>> queryParams = event.getLocation().getQueryParameters().getParameters();
+        if (queryParams.containsKey("email")) {
+            List<String> emails = queryParams.get("email");
+            if (!emails.isEmpty()) {
+                this.email = emails.get(0); // Get the first email parameter
+            }
+        }
+    }
+
+    public ForgotPWVerificationView() {
         addClassName("register-verification-view");
 
-        H1 title = new H1("E-Mail bestätigen");
+        H1 title = new H1("Account entsperren");
         add(title);
 
         Paragraph text = new Paragraph("Bitte geben Sie den Code ein, den Sie per E-Mail erhalten haben.");
         add(text);
         Button resendButton = new Button("Erneut senden", e -> {
-            User user = userController.getCurrentUser();
-            emailController.sendVerificationEmail(user.getEmail(), user.getSurname());
+            User user = userController.getUserByEmail(email);
+            userController.generateVerificationCode(user);
+            emailController.unlockAccountEmail(user.getEmail(), user.getSurname());
             Notification.show("E-Mail erfolgreich versendet").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         });
         resendButton.addClassName("link-button");
@@ -70,20 +88,21 @@ public class RegisterVerificationView extends VerticalLayout {
                     String fieldValue = field.getValue(); // get the value from the TextField
                     pin += fieldValue; // add the value to the pin string
                 }
-                if (userController.verifyEmail(userController.getCurrentUser(), pin)) {
-                    ui.navigate("/create/profile");
-                    Notification.show("E-Mail erfolgreich verifiziert")
+                User user = userController.getUserByEmail(email);
+                if (userController.verifyEmail(user, pin)) {
+                    userController.unlock(user.getEmail());
+                    ui.navigate("/forgotPW");
+                    Notification.show("Account erfolgreich entsperrt")
                             .addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 } else {
-                    Notification.show("E-Mail konnte nicht verifiziert werden!")
+                    Notification.show("Ihr Account konnte nicht entsperrt werden!")
                             .addThemeVariants(NotificationVariant.LUMO_ERROR);
                 }
             }));
         });
         verifyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        Button skipButton = new Button("Überspringen", e -> UI.getCurrent().navigate("/create/profile"));
         HorizontalLayout buttons = new HorizontalLayout();
-        buttons.add(verifyButton, skipButton);
+        buttons.add(verifyButton);
         add(buttons);
     }
 }
