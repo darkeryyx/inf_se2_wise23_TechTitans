@@ -7,6 +7,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -126,13 +127,14 @@ public class RegisterView extends VerticalLayout {
         securityQuestionsComboBox.setRequiredIndicatorVisible(true);
         securityQuestionsComboBox.setWidth("20rem");
         securityQuestionsComboBox.addValueChangeListener(this::onSecurityQuestionsSelected);
-        Checkbox checkbox = new Checkbox("Ich stimme den AGB zu");
+        Checkbox checkbox = new Checkbox("Ich bin mit der Verarbeitung meiner Daten im Rahmen der Datenschutzerklärung einverstanden.");
+        Anchor link = new Anchor("/Datenschutz", "Datenschutzerklärung");
 
         HorizontalLayout line1 = new HorizontalLayout(vorname, nachname);
         HorizontalLayout line2 = new HorizontalLayout(email);
         email.setWidth("25rem");
         HorizontalLayout line3 = new HorizontalLayout(passwort, passwort2);
-
+        
         Button submit = new Button("Bestätigen", event -> register(
                 email,
                 vorname.getValue(),
@@ -151,6 +153,7 @@ public class RegisterView extends VerticalLayout {
                 securityQuestionsComboBox,
                 answerLayout,
                 checkbox,
+                link,
                 submit);
 
         main.setAlignItems(Alignment.CENTER);
