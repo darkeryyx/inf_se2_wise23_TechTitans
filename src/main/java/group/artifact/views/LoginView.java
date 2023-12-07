@@ -1,17 +1,16 @@
 package group.artifact.views;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -45,9 +44,84 @@ public class LoginView extends Composite<Component> {
     private CompanyController companyController;
 
     protected Component initContent() {
+        FlexLayout mainLayout = new FlexLayout();
+        mainLayout.setSizeFull();
+
+        // Job Advertisement Component
+        Component jobAdvertisementComponent = createJobAdvertisementListComponent();
+        jobAdvertisementComponent.getElement().getStyle().set("max-height", "95%");
+        jobAdvertisementComponent.getElement().getStyle().set("overflow-y", "auto");
+        mainLayout.add(jobAdvertisementComponent);
+
+        // Login Component
+        Component loginComponent = createLoginComponent();
+        mainLayout.add(loginComponent);
+
+        mainLayout.setFlexDirection(FlexLayout.FlexDirection.ROW);
+        mainLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        mainLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+
+        return mainLayout;
+    }
+
+    private Component createJobAdvertisementListComponent() {
+        List<OfferDTO> offers = offerController.getAllOffersAndTheirCompany();
+
+        // Cheat to have more than 5 job advertisements
+        for(int i = 0; i < 10; i++) {
+            offers.add(offers.get(0));
+        }
+
+        FlexLayout jobAdvertisementsLayout = new FlexLayout();
+        jobAdvertisementsLayout.setFlexDirection(FlexLayout.FlexDirection.COLUMN);
+        jobAdvertisementsLayout.setWidth("50%");
+        jobAdvertisementsLayout.getStyle().set("overflow-y", "auto");
+
+        // If we have 20+ Offers not every offer can be used
+        // Maybe a fancy ML solution
+        for(OfferDTO offerDTO : offers) {
+            jobAdvertisementsLayout.add(createJobAdvertisementComponent(offerDTO));
+        }
+        jobAdvertisementsLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+        return jobAdvertisementsLayout;
+    }
+
+    private Component createJobAdvertisementComponent(OfferDTO offerDTO) {
+        Div jobAdvertisementComponent = new Div();
+        H3 job = new H3(offerDTO.getJob());
+        H5 company = new H5(offerDTO.getCompanyName());
+        Span description = new Span(offerDTO.getDescription());
+        jobAdvertisementComponent.add(job);
+        jobAdvertisementComponent.add(company);
+        jobAdvertisementComponent.add(description);
+
+        jobAdvertisementComponent.setWidth("95%");
+
+        jobAdvertisementComponent.getStyle().set("border", "1px solid #aaaaaa");
+        jobAdvertisementComponent.getStyle().set("padding", "10px");
+
+        jobAdvertisementComponent.getStyle().set("transition", "background-color 0.3s ease");
+        jobAdvertisementComponent.getStyle().set("cursor", "pointer");
+
+        jobAdvertisementComponent.getElement().addEventListener("mouseover", event -> {
+            getUI().ifPresent(ui -> ui.access(() ->
+                    jobAdvertisementComponent.getStyle().set("background-color", "#f0f0f0")
+            ));
+        });
+
+        jobAdvertisementComponent.getElement().addEventListener("mouseout", event -> {
+            getUI().ifPresent(ui -> ui.access(() ->
+                    jobAdvertisementComponent.getStyle().remove("background-color")
+            ));
+        });
+        return jobAdvertisementComponent;
+    }
+
+    private Component createLoginComponent() {
         TextField email = new TextField("Email");
         PasswordField password = new PasswordField("Passwort");
-        Anchor pwVergessen = new Anchor("forgotPW", "Passwort vergessen?");
+        Anchor forgotPW = new Anchor("forgotPW", "Passwort vergessen?");
         Anchor account = new Anchor("register", "Account erstellen");
 
         password.addKeyDownListener(Key.ENTER, event -> {
@@ -67,14 +141,18 @@ public class LoginView extends Composite<Component> {
 
         email.focus();
 
-        VerticalLayout loginFormLayout = new VerticalLayout(
+        FlexLayout loginFormLayout = new FlexLayout(
                 loginHeader,
                 email,
                 password,
                 submit);
+        loginFormLayout.setFlexDirection(FlexLayout.FlexDirection.COLUMN);
+        loginFormLayout.setWidth("50%");
 
-        loginFormLayout.add(pwVergessen);
+        loginFormLayout.add(forgotPW);
         loginFormLayout.add(account);
+
+        loginFormLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
         //loginFormLayout.setHeight("100%");
 
@@ -84,60 +162,7 @@ public class LoginView extends Composite<Component> {
 
          */
 
-        loginFormLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-
-        List<OfferDTO> offers = offerController.getAllOffersAndTheirCompany();
-        for(int i = 0; i < 10; i++) {
-            offers.add(offers.get(0));
-        }
-
-
-        VerticalLayout jobAdvertisementsLayout = new VerticalLayout();
-        jobAdvertisementsLayout.getStyle().set("max-height", "90%");
-        jobAdvertisementsLayout.getStyle().set("overflow-y", "auto");
-
-        for(OfferDTO offerDTO : offers) {
-            jobAdvertisementsLayout.add(createJobAdvertisementComponent(offerDTO));
-        }
-        jobAdvertisementsLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-
-        HorizontalLayout mainLayout = new HorizontalLayout(jobAdvertisementsLayout, loginFormLayout);
-        mainLayout.setSizeFull();
-        mainLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-        mainLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-
-        return mainLayout;
-    }
-
-    private Component createJobAdvertisementComponent(OfferDTO offerDTO) {
-        Div test = new Div();
-        H3 job = new H3(offerDTO.getJob());
-        H5 company = new H5(offerDTO.getCompanyName());
-        Span description = new Span(offerDTO.getDescription());
-        test.add(job);
-        test.add(company);
-        test.add(description);
-
-        test.setWidth("95%");
-
-        test.getStyle().set("border", "1px solid #aaaaaa");
-        test.getStyle().set("padding", "10px");
-
-        test.getStyle().set("transition", "background-color 0.3s ease");
-        test.getStyle().set("cursor", "pointer");
-
-        test.getElement().addEventListener("mouseover", event -> {
-            getUI().ifPresent(ui -> ui.access(() ->
-                    test.getStyle().set("background-color", "#f0f0f0")
-            ));
-        });
-
-        test.getElement().addEventListener("mouseout", event -> {
-            getUI().ifPresent(ui -> ui.access(() ->
-                    test.getStyle().remove("background-color")
-            ));
-        });
-        return test;
+        return loginFormLayout;
     }
 
     private void login(String email, String password) {
