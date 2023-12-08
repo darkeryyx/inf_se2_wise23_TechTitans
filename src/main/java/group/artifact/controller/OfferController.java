@@ -24,4 +24,8 @@ public class OfferController {
     }
 
     public List<String> getBusinessList() {return offerService.getBusinessList();}
+
+    public String getLogo(int id) {
+        return offerService.getLogo(id);
+    }
 }

@@ -17,6 +17,7 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.StreamResource;
 import group.artifact.controller.OfferController;
 import group.artifact.dtos.OfferDTO;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.security.RolesAllowed;
 
 
+import java.io.ByteArrayInputStream;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +49,6 @@ public class SearchOffersView extends HomeView {
         ListDataProvider<OfferDTO> offerDataProvider = new ListDataProvider<>(offers);
         grid.setItems(offerDataProvider);
 
-        //TODO: Fehler beim Zugreifen auf company deswegen in dto nur name übergeben -> keinen zugriff auf link
         grid.addComponentColumn( item-> gridRowLayout(item));
 
         // Filtering Components
@@ -134,9 +136,9 @@ public class SearchOffersView extends HomeView {
     }
 
 
-    static HorizontalLayout gridRowLayout(OfferDTO item){
+    HorizontalLayout gridRowLayout(OfferDTO item){
 
-        Image logo = new Image ("images/fabrik.png", "images/fabrik.png");
+        Image logo = generateImage(offerController.getLogo(item.getId()));
         Label details = new Label("Branche: " + item.getBusiness() + "\u3000\u3000" + "Gehalt: " + item.getIncomePerHour() + " €/h");
         Label company = new Label(item.getCompanyName());
         Label job = new Label(item.getJob());
@@ -177,5 +179,24 @@ public class SearchOffersView extends HomeView {
 
         return layout;
     }
+    public Image generateImage(String logo) {
+        try {
+            String enc = logo;
+            System.out.println("Bild in DB? " + (enc != null));
+            if (enc == null) {
+                return null;
+            }
+            StreamResource sr = new StreamResource("company", () -> {
+                byte[] decoded = Base64.getDecoder().decode(enc);
+                return new ByteArrayInputStream(decoded);
+            });
+            sr.setContentType("image/png");
+            Image image = new Image(sr, "Profilbild");
 
+            return image;
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

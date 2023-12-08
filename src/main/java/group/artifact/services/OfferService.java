@@ -31,9 +31,16 @@ public class OfferService {
             dto.setBusiness(offer.getBusiness());
             dto.setDescription(offer.getDescription());
             dto.setIncomePerHour(offer.getIncomePerHour());
+            dto.setId(offer.getOffer_pk());
             offerDTOS.add(dto);
         }
         return offerDTOS;
+    }
+
+    public String getLogo(int id) {
+        if(offerRepository.findById(id).isPresent()) {
+            return offerRepository.findById(id).get().getCompany().getImage();
+        } else {return null;}
     }
     public List<String> getBusinessList() {
         return Arrays.asList(
