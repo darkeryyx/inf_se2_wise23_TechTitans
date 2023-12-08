@@ -28,4 +28,12 @@ public class OfferController {
     public String getLogo(int id) {
         return offerService.getLogo(id);
     }
+
+    public List<OfferDTO> getAllOffersForOneCompany(int id) {
+        return offerService.getAllOffersForOneCompany(id);
+    }
+
+    public void editOffer(int currentOffer, String job, String business, String description, float income) {
+        offerService.editOffer(currentOffer,job,business,description,income);
+    }
 }

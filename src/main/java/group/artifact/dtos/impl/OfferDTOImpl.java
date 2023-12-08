@@ -14,4 +14,5 @@ public class OfferDTOImpl implements OfferDTO {
     private String description;
     private Float incomePerHour;
     private int id;
+    private int company;
 }

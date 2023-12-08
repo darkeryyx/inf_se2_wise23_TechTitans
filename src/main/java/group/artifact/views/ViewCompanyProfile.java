@@ -218,16 +218,12 @@ public class ViewCompanyProfile extends VerticalLayout {
         }
         try {
         String enc = company.getImage();
-        System.out.println("Bild in DB? "+ (enc!=null));
         if (enc==null){
             return null;
         }
 
         StreamResource sr = new StreamResource("company", () ->  {
             byte[] decoded = Base64.getDecoder().decode(enc);
-            //byte [] arr = HexFormat.of().parseHex("89504e470d0a1a0a0000000d49484452000000050000000508060000008d6f26e50000001c4944415408d763f8ffff3fc37f062005c3201284d031f18258cd04000ef535cbd18e0e1f0000000049454e44ae426082");
-            //System.out.println(HexFormat.of().parseHex("89504e470d0a1a0a0000000d49484452000000050000000508060000008d6f26e50000001c4944415408d763f8ffff3fc37f062005c3201284d031f18258cd04000ef535cbd18e0e1f0000000049454e44ae426082"));
-            //System.out.println(new String(decoded));
             return new ByteArrayInputStream(decoded);
         });
         sr.setContentType("image/png");
@@ -272,8 +268,6 @@ public class ViewCompanyProfile extends VerticalLayout {
                     String encoded = Base64.getEncoder().encodeToString(fileData.readAllBytes());
                     setValue(encoded);
                     // String encodedComp = Base64.getEncoder().encodeToString(targetArray);
-                    System.out.println("Encoded " + encoded);
-
                     // String decoded = new String(Base64.getDecoder().decode(encoded.getBytes()));
                 } catch (IOException | NullPointerException e) {
                     e.printStackTrace();

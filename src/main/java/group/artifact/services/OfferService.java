@@ -2,6 +2,7 @@ package group.artifact.services;
 
 import group.artifact.dtos.OfferDTO;
 import group.artifact.dtos.impl.OfferDTOImpl;
+import group.artifact.entities.Company;
 import group.artifact.entities.Offer;
 import group.artifact.repositories.OfferRepository;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -32,7 +34,27 @@ public class OfferService {
             dto.setDescription(offer.getDescription());
             dto.setIncomePerHour(offer.getIncomePerHour());
             dto.setId(offer.getOffer_pk());
+            dto.setCompany(offer.getCompany().getUser_fk());
             offerDTOS.add(dto);
+        }
+        return offerDTOS;
+    }
+
+    public List<OfferDTO> getAllOffersForOneCompany(int id){
+        List<Offer> offers = offerRepository.findAll(); // all offers needs to be parsed to DTO
+        ArrayList<OfferDTO> offerDTOS = new ArrayList<>(); // this whill be done by an array list
+        for (Offer offer : offers) {
+            if(offer.getCompany().getUser_fk() == id) {
+                OfferDTO dto = new OfferDTOImpl();
+                dto.setCompanyName(offer.getCompany().getName());
+                dto.setJob(offer.getJob());
+                dto.setBusiness(offer.getBusiness());
+                dto.setDescription(offer.getDescription());
+                dto.setIncomePerHour(offer.getIncomePerHour());
+                dto.setId(offer.getOffer_pk());
+                dto.setCompany(offer.getCompany().getUser_fk());
+                offerDTOS.add(dto);
+            }
         }
         return offerDTOS;
     }
@@ -185,5 +207,22 @@ public class OfferService {
                 "Steuern & Staatsfinanzen",
                 "Verteidigung"
         );
+    }
+
+    public void editOffer(int currentOffer, String job, String business, String description, float income) {
+        try {
+            Optional<Offer> o = offerRepository.findById(currentOffer);
+            if (o.isEmpty()) {
+                throw new NullPointerException();
+            }
+            Offer offer = o.get();
+            offer.setJob(job);
+            offer.setBusiness(business);
+            offer.setDescription(description);
+            offer.setIncomePerHour(income);
+            offerRepository.save(offer);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 }

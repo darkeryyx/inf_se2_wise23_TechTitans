@@ -8,6 +8,7 @@ public interface OfferDTO {
     public String getDescription();
     public Float getIncomePerHour();
     public int getId();
+    public int getCompany();
 
     public void setCompanyName(String company);
     public void setJob(String job);
@@ -16,4 +17,5 @@ public interface OfferDTO {
     public void setIncomePerHour(Float incomePerHour);
 
     public void setId(int id);
+    public void setCompany(int id);
 }

@@ -227,7 +227,6 @@ public class ViewStudentProfile extends VerticalLayout {
     public Image generateImage() {
         Student student = userController.getCurrentUser().getStudent();
         String enc = student.getImage();
-        System.out.println("Bild in DB? "+ (enc!=null));
         if (enc==null){
             return null;
         }
@@ -275,8 +274,6 @@ public class ViewStudentProfile extends VerticalLayout {
                     String encoded = Base64.getEncoder().encodeToString(fileData.readAllBytes());
                     setValue(encoded);
                     // String encodedComp = Base64.getEncoder().encodeToString(targetArray);
-                    System.out.println("Encoded " + encoded);
-
                     // String decoded = new String(Base64.getDecoder().decode(encoded.getBytes()));
                 } catch (IOException | NullPointerException e) {
                     e.printStackTrace();
