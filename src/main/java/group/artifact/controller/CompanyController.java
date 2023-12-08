@@ -30,4 +30,17 @@ public class CompanyController {
     }
     public List<String> findAllBusinesses() {return companyService.findAllBusinesses();}
     public Optional<Company> findByID(int i) {return companyService.findByID(i);}
+
+    public CompanyDTO viewCompanyProfile(Integer id) {
+        return companyService.viewProfile(id);
+    }
+
+    public void updateCompanyProfile(CompanyDTO companyDTO, Integer id) {
+        companyService.updateProfile(companyDTO, id);
+    }
+
+    public void updateImage(int id, String i) {
+        companyService.updateImage(id,i);
+    }
+    public Optional<Company> getByID(int id) {return this.companyService.findByID(id);}
 }
