@@ -2,6 +2,7 @@ package group.artifact.services;
 
 import group.artifact.dtos.StudentDTO;
 import group.artifact.dtos.impl.StudentDTOImpl;
+import group.artifact.entities.Company;
 import group.artifact.entities.Student;
 import group.artifact.entities.User;
 import group.artifact.repositories.StudentRepository;
@@ -67,5 +68,19 @@ public class StudentService {
 
         studentToUpdate.setUser(user);
         studentRepository.save(studentToUpdate);
+    }
+
+    public void updateImage(int id, String image) {
+        try {
+            Optional<Student> s = studentRepository.findById(id);
+            if (s.isEmpty()) {
+                throw new NullPointerException();
+            }
+            Student student = s.get();
+            student.setImage(image);
+            studentRepository.save(student);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 }

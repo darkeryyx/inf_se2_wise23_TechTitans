@@ -1,10 +1,15 @@
 package group.artifact.views;
 
+import com.vaadin.flow.component.AbstractSinglePropertyField;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -12,8 +17,12 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.dom.DomEvent;
+import com.vaadin.flow.dom.DomEventListener;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import group.artifact.controller.StudentController;
@@ -28,6 +37,8 @@ import javax.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Base64;
 
 @Route("view/student")
@@ -48,6 +59,10 @@ public class ViewStudentProfile extends VerticalLayout {
     TextField skills = createTextField("Mitgebrachte Fähigkeiten");
     TextField interests = createTextField("Interessen");
     TextField description = createTextField("Beschreibung");
+    Image image;
+    UploadFileFormat singleFileUpload = new UploadFileFormat();
+    VerticalLayout uploadLayout = new VerticalLayout(singleFileUpload.title, singleFileUpload.hint,
+            singleFileUpload.upload);
 
     Binder<StudentDTO> binder = new Binder<>(StudentDTO.class);
 
@@ -71,12 +86,14 @@ public class ViewStudentProfile extends VerticalLayout {
 
     private Component buildForm() {
 
-        Image image = generateImage();
+        image = generateImage();
 
         VerticalLayout formLayout = new VerticalLayout();
         HorizontalLayout header = new HorizontalLayout(
                 new H2 ("Studentenprofil"));
         VerticalLayout profile = new VerticalLayout();
+        uploadLayout.setAlignItems(Alignment.CENTER);
+        uploadLayout.setVisible(false);
         if (image != null) {
             image.setWidth("50px");
             image.setHeight("50px");
@@ -104,7 +121,7 @@ public class ViewStudentProfile extends VerticalLayout {
                     description);
         }
         profile.setAlignItems(Alignment.CENTER);
-        formLayout.add(header,profile, editButton, saveButton);
+        formLayout.add(header,profile,uploadLayout, editButton, saveButton);
         formLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         return formLayout;
     }
@@ -150,6 +167,7 @@ public class ViewStudentProfile extends VerticalLayout {
             if (studentDto != null) {
                 binder.setBean(studentDto);
                 setEditable(true);
+                uploadLayout.setVisible(true);
             } else {
                 Notification.show("Student nicht gefunden.");
             }
@@ -179,6 +197,12 @@ public class ViewStudentProfile extends VerticalLayout {
             Notification.show("Studentenprofil erfolgreich gespeichert.");
 
             setEditable(false);
+            uploadLayout.setVisible(false);
+            if(singleFileUpload.getValue() != null) {
+                studentController.updateImage(userController.getCurrentUser().getUser_pk(),singleFileUpload.getValue());
+                image = generateImage();
+                UI.getCurrent().close();
+            }
         } catch (ValidationException ex) {
             Notification.show("Validierungsfehler: " + ex.getMessage());
         }
@@ -210,15 +234,76 @@ public class ViewStudentProfile extends VerticalLayout {
 
         StreamResource sr = new StreamResource("student", () ->  {
             byte[] decoded = Base64.getDecoder().decode(enc);
-            //byte [] arr = HexFormat.of().parseHex("89504e470d0a1a0a0000000d49484452000000050000000508060000008d6f26e50000001c4944415408d763f8ffff3fc37f062005c3201284d031f18258cd04000ef535cbd18e0e1f0000000049454e44ae426082");
-            //System.out.println(HexFormat.of().parseHex("89504e470d0a1a0a0000000d49484452000000050000000508060000008d6f26e50000001c4944415408d763f8ffff3fc37f062005c3201284d031f18258cd04000ef535cbd18e0e1f0000000049454e44ae426082"));
-            //System.out.println(new String(decoded));
             return new ByteArrayInputStream(decoded);
         });
         sr.setContentType("image/png");
         Image image = new Image(sr, "Profilbild");
 
         return image;
+    }
+
+    @Tag("div")
+    public class UploadFileFormat extends AbstractSinglePropertyField<CreateProfile.UploadFileFormat, String> {
+
+        String value; // The encoded image
+        H4 title;
+        Paragraph hint;
+        Upload upload;
+
+        public UploadFileFormat() {
+            super("image", "", false);
+            MemoryBuffer buffer = new MemoryBuffer();
+            upload = new Upload(buffer);
+
+            upload.setAcceptedFileTypes("image/jpeg", "image/png", "image/gif");
+            int maxFileSizeInBytes = 1024 * 1024; // 1MB
+            upload.setMaxFileSize(maxFileSizeInBytes);
+
+            upload.addFileRejectedListener(event -> {
+                String errorMessage = event.getErrorMessage();
+
+                Notification notification = Notification.show(errorMessage, 5000,
+                        Notification.Position.MIDDLE);
+                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            });
+
+            upload.addSucceededListener(event -> {
+                InputStream fileData = buffer.getInputStream();
+                System.out.println("succeeded");
+                try {
+                    // byte[] targetArray = new byte[fileData.available()];
+                    String encoded = Base64.getEncoder().encodeToString(fileData.readAllBytes());
+                    setValue(encoded);
+                    // String encodedComp = Base64.getEncoder().encodeToString(targetArray);
+                    System.out.println("Encoded " + encoded);
+
+                    // String decoded = new String(Base64.getDecoder().decode(encoded.getBytes()));
+                } catch (IOException | NullPointerException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            upload.getElement().addEventListener("upload-abort", new DomEventListener() {
+                @Override
+                public void handleEvent(DomEvent domEvent) {
+                    setValue(null);
+                }
+            });
+
+            title = new H4("Bild hochladen");
+            title.getStyle().set("margin-top", "0");
+            hint = new Paragraph("Maximale Dateigröße: 1 MB. Akzeptierte Formate: jpeg, png, gif.");
+            hint.getStyle().set("color", "var(--lumo-secondary-text-color)");
+        }
+
+        public void setValue(String v) {
+            value = v;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
     }
 }
 

@@ -14,6 +14,10 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
+    public void updateImage(int id, String value) {
+        studentService.updateImage(id, value);
+    }
+
 
     public StudentDTO viewStudentProfile(Integer id) {
         return studentService.viewProfile(id);

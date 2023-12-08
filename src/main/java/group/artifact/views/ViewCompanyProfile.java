@@ -188,7 +188,6 @@ public class ViewCompanyProfile extends VerticalLayout {
                 companyController.updateImage(userController.getCurrentUser().getUser_pk(),singleFileUpload.getValue());
                 image = generateImage();
                 UI.getCurrent().close();
-                //add(buildForm());
             }
         } catch (ValidationException ex) {
             Notification.show("Validierungsfehler: " + ex.getMessage());
