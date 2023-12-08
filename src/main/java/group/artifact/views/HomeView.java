@@ -29,9 +29,10 @@ public class HomeView extends VerticalLayout {
         Anchor searchOffersView = new Anchor("search/offers", "Angebote suchen");
 
         Anchor viewStudentProfile = new Anchor("view/student", "Studentenprofil ansehen");
+        Anchor viewCompanyProfile = new Anchor("view/companyProfile", "Unternehmensprofil ansehen");
 
         header = new HorizontalLayout(login, register, registerVerify, forgotPW, forgotPWVerify, createProfile, createOfferView,
-                searchCompaniesView, searchOffersView, viewStudentProfile);
+                searchCompaniesView, searchOffersView, viewStudentProfile, viewCompanyProfile);
 
         content = new VerticalLayout();
 
