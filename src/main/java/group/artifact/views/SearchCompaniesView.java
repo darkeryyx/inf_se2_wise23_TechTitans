@@ -14,13 +14,17 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.RouterLink;
 
+import com.vaadin.flow.server.StreamResource;
 import group.artifact.controller.CompanyController;
 import group.artifact.dtos.CompanyDTO;
+import group.artifact.entities.Company;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.ByteArrayInputStream;
+import java.util.Base64;
 import java.util.List;
-
+import java.util.Optional;
 
 
 @Route("search/companies")
@@ -109,10 +113,10 @@ public class SearchCompaniesView extends HomeView {
         return layout;
     }
 
-    static HorizontalLayout gridRowLayout(CompanyDTO item) {
+    HorizontalLayout gridRowLayout(CompanyDTO item) {
 
         Anchor link = new Anchor(item.getLink(), item.getLink());
-        Image logo = new Image("images/fabrik.png", "images/fabrik.png");
+        Image logo = generateImage(item.getLogo());
         Label business = new Label("Branche: " + item.getBusiness());
         Label company = new Label(item.getName());
         Label description = new Label(item.getDescription());
@@ -154,6 +158,26 @@ public class SearchCompaniesView extends HomeView {
         return layout;
     }
 
+    public Image generateImage(String logo) {
+        try {
+            String enc = logo;
+            System.out.println("Bild in DB? " + (enc != null));
+            if (enc == null) {
+                return null;
+            }
+            StreamResource sr = new StreamResource("company", () -> {
+                byte[] decoded = Base64.getDecoder().decode(enc);
+                return new ByteArrayInputStream(decoded);
+            });
+            sr.setContentType("image/png");
+            Image image = new Image(sr, "Profilbild");
+
+            return image;
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
 
 
