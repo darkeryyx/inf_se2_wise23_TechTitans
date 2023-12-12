@@ -1,6 +1,7 @@
 package group.artifact.entities;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -8,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data // constructor, getter, setter
 @Entity
@@ -63,4 +66,11 @@ public class User {
      * when validated: !true (char not boolean)
      */
     private String pin;
+
+    @NonNull
+    @Column
+    @ElementCollection
+
+    private ArrayList<Message> poBox;
+    //arraylis tgeht auch net?
 }
