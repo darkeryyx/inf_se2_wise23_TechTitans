@@ -17,19 +17,17 @@ import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.StreamResource;
 import group.artifact.controller.CompanyController;
 import group.artifact.dtos.CompanyDTO;
-import group.artifact.entities.Company;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 
 
 @Route("search/companies")
 @RolesAllowed("ROLE_USER")
-public class SearchCompaniesView extends HomeView {
+public class SearchCompaniesView extends StudentView {
     CompanyController companyController;
     MultiSelectComboBox<String> businessComboBox;
 
@@ -83,11 +81,6 @@ public class SearchCompaniesView extends HomeView {
         searchings.setWidth("70%");
         searchings.setHeight("10%");
 
-        //Others
-        RouterLink searchOffersViewLink = new RouterLink(SearchOffersView.class);
-        searchOffersViewLink.setText("-> Hier geht es zur Suche nach Stellenangeboten");
-        searchOffersViewLink.getStyle().set("text-decoration", "underline");
-
         //Titel - erstmal vorläufig bis Standardheader definiert
         H3 viewTitle = new H3("Suchen und Filtern von Unternehmen");
 
@@ -101,12 +94,10 @@ public class SearchCompaniesView extends HomeView {
         //Content Layout
         VerticalLayout layout = new VerticalLayout(
                 viewTitle,
-                searchOffersViewLink,
                 searchings,
                 grid
         );
 
-        layout.setAlignSelf(Alignment.END, searchOffersViewLink);
         layout.setAlignSelf(Alignment.CENTER, searchings,grid, viewTitle);
         layout.setSizeFull();
         layout.setHeightFull();

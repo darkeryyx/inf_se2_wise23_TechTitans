@@ -16,7 +16,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.StreamResource;
 import group.artifact.controller.OfferController;
 import group.artifact.dtos.OfferDTO;
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 
 @Route("search/offers")
 @RolesAllowed("ROLE_USER")
-public class SearchOffersView extends HomeView {
+public class SearchOffersView extends StudentView {
 
     private final OfferController offerController;
     public SearchOffersView(OfferController offerController) {
@@ -96,11 +95,6 @@ public class SearchOffersView extends HomeView {
                 }));
         businessComboBox.setClearButtonVisible(true);
 
-        //Others
-        RouterLink searchCompanyViewLink = new RouterLink(SearchCompaniesView.class);
-        searchCompanyViewLink.setText("-> Hier geht es zur Suche nach Unternehmen");
-        searchCompanyViewLink.getStyle().set("text-decoration", "underline");
-
         //Titel - erstmal vorläufig bis Standardheader definiert
         H3 viewTitle = new H3("Suchen und Filtern von Stellenangeboten");
 
@@ -122,12 +116,11 @@ public class SearchOffersView extends HomeView {
         //Content Layout
         VerticalLayout layout = new VerticalLayout(
                 viewTitle,
-                searchCompanyViewLink,
                 searchings,
                 grid
         );
 
-        layout.setAlignSelf(Alignment.END, searchCompanyViewLink);
+        layout.setAlignSelf(Alignment.END);
         layout.setAlignSelf(Alignment.CENTER, searchings,grid, viewTitle);
         layout.setSizeFull();
         layout.setHeightFull();

@@ -1,0 +1,13 @@
+
+.header-fooder{
+    border-color: #00327b;
+    border-width: thick;
+    z-index: 0;
+    width: 100vw;
+    height: 60px;
+    align-items: center;
+}
+
+vaadin-menu-bar-button{
+    background-color: #00327b;
+}
