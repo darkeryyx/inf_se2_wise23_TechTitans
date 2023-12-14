@@ -67,10 +67,8 @@ public class User {
      */
     private String pin;
 
-    @NonNull
-    @Column
-    @ElementCollection
-
-    private ArrayList<Message> poBox;
+    // @Column
+    // @ElementCollection
+    // private ArrayList<Message> poBox;
     //arraylis tgeht auch net?
 }
