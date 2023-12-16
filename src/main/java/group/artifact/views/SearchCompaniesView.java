@@ -101,6 +101,7 @@ public class SearchCompaniesView extends StudentView {
         layout.setAlignSelf(Alignment.CENTER, searchings,grid, viewTitle);
         layout.setSizeFull();
         layout.setHeightFull();
+
         return layout;
     }
 
