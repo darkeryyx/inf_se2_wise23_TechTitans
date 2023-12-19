@@ -1,26 +1,35 @@
 package group.artifact.entities;
 
-import java.time.ZonedDateTime;
-import java.util.Set;
-
 import javax.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
+@Data
+@Entity
+@NoArgsConstructor
 @Table(name = "messages", schema = "project") // mapping to postgres
 public class Message {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int messageID;
 
-    private int senderID;
+    @ManyToOne
+    @JoinColumn(name = "chat_id")
+    private PostBox postBoxID;
 
-    private int recipientID;
+    @Column(name = "sender_id")
+    private int sender;
+
+
+    @Column(name = "recipient_id")
+    private int recipient;
 
     private String subject;
 
     private String content;
 
     private boolean read;
+
+
 }
