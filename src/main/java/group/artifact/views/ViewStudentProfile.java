@@ -43,7 +43,7 @@ import java.util.Base64;
 
 @Route("view/student")
 @RolesAllowed("ROLE_USER")
-public class ViewStudentProfile extends VerticalLayout {
+public class ViewStudentProfile extends StudentView {
 
     @Autowired
     private StudentController studentController;
@@ -70,13 +70,14 @@ public class ViewStudentProfile extends VerticalLayout {
     Button saveButton = new Button("Speichern");
 
     public ViewStudentProfile(UserController userController, StudentController studentController) {
+        super();
         this.studentController = studentController;
         this.userController = userController;
-        setSizeFull();
-        add(buildForm());
+        this.setContent(buildForm());
         editButton.addClickListener(e -> edit());
         saveButton.addClickListener(e -> save());
         saveButton.setVisible(false);
+        this.add();
     }
 
     @PostConstruct
@@ -84,7 +85,7 @@ public class ViewStudentProfile extends VerticalLayout {
         findStudent();
     }
 
-    private Component buildForm() {
+    private VerticalLayout buildForm() {
 
         image = generateImage();
 

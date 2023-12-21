@@ -39,11 +39,10 @@ import java.util.stream.Collectors;
 
 @Route("my/offers")
 @RolesAllowed("ROLE_USER")
-public class MyOffersView extends HomeView {
+public class MyOffersView extends CompanyView {
 
     private final OfferController offerController;
     private final UserController userController;
-    private VerticalLayout content;
     private VerticalLayout editContent;
     private int currentOffer;
 
@@ -54,7 +53,7 @@ public class MyOffersView extends HomeView {
         this.userController = userController;
         this.offerController = offerController;
         editContent = this.editContent();
-        content = this.content();
+        this.content = content();
         this.setContent(new VerticalLayout(this.content, this.editContent));
         this.add();
     }
@@ -113,11 +112,6 @@ public class MyOffersView extends HomeView {
                 }));
         businessComboBox.setClearButtonVisible(true);
 
-        //Others
-        RouterLink homeViewLink = new RouterLink(HomeView.class);
-        homeViewLink.setText("-> Hier geht es zur HomeView");
-        homeViewLink.getStyle().set("text-decoration", "underline");
-
         //Titel - erstmal vorläufig bis Standardheader definiert
         H3 viewTitle = new H3("Suchen und Filtern von Stellenangeboten");
 
@@ -139,12 +133,10 @@ public class MyOffersView extends HomeView {
         //Content Layout
         VerticalLayout layout = new VerticalLayout(
                 viewTitle,
-                homeViewLink,
                 searchings,
                 grid
         );
 
-        layout.setAlignSelf(Alignment.END, homeViewLink);
         layout.setAlignSelf(Alignment.CENTER, searchings,grid, viewTitle);
         layout.setSizeFull();
         layout.setHeightFull();

@@ -1,7 +1,6 @@
 package group.artifact.views;
 
 import com.vaadin.flow.component.AbstractSinglePropertyField;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -46,7 +45,7 @@ import static org.springframework.data.support.PageableExecutionUtils.getPage;
 
 @Route("view/companyProfile")
 @RolesAllowed("ROLE_USER")
-public class ViewCompanyProfile extends VerticalLayout {
+public class ViewCompanyProfile extends CompanyView {
 
     @Autowired
     private CompanyController companyController;
@@ -72,13 +71,14 @@ public class ViewCompanyProfile extends VerticalLayout {
     Button saveButton = new Button("Speichern");
 
     public ViewCompanyProfile(UserController userController, CompanyController companyController) {
+        super();
         this.companyController = companyController;
         this.userController = userController;
-        setSizeFull();
-        add(buildForm());
+        this.setContent(buildForm());
         editButton.addClickListener(e -> edit());
         saveButton.addClickListener(e -> save());
         saveButton.setVisible(false);
+        this.add();
     }
 
     @PostConstruct
@@ -86,7 +86,7 @@ public class ViewCompanyProfile extends VerticalLayout {
         findCompany();
     }
 
-    private Component buildForm() {
+    private VerticalLayout buildForm() {
 
         image = generateImage();
         VerticalLayout formLayout = new VerticalLayout();

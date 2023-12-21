@@ -1,4 +1,5 @@
 package group.artifact.views;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.component.Html;
@@ -9,10 +10,14 @@ import com.vaadin.flow.component.orderedlayout.FlexLayout;
 
 @Route("Datenschutz")
 @AnonymousAllowed
-public class DatenschutzerklaerungView extends FlexLayout{
+public class DatenschutzerklaerungView extends BasisView{
 
     public DatenschutzerklaerungView(){
-       
+        super();
+        this.setContent(content());
+        this.add();
+    }
+    public VerticalLayout content(){
 
        String htmlContent = "<div>"
        + "<h1>Datenschutzerklärung</h1>"
@@ -94,11 +99,12 @@ public class DatenschutzerklaerungView extends FlexLayout{
        + "</ul>"
        + "</div>";
 
-// Create Html component with the wrapped HTML content
-Html htmlComponent = new Html(htmlContent);
+    // Create Html component with the wrapped HTML content
+    Html htmlComponent = new Html(htmlContent);
 
-// Add the HtmlComponent to your layout
-add(htmlComponent);
+    // Add the HtmlComponent to your layout
+    return new VerticalLayout(htmlComponent);
     }
 }
+
 

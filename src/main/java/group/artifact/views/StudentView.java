@@ -21,10 +21,6 @@ public class StudentView extends BasisView {
         super();
         menuBar.setEnabled(true);
 
-        this.getStyle().set("padding","0");
-        this.setAlignItems(Alignment.CENTER);
-        this.addViews();
-
         //placeholder.setEnabled(false);
 
         MenuItem searchCompanies = menuBar.addItem(createMenuContent("Unternehmen", VaadinIcon.SEARCH),
@@ -43,20 +39,13 @@ public class StudentView extends BasisView {
 
 
         this.header = new HorizontalLayout(menuBar);
-        this.header.setWidth("100vw");
-        this.header.addClassName("header-fooder");
-        this.header.setAlignItems(Alignment.CENTER);
 
+        menuBar.getItems().get(0).getElement().getStyle().set("width","54vw");
         searchCompanies.getElement().getStyle().set("width", "15vw");
         searchOffer.getElement().getStyle().set("width", "15vw");
         messages.getElement().getStyle().set("width", "6vw");
         profilDropdown.getElement().getStyle().set("width", "7vw");
 
-    }
-
-    HorizontalLayout createHeader(){
-
-        return new HorizontalLayout();
     }
 
 }

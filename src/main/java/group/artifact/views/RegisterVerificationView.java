@@ -24,14 +24,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Route("register/verify")
 @RolesAllowed("ROLE_USER")
 @CssImport("./css/RegisterVerificationView.css")
-public class RegisterVerificationView extends VerticalLayout {
+public class RegisterVerificationView extends BasisView {
     @Autowired
     EmailController emailController;
     @Autowired
     UserController userController;
 
-    public RegisterVerificationView() {
-        addClassName("register-verification-view");
+    public RegisterVerificationView(){
+        super();
+        this.setContent(content());
+        this.add();
+    }
+    public VerticalLayout content() {
+        //addClassName("register-verification-view");
 
         H1 title = new H1("E-Mail bestätigen");
         add(title);
@@ -85,5 +90,8 @@ public class RegisterVerificationView extends VerticalLayout {
         HorizontalLayout buttons = new HorizontalLayout();
         buttons.add(verifyButton, skipButton);
         add(buttons);
+        VerticalLayout content = new VerticalLayout(title,text, resendButton,inputFields, buttons);
+        return content;
     }
+
 }

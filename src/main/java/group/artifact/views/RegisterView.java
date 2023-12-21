@@ -1,7 +1,6 @@
 package group.artifact.views;
 
 import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -15,7 +14,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -28,62 +26,29 @@ import group.artifact.dtos.impl.UserDTOImpl;
 import group.artifact.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
+
 import java.util.*;
 
 @Route("register")
 @AnonymousAllowed
 @CssImport("./css/RegisterView.css")
 
-public class RegisterView extends VerticalLayout {
+public class RegisterView extends BasisView {
     @Autowired
     private UserController userController;
     private Map<String, String> sicherheitsQA = new HashMap<>();
     public RegisterView() {
-        addClassName("newRegisterView");
-        createHeader();
-        createMain();
+        super();
+        this.setContent(createMain());
+        this.add();
     }
 
-    private void createHeader(){
-        var header = new HorizontalLayout();
-        header.addClassName("header");
-        Button home = new Button("Home", new Icon(VaadinIcon.HOME), event -> navToHome());
-        home.addClassName("home-btn");
-        home.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        Button searchCompany = new Button("Suche nach Firma", new Icon(VaadinIcon.WORKPLACE), event -> searchCompany());
-        searchCompany.addClassName("searchComp-btn");
-        searchCompany.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        Button searchOffers = new Button("Suche nach Angeboten", new Icon(VaadinIcon.SEARCH), event -> searchOffer());
-        searchOffers.addClassName("searchOff-btn");
-        searchOffers.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        Button logout = new Button("Logout", new Icon(VaadinIcon.SIGN_OUT), event -> logout());
-        logout.addClassName("logout-btn");
 
-        header.add(home, searchCompany, searchOffers, logout);
-        add(header);
-    }
+    private VerticalLayout createMain(){
+        VerticalLayout main = new VerticalLayout();
 
-    private void logout() {
-        userController.logout();
-        navToHome();
-    }
+        //main.setFlexDirection(FlexLayout.FlexDirection.COLUMN);
 
-    private void searchCompany() {
-        UI.getCurrent().navigate(SearchCompaniesView.class);
-
-    }
-
-    private void navToHome() {
-        UI.getCurrent().navigate(HomeView.class);
-    }
-
-    private void searchOffer() {
-        UI.getCurrent().navigate(SearchOffersView.class);
-    }
-
-    private void createMain(){
-        FlexLayout main = new FlexLayout();
-        main.setFlexDirection(FlexLayout.FlexDirection.COLUMN);
         final List<String> allSecurityQuestions = Arrays.asList(
                 "Wie lautet der Mädchenname Ihrer Mutter?",
                 "In welcher Stadt wurden Sie geboren?",
@@ -129,6 +94,7 @@ public class RegisterView extends VerticalLayout {
         securityQuestionsComboBox.addValueChangeListener(this::onSecurityQuestionsSelected);
         Checkbox checkbox = new Checkbox("Ich bin mit der Verarbeitung meiner Daten im Rahmen der Datenschutzerklärung einverstanden.");
         Anchor link = new Anchor("/Datenschutz", "Datenschutzerklärung");
+        link.setTarget("_blank");
 
         HorizontalLayout line1 = new HorizontalLayout(vorname, nachname);
         HorizontalLayout line2 = new HorizontalLayout(email);
@@ -158,7 +124,7 @@ public class RegisterView extends VerticalLayout {
 
         main.setAlignItems(Alignment.CENTER);
         answerLayout.setAlignItems(Alignment.CENTER);
-        add(main);
+        return main;
     }
     public HorizontalLayout createPasswordRequirement(String text){
         Icon icon = VaadinIcon.CHECK_CIRCLE.create();
