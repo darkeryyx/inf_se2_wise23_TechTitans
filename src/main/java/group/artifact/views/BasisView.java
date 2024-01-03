@@ -91,6 +91,9 @@ public class BasisView extends VerticalLayout {
         MenuItem studentProfile = views.getSubMenu().addItem("StudentProfile",
                 e -> {UI.getCurrent().navigate(ViewStudentProfile.class);});
 
+        MenuItem postBox = views.getSubMenu().addItem("StudentProfile",
+                e -> {UI.getCurrent().navigate(PostBoxView.class);});
+
         this.menuBar.setEnabled(true);
     }
 

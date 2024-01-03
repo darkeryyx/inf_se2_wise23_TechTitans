@@ -1,15 +1,21 @@
 package group.artifact.views;
 
 import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -17,9 +23,17 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
-import group.artifact.controller.OfferController;
+import group.artifact.controller.*;
+import group.artifact.dtos.CompanyDTO;
 import group.artifact.dtos.OfferDTO;
+import group.artifact.dtos.StudentDTO;
+import group.artifact.dtos.UserDTO;
+import group.artifact.entities.Company;
+import group.artifact.entities.Message;
+import group.artifact.entities.PostBox;
+import group.artifact.entities.User;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -27,6 +41,7 @@ import javax.annotation.security.RolesAllowed;
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Route("search/offers")
@@ -34,6 +49,18 @@ import java.util.stream.Collectors;
 public class SearchOffersView extends StudentView {
 
     private final OfferController offerController;
+    @Autowired
+    private StudentController studentController;
+    @Autowired
+    private UserController userController;
+    @Autowired
+    private CompanyController companyController;
+    @Autowired
+    private PostBoxController postBoxController;
+    @Autowired
+    private MessageController messageController;
+
+
     public SearchOffersView(OfferController offerController) {
         super();
         this.offerController = offerController;
@@ -163,6 +190,8 @@ public class SearchOffersView extends StudentView {
         infoLayout.setSpacing(false);
         infoLayout.setAlignItems(Alignment.START);
         infoLayout.getStyle().set("display", "flex"); //-> Default css nachtrag
+        infoLayout.add(new Button("Jetzt bewerben!", event -> apply(item)));
+
 
         
         //RowLayout
@@ -190,5 +219,87 @@ public class SearchOffersView extends StudentView {
             e.printStackTrace();
             return null;
         }
+    }
+
+
+    public void apply(OfferDTO item) {
+        User user =userController.getCurrentUser();
+        System.out.println(user.getName());
+        //vorname,nachname, studienfach,bday,semester, fähigkeiten interssen,beschreibung
+        StudentDTO studentDTO= studentController.viewStudentProfile(user.getUser_pk()); //
+      //  item.
+        System.out.println(studentDTO);
+     //   Optional<Company> company= companyController.getByID(item.getId());
+       // System.out.println(company);
+   //    CompanyDTO companyDTO=companyController.viewCompanyProfile(item.getCompany());
+
+
+        //anfrage ok so?
+    //   UserDTO createrOfOffer= userController.getUserDTO(company.get().getUser_fk());
+
+
+
+        // Erstellen Sie ein Dialogfenster
+        Dialog applyDialog = new Dialog();
+        applyDialog.setHeight("auto");
+
+        Label angaben = new Label("Ihre Angaben: ");
+        Label name = new Label("Name: " + studentDTO.getName() + " " +studentDTO.getSurname());
+        Label geburtstag= new Label("Geburtsdatum: " + studentDTO.getBirthday());
+        Label studienfach = new Label("Studienfach: " + studentDTO.getSubject());
+        Label semester = new Label("Semester: " + studentDTO.getSemester());
+        Label faehigkeiten=new Label("Fähigkeiten: "+ studentDTO.getSkills());
+        Label interessen= new Label("Interessen: " + studentDTO.getInterests());
+        Label beschreibung = new Label("Beschreibung: " + studentDTO.getDescription());
+
+        // Eingabefeld für den Text
+        TextArea textArea = new TextArea("Bewerbungstext");
+        textArea.setWidth("100%");
+        textArea.setHeight("350px");
+
+        // Markieren Sie das Textfeld als Pflichtfeld
+        textArea.setRequiredIndicatorVisible(true);
+
+        // Bestätigungsbutton
+        Button confirmButton = new Button("Bewerbung abschicken!", event -> {
+            // Überprüfen Sie, ob der Text eingegeben wurde, bevor Sie fortfahren
+            if (textArea.isEmpty()) {
+                // Hier können Sie eine Benachrichtigung oder eine andere Behandlung für den leeren Text hinzufügen
+                Notification.show("Bitte geben Sie einen Bewerbungstext ein");
+            } else {
+                String applicationText = textArea.getValue();
+                //tmp messageID, zum testen, user_pk= ID??, nächster plan: auf die postbox vom user zugreifen und die nachricht da einfügen
+                                                            //dann maybe über messagecontroller ne mehode send und in dieser wird die message in die pobox eingefügt
+                                                            //die liste der pobox wird dann dem user angezeigt
+
+                //plan: von dem user auf die postbox und die nachricht dadrin saven
+                PostBox box=postBoxController.getPostBoxByID(user);
+                System.out.println("HIER"+ box.getPostBoxID());
+               // System.out.println(company.get().getUser_fk());
+                if(box !=null) {//1, user.getUser_pk(), box.getUser().getUser_pk(),"test subject", applicationText, false, 42
+               //     Message message = new Message(box,user.getUser_pk(),company.get().getUser_fk(),"betrreff", applicationText, false);
+                 //   messageController.createMessage(message);
+                    applyDialog.close();
+                }//todo: else fall -> neue postbox createn
+            }
+        });
+
+        //verticallayout ging iwie nicht, angaben wurden trzd horizonzal angezeigt
+        HorizontalLayout angabenLayout = new HorizontalLayout(angaben,name,geburtstag,studienfach, semester, faehigkeiten, interessen, beschreibung);
+        angabenLayout.setAlignItems(Alignment.STRETCH);
+
+        // Abbruchbutton
+        Button cancelButton = new Button("Abbrechen", event -> applyDialog.close());
+
+        // Layout für die Buttons
+        HorizontalLayout buttonLayout = new HorizontalLayout(confirmButton, cancelButton);
+
+        // Layout für das gesamte Dialogfenster
+        VerticalLayout dialogLayout = new VerticalLayout(angabenLayout,textArea,buttonLayout);
+
+        applyDialog.add(dialogLayout);
+
+        // Dialogfenster anzeigen
+        applyDialog.open();
     }
 }
